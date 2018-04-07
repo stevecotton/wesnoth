@@ -2470,8 +2470,8 @@ msgid ""
 "Before Kalenz left the Ka’lian he had ordered $left_behind_kalenz to stay "
 "and guard it."
 msgstr ""
-"Bevor Kalenz den Ka'lian  verließ, ließ er $left_behind zurück, um Wache zu "
-"halten. Kalenz ist nun in der Lage, Zwerge zu rekrutieren."
+"Bevor Kalenz den Ka'lian verließ, ließ er $left_behind_kalenz zurück, um Wache zu "
+"halten."
 
 #. [message]: speaker=narrator
 #: data/campaigns/Legend_of_Wesmere/scenarios/chapter3/09_Bounty_Hunters.cfg:380
@@ -2479,8 +2479,8 @@ msgid ""
 "Before Landar left the Ka’lian he had ordered $left_behind_landar to stay "
 "and guard it."
 msgstr ""
-"Bevor Kalenz den Ka'lian  verließ, ließ er $left_behind zurück, um Wache zu "
-"halten. Kalenz ist nun in der Lage, Zwerge zu rekrutieren."
+"Bevor Landar den Ka'lian verließ, ließ er $left_behind_landar zurück, um Wache zu "
+"halten."
 
 #. [message]: speaker=unit
 #: data/campaigns/Legend_of_Wesmere/scenarios/chapter3/09_Bounty_Hunters.cfg:408
