@@ -79,7 +79,7 @@ private:
 
 	bool replay_ui_has_all_buttons() {
 		return play_button() && stop_button() && reset_button() &&
-		       play_turn_button() && play_side_button();
+		       play_turn_button() && play_side_button() && play_move_button();
 	}
 	play_controller& controller_;
 	std::unique_ptr<replay_stop_condition> stop_condition_;
