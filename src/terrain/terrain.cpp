@@ -255,26 +255,16 @@ terrain_type::terrain_type(const terrain_type& base, const terrain_type& overlay
 		submerge_ = overlay.submerge_;
 	}
 
-	merge_alias_lists(mvt_type_, base.mvt_type_);
-	merge_alias_lists(def_type_, base.def_type_);
-	merge_alias_lists(vision_type_, base.vision_type_);
+	merge_alias_lists(mvt_type_, {base.number_});
+	merge_alias_lists(def_type_, {base.number_});
+	merge_alias_lists(vision_type_, {base.number_});
 
-	union_type_ = mvt_type_;
-	union_type_.insert( union_type_.end(), def_type_.begin(), def_type_.end() );
-	union_type_.insert( union_type_.end(), vision_type_.begin(), vision_type_.end() );
-
-	// remove + and -
-	union_type_.erase(std::remove(union_type_.begin(), union_type_.end(),
-				t_translation::MINUS), union_type_.end());
-
-	union_type_.erase(std::remove(union_type_.begin(), union_type_.end(),
-				t_translation::PLUS), union_type_.end());
-
+	union_type_ = overlay.union_type_;
+	union_type_.push_back(base.number_);
+	union_type_.insert( union_type_.end(), base.union_type_.begin(), base.union_type_.end() );
 	// remove doubles
 	std::sort(union_type_.begin(),union_type_.end());
 	union_type_.erase(std::unique(union_type_.begin(), union_type_.end()), union_type_.end());
-
-
 
 	//mouse over message are only shown on villages
 	if(base.village_) {
