@@ -207,7 +207,7 @@ std::string terrain_topic_generator::operator()() const {
 
 	// Almost all terrains will show the data in this conditional block. The ones that don't are the
 	// archetypes used in [movetype]'s subtags such as [movement_costs].
-	if (!type_.is_indivisible()) {
+	if (!type_.is_archetype()) {
 		std::vector<t_string> underlying;
 		for (const auto& underlying_terrain : type_.union_type()) {
 			const terrain_type& base = tdata->get_terrain_info(underlying_terrain);
@@ -226,7 +226,7 @@ std::string terrain_topic_generator::operator()() const {
 			const terrain_type& base = tdata->get_terrain_info(type_.default_base());
 
 			symbols.clear();
-			if (base.is_indivisible()) {
+			if (base.is_archetype()) {
 				symbols["type"] = make_link(base.editor_name(), ".." + terrain_prefix + base.id());
 			} else {
 				symbols["type"] = make_link(base.editor_name(), terrain_prefix + base.id());
@@ -258,8 +258,8 @@ std::string terrain_topic_generator::operator()() const {
 		ss << "Castle: "      << (type_.is_castle()    ? "Yes" : "No") << "\n";
 
 		ss << "Overlay: "     << (type_.is_overlay()   ? "Yes" : "No") << "\n";
+		ss << "Archetype: "   << (type_.is_archetype() ? "Yes" : "No") << "\n";
 		ss << "Combined: "    << (type_.is_combined()  ? "Yes" : "No") << "\n";
-		ss << "Nonnull: "     << (type_.is_nonnull()   ? "Yes" : "No") << "\n";
 
 		ss << "Terrain string: " << type_.number() << "\n";
 
@@ -799,7 +799,7 @@ std::string unit_topic_generator::operator()() const {
 				continue;
 			}
 
-			if (info.is_indivisible() && info.is_nonnull()) {
+			if (info.is_archetype()) {
 				terrain_movement_info movement_info =
 				{
 					info.name(),

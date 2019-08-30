@@ -42,6 +42,7 @@ private:
 	mutable t_translation::ter_list terrainList_;
 	using tcodeToTerrain_t = std::map<t_translation::terrain_code, terrain_type>;
 	mutable tcodeToTerrain_t tcodeToTerrain_;
+	mutable t_translation::ter_list archetypeList_;
 	mutable bool initialized_;
 	const game_config_view & game_config_;
 
@@ -59,6 +60,15 @@ public:
 
 	const t_translation::ter_list & list() const;
 	const std::map<t_translation::terrain_code, terrain_type> & map() const;
+
+	/**
+	 * Returns the set of all terrains which do not alias their movement or
+	 * defense to another terrain. These will correspond to the terrains for
+	 * which [movetype]s are defined.
+	 *
+	 * \todo change the return type to a reference
+	 */
+	const t_translation::ter_list basic_movetypes() const;
 
 	/**
 	 * Get the corresponding terrain_type information object for a given type

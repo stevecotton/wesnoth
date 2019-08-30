@@ -1003,8 +1003,9 @@ void generate_terrain_sections(section& sec, int /*level*/)
 
 			const terrain_type& base_info = tdata->get_terrain_info(base);
 
-			if (!base_info.is_nonnull() || base_info.hide_help())
+			if (!base_info.is_archetype() || base_info.hide_help()) {
 				continue;
+			}
 
 			section& base_section = base_map[base_info.id()];
 

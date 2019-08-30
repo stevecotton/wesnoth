@@ -25,9 +25,28 @@
 #define LOG_G LOG_STREAM(info, lg::general())
 #define DBG_G LOG_STREAM(debug, lg::general())
 
+namespace
+{
+/**
+ * The instance returned as a sentinel when find_or_create doesn't find a terrain.
+ *
+ * The reason for using this instead of std::nullopt is that many of the callers just want to check
+ * a property of the terrain. Their behavior when they received std::nullopt would be to follow the
+ * same codepath that's used when an existing terrain's property is either false or an empty string,
+ * so returning a dummy terrain makes the code in the callers more readable.
+ */
+const auto EMPTY_TERRAIN = terrain_type();
+/**
+ * The list returned as a sentinel when one of the functions that return ter_list is called with a
+ * non-existent terrain code.
+ */
+const auto EMPTY_LIST = t_translation::ter_list{};
+}
+
 terrain_type_data::terrain_type_data(const game_config_view & game_config)
 	: terrainList_()
 	, tcodeToTerrain_()
+	, archetypeList_()
 	, initialized_(false)
 	, game_config_(game_config)
 {
@@ -81,6 +100,9 @@ void terrain_type_data::lazy_initialization() const
 			}
 		} else {
 			terrainList_.push_back(terrain.number());
+			if(terrain.is_archetype()) {
+				archetypeList_.emplace_back(terrain.number());
+			}
 		}
 	}
 	initialized_ = true;
@@ -92,6 +114,11 @@ const t_translation::ter_list & terrain_type_data::list() const
 	return terrainList_;
 }
 
+const t_translation::ter_list terrain_type_data::basic_movetypes() const
+{
+	lazy_initialization();
+	return archetypeList_;
+}
 
 const std::map<t_translation::terrain_code, terrain_type> & terrain_type_data::map() const
 {
@@ -106,8 +133,7 @@ const terrain_type& terrain_type_data::get_terrain_info(const t_translation::ter
 	if(i != tcodeToTerrain_.end()) {
 		return i->second;
 	} else {
-		static const terrain_type default_terrain;
-		return default_terrain;
+		return EMPTY_TERRAIN;
 	}
 }
 
@@ -119,9 +145,7 @@ const t_translation::ter_list& terrain_type_data::underlying_mvt_terrain(const t
 		// TODO: At least in some cases (for example when this is called from lua) it
 		// seems to make more sense to throw an exception here, same goes for get_terrain_info
 		// and underlying_def_terrain
-		static t_translation::ter_list result(1);
-		result[0] = terrain;
-		return result;
+		return EMPTY_LIST;
 	} else {
 		return i->second.mvt_type();
 	}
@@ -132,9 +156,7 @@ const t_translation::ter_list& terrain_type_data::underlying_def_terrain(const t
 	auto i = find_or_create(terrain);
 
 	if(i == tcodeToTerrain_.end()) {
-		static t_translation::ter_list result(1);
-		result[0] = terrain;
-		return result;
+		return EMPTY_LIST;
 	} else {
 		return i->second.def_type();
 	}
@@ -145,9 +167,7 @@ const t_translation::ter_list& terrain_type_data::underlying_union_terrain(const
 	auto i = find_or_create(terrain);
 
 	if(i == tcodeToTerrain_.end()) {
-		static t_translation::ter_list result(1);
-		result[0] = terrain;
-		return result;
+		return EMPTY_LIST;
 	} else {
 		return i->second.union_type();
 	}
@@ -188,7 +208,11 @@ t_string terrain_type_data::get_underlying_terrain_string(const t_translation::t
 	std::string str;
 
 	const t_translation::ter_list& underlying = underlying_union_terrain(terrain);
-	assert(!underlying.empty());
+
+	if(underlying.empty()) {
+		DBG_G << "No underlying terrains for " << terrain;
+		return "";
+	}
 
 	if(underlying.size() > 1 || underlying[0] != terrain) {
 		str += " (";
@@ -227,6 +251,8 @@ terrain_type_data::tcodeToTerrain_t::const_iterator terrain_type_data::find_or_c
 	}
 	else {
 		DBG_G << "find_or_create: creating terrain " << terrain;
+		// \todo: if terrain.base or terrain.overlay is an alias, then it may need a find_or_create too. However, that recursion isn't implemented and instead this just returns tcodeToTerrain_.end().
+		// \todo: if making this recursive, ensure that an addon can't crash Wesnoth with a circular dependency
 		auto base_iter    = tcodeToTerrain_.find(t_translation::terrain_code(terrain.base, t_translation::NO_LAYER));
 		auto overlay_iter = tcodeToTerrain_.find(t_translation::terrain_code(t_translation::NO_LAYER, terrain.overlay));
 

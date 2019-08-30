@@ -589,7 +589,7 @@ static config unit_defense(const reports::context& rc, const unit* u, const map_
 	tooltip << _("Terrain: ") << "<b>" << map.get_terrain_info(terrain).description() << "</b>\n";
 
 	const t_translation::ter_list &underlyings = map.underlying_def_terrain(terrain);
-	if (underlyings.size() != 1 || underlyings.front() != terrain)
+	if (underlyings.size() != 1 || underlyings.front() != terrain) // \todo this is_indivisible()-like calculation will treat {+,base} differently to {base}
 	{
 		bool revert = false;
 		for (const t_translation::terrain_code &t : underlyings)
@@ -679,15 +679,9 @@ static config unit_moves(const reports::context& rc, const unit* u, bool is_visi
 	}
 
 	tooltip << _("Movement Costs:") << "\n";
-	for (t_translation::terrain_code terrain : preferences::encountered_terrains()) {
-		if (terrain == t_translation::FOGGED || terrain == t_translation::VOID_TERRAIN || t_translation::terrain_matches(terrain, t_translation::ALL_OFF_MAP))
-			continue;
-
+	for(const auto& terrain : rc.map().tdata()->basic_movetypes()) {
 		const terrain_type& info = rc.map().get_terrain_info(terrain);
-
-		if (info.union_type().size() == 1 && info.union_type()[0] == info.number() && info.is_nonnull()) {
-			terrain_moves.emplace(info.name(), u->movement_cost(terrain));
-		}
+		terrain_moves.emplace(info.name(), u->movement_cost(terrain));
 	}
 
 	for (const terrain_movement& tm : terrain_moves) {

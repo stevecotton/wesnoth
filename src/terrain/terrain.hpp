@@ -24,9 +24,10 @@ class terrain_type
 public:
 
 	/**
-	 * Creates an instance for which is_nonnull() returns false.  Used for the
-	 * sentinel value when terrain_type_data::get_terrain_info() is called for
-	 * an unknown terrain code.
+	 * Creates an instance for which most properties return either false or an
+	 * empty string.
+	 *
+	 * Used for the sentinel value of terrain_type_data::get_terrain_info().
 	 */
 	explicit terrain_type();
 
@@ -91,6 +92,8 @@ public:
 	 * This is not related to whether the terrain has an overlay. For example,
 	 * Gg^Uf (flat with old mushrooms) is indivisible (it's only Tt), although
 	 * Gg^Tf (flat with new mushrooms) can be divided (in to Gt and Tt).
+	 * FIXME: this paragraph is wrong, for Gg^Uf there's one underlying terrain,
+	 * but that terrain's id isn't itself Gg^Uf.
 	 *
 	 * TODO: should this document vision_type() too?
 	 *
@@ -103,31 +106,24 @@ public:
 	}
 
 	/**
-	 * Returns true if this terrain has no underlying types other than itself.
+	 * Returns true if this is one of the terrains used for declaring movetypes'
+	 * [movement_costs], [vision_costs], [jamming_costs] or [defense]. A list of
+	 * all of these will be returned by type_data::basic_movetypes().
 	 *
-	 * \todo what about a terrain where is_mvt_indivisible() != is_def_indivisible()?
+	 * Returns false for sentinel terrains.
+	 *
+	 * Should not be used in the cost calculation mechanism itself, because
+	 * this makes the assumption that a given terrain will be an archetype
+	 * either in all of, or in none of, movement, defense, vision and jamming.
 	 */
-	bool is_indivisible() const {
-		return (union_type_.empty()
-			|| (union_type_.size() == 1 && union_type_.front() == number_));
-	}
-	bool is_mvt_indivisible() const {
-		return (mvt_type_.empty()
-			|| (mvt_type_.size() == 1 && mvt_type_.front() == number_));
+	bool is_archetype() const {
+		return is_indivisible(number_, union_type_)
+			&& (number_ != t_translation::FOGGED)
+			&& (number_ != t_translation::NONE_TERRAIN)
+			&& (number_ != t_translation::VOID_TERRAIN)
+			&& !t_translation::terrain_matches(number_, t_translation::ALL_OFF_MAP);
 	}
 
-	/**
-	 * True if this object represents some sentinel values.
-	 *
-	 * \todo number_ should never be NONE_TERRAIN
-	 * \todo there's two different VOID_TERRAINS - see the comment attached to
-	 * the definition of VOID_TERRAIN.
-	 *
-	 * \todo unclear what this should mean, so replace it with a clearly-named
-	 * successor.
-	 */
-	bool is_nonnull() const { return  (number_ != t_translation::NONE_TERRAIN) &&
-		(number_ != t_translation::VOID_TERRAIN ); }
 	/** Returns the light (lawful) bonus for this terrain when the time of day gives a @a base bonus. */
 	int light_bonus(int base) const
 	{

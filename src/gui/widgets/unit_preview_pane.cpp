@@ -157,13 +157,9 @@ static inline std::string get_mp_tooltip(int total_movement, std::function<int (
 		return "";
 	}
 
-	for(t_translation::terrain_code terrain : preferences::encountered_terrains()) {
-		if(terrain == t_translation::FOGGED || terrain == t_translation::VOID_TERRAIN || t_translation::terrain_matches(terrain, t_translation::ALL_OFF_MAP)) {
-			continue;
-		}
-
-		const terrain_type& info = tdata->get_terrain_info(terrain);
-		if(info.is_indivisible() && info.is_nonnull()) {
+	for(auto terrain : tdata->basic_movetypes()) {
+		if(utils::contains(preferences::encountered_terrains(), terrain)) {
+			const auto& info = tdata->get_terrain_info(terrain);
 			terrain_moves.emplace(info.name(), get(terrain));
 		}
 	}
