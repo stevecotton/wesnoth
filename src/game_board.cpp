@@ -369,6 +369,9 @@ bool game_board::change_terrain(const map_location &loc, const t_translation::te
 			get_team(owner).lose_village(loc);
 	}
 
+	// \todo what is going on here? Above uses replace_if_failed, but inside set_terrain() there
+	// will be another call to merge_terrains(), this time with the default value of replace_if_failed.
+	// The for loop afterwards will then query the map to find out which terrain was set.
 	map_->set_terrain(loc, new_t);
 
 	for(const t_translation::terrain_code& ut : map_->underlying_union_terrain(loc)) {
