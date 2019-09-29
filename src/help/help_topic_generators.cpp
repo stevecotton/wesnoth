@@ -153,6 +153,22 @@ std::string terrain_topic_generator::operator()() const {
 		return ss.str();
 	}
 
+	// If type_ doesn't have any help text, see if either of the components do.
+	// This is intended for terrains that have been automatically generated
+	// (combined) from a base and an overlay, where there is no corresponding
+	// [terrain_type] in a cfg file; for non-combined terrains then any text
+	// could be put in the cfg file instead.
+	//
+	// For non-combined terrains, if there's no text then this code assumes that
+	// no text should be added here.
+	if (type_.help_topic_text().empty() && type_.is_combined()) {
+		for (const auto& text : tdata->combined_help(type_.number())) {
+			if (!text.empty()) {
+				ss << "\n" << text << "\n\n";
+			}
+		}
+	}
+
 	if (!type_.is_indivisible()) {
 		ss << "\n" << _("Base Terrain: ");
 
