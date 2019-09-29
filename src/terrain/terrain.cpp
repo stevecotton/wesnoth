@@ -207,6 +207,7 @@ terrain_type::terrain_type(const terrain_type& base, const terrain_type& overlay
 	icon_image_(),
 	minimap_image_(base.minimap_image_),
 	minimap_image_overlay_(overlay.minimap_image_),
+	// next line is causing warnings that ~BLIT gets no arguments
 	editor_image_(base.editor_image_ + "~BLIT(" + overlay.editor_image_ +")"),
 	id_(base.id_+"^"+overlay.id_),
 	name_(overlay.name_),
