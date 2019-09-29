@@ -107,6 +107,12 @@ public:
 	t_string get_terrain_editor_string(const t_translation::terrain_code& terrain) const;
 	t_string get_underlying_terrain_string(const t_translation::terrain_code& terrain) const;
 
+	/**
+	 * Returns the (possibly empty) help_topic_text() from the terrains which
+	 * form the base and overlay of this terrain.
+	 */
+	std::vector<t_string> combined_help(const t_translation::terrain_code& terrain) const;
+
 	bool is_village(const t_translation::terrain_code & terrain) const
 		{ return get_terrain_info(terrain).is_village(); }
 	int gives_healing(const t_translation::terrain_code & terrain) const

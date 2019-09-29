@@ -203,6 +203,21 @@ t_string terrain_type_data::get_underlying_terrain_string(const t_translation::t
 	return str;
 }
 
+std::vector<t_string> terrain_type_data::combined_help(const t_translation::terrain_code& terrain) const
+{
+	std::vector<t_string> text;
+
+	auto base_iter    = tcodeToTerrain_.find(t_translation::terrain_code(terrain.base, t_translation::NO_LAYER));
+	if(base_iter != tcodeToTerrain_.end())
+		text.emplace_back(base_iter->second.help_topic_text());
+
+	auto overlay_iter = tcodeToTerrain_.find(t_translation::terrain_code(t_translation::NO_LAYER, terrain.overlay));
+	if(overlay_iter != tcodeToTerrain_.end())
+		text.emplace_back(overlay_iter->second.help_topic_text());
+
+	return text;
+}
+
 terrain_type_data::tcodeToTerrain_t::const_iterator terrain_type_data::find_or_create(t_translation::terrain_code terrain) const
 {
 	lazy_initialization();
