@@ -21,10 +21,10 @@
 
 #include "config.hpp"
 #include "game_config.hpp"
+#include "game_version.hpp"
 #include "log.hpp"
 #include "serialization/unicode.hpp"
 #include "serialization/unicode_cast.hpp"
-#include "game_version.hpp"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -527,6 +527,13 @@ std::string get_next_filename(const std::string& name, const std::string& extens
 
 static bfs::path user_data_dir, user_config_dir, cache_dir;
 
+static const std::string get_version_path_suffix(const version_info& version)
+{
+	std::ostringstream s;
+	s << version.major_version() << '.' << version.minor_version();
+	return s.str();
+}
+
 static const std::string& get_version_path_suffix()
 {
 	static std::string suffix;
@@ -535,9 +542,7 @@ static const std::string& get_version_path_suffix()
 	// the version number cannot change during runtime.
 
 	if(suffix.empty()) {
-		std::ostringstream s;
-		s << game_config::wesnoth_version.major_version() << '.' << game_config::wesnoth_version.minor_version();
-		suffix = s.str();
+		suffix = get_version_path_suffix(game_config::wesnoth_version);
 	}
 
 	return suffix;
@@ -802,6 +807,36 @@ std::string get_cache_dir()
 	}
 
 	return cache_dir.string();
+}
+
+std::vector<other_version_dir> find_other_version_saves_dirs()
+{
+	const auto& w_ver = game_config::wesnoth_version;
+	const auto& ms_ver = game_config::min_savegame_version;
+
+	if(w_ver.major_version() != 1 || ms_ver.major_version() != 1) {
+		// Unimplemented, assuming that version 2 won't use WML-based saves
+		return {};
+	}
+
+	std::vector<other_version_dir> result;
+
+	// For 1.16, check for saves from all versions up to 1.20.
+	for(auto minor = ms_ver.minor_version(); minor <= w_ver.minor_version() + 4; ++minor) {
+		if(minor == w_ver.minor_version())
+			continue;
+
+		auto version = version_info{};
+		version.set_major_version(w_ver.major_version());
+		version.set_minor_version(minor);
+		auto suffix = get_version_path_suffix(version);
+		auto path = get_user_data_path().parent_path() / suffix / "saves";
+		if(bfs::exists(path)) {
+			result.emplace_back(suffix, path.string());
+		}
+	}
+
+	return result;
 }
 
 std::string get_cwd()
