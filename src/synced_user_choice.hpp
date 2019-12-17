@@ -31,7 +31,14 @@ namespace mp_sync
 struct user_choice
 {
 	virtual ~user_choice() {}
+	/**
+	 * Called when in a situation where GUI can be shown to the user.
+	 */
 	virtual config query_user(int side) const = 0;
+	/**
+	 * Called when in a situation where GUI can't be shown to the user,
+	 * including empty sides and during prestart events.
+	 */
 	virtual config random_choice(int side) const = 0;
 	///whether the choice is visible for the user like an advancement choice
 	///a non-visible choice is for example get_global_variable
