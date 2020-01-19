@@ -394,11 +394,11 @@ class mp_manager
 {
 public:
 	// Declare this as a friend to allow direct access to enter_create_mode
-	friend void mp::start_local_game(saved_game&);
+	friend void mp::start_local_game();
 
-	mp_manager(const std::string& host, saved_game& state)
+	mp_manager(const std::string& host)
 		: game_config(&game_config_manager::get()->game_config())
-		, state(state)
+		, state()
 		, connection(nullptr)
 		, lobby_config()
 		, lobby_info(::installed_addons())
@@ -458,7 +458,9 @@ private:
 	// minimap and the preferences dialog. Shouldn't need to be kept here.
 	const game_config_view* game_config;
 
-	saved_game& state;
+	// This single instance of saved_game is reused for all games played during
+	// the current connection to the server.
+	saved_game state;
 
 	wesnothd_connection_ptr connection;
 
@@ -643,13 +645,13 @@ bool mp_manager::enter_lobby_mode()
 /** Pubic entry points for the MP workflow */
 namespace mp
 {
-void start_client(saved_game& state, const std::string& host)
+void start_client(const std::string& host)
 {
 	DBG_MP << "starting client" << std::endl;
 
 	preferences::admin_authentication_reset admin_raii_helper;
 
-	mp_manager(host, state).run_lobby_loop();
+	mp_manager(host).run_lobby_loop();
 }
 
 bool goto_mp_connect(ng::connect_engine& engine, wesnothd_connection* connection)
@@ -673,16 +675,16 @@ bool goto_mp_wait(saved_game& state, wesnothd_connection* connection, bool obser
 	return dlg.show();
 }
 
-void start_local_game(saved_game& state)
+void start_local_game()
 {
 	DBG_MP << "starting local game" << std::endl;
 
 	preferences::set_message_private(false);
 
-	mp_manager("", state).enter_create_mode();
+	mp_manager("").enter_create_mode();
 }
 
-void start_local_game_commandline(const game_config_view& game_config, saved_game& state, const commandline_options& cmdline_opts)
+void start_local_game_commandline(const game_config_view& game_config, const commandline_options& cmdline_opts)
 {
 	DBG_MP << "starting local MP game from commandline" << std::endl;
 
@@ -694,7 +696,7 @@ void start_local_game_commandline(const game_config_view& game_config, saved_gam
 	DBG_MP << "entering create mode" << std::endl;
 
 	// Set the default parameters
-	state.clear(); // This creates these parameters with default values defined in mp_game_settings.cpp
+	saved_game state;
 	mp_game_settings& parameters = state.mp_settings();
 
 	// Hardcoded default values

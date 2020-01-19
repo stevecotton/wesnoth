@@ -785,7 +785,9 @@ void mp_create_game::update_map_settings()
 
 void mp_create_game::load_game_callback()
 {
-	savegame::loadgame load(savegame::save_index_class::default_saves_dir(), cfg_, create_engine_.get_state());
+	savegame::loadgame load(savegame::save_index_class::default_saves_dir(), cfg_);
+
+	// \todo need to update create_engine_.get_state() from the dialog's result
 
 	if(!load.load_multiplayer_game()) {
 		return;

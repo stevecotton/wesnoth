@@ -87,7 +87,7 @@ struct load_game_metadata
 };
 
 /**
-* Exception used to signal that the user has decided to abortt a game,
+* Exception used to signal that the user has decided to abort a game,
 * and to load another game instead.
 */
 class load_game_exception
@@ -109,7 +109,7 @@ private:
 class loadgame
 {
 public:
-	loadgame(const std::shared_ptr<save_index_class>& index, const game_config_view& game_config, saved_game& gamestate);
+	loadgame(const std::shared_ptr<save_index_class>& index, const game_config_view& game_config);
 	virtual ~loadgame() {}
 
 	/* In any of the following three function, a bool value of false indicates
@@ -117,12 +117,18 @@ public:
 
 	/** Load a game without providing any information. */
 	bool load_game_ingame();
-	/** Load a game with pre-setting information for the load-game dialog. */
-	bool load_game();
+	/**
+	 * Load a game with pre-setting information for the load-game dialog.
+	 *
+	 * Throws on failure.
+	 */
+	saved_game load_game();
 	/** Loading a game from within the multiplayer-create dialog. */
 	bool load_multiplayer_game();
+private:
 	/** Generate the gamestate out of the loaded game config. */
 	void set_gamestate();
+public:
 
 	// Getter-methods
 	load_game_metadata& data()
@@ -148,7 +154,7 @@ private:
 
 	const game_config_view& game_config_;
 
-	saved_game& gamestate_; /** Primary output information. */
+	saved_game gamestate_; /** Primary output information. */
 
 	load_game_metadata load_data_;
 };
@@ -165,7 +171,7 @@ class savegame
 protected:
 	/** The only constructor of savegame. The title parameter is only necessary if you
 		intend to do interactive saves. */
-	savegame(saved_game& gamestate, const compression::format compress_saves, const std::string& title = "Save");
+	savegame(const saved_game& gamestate, const compression::format compress_saves, const std::string& title = "Save");
 
 public:
 	enum DIALOG_TYPE { YES_NO, OK_CANCEL};
@@ -247,8 +253,7 @@ private:
 	/** Throws game::save_game_failed. */
 	filesystem::scoped_ostream open_save_game(const std::string &label);
 	friend class save_info;
-	//before_save (write replay data) changes this so it cannot be const
-	saved_game& gamestate_;
+	const saved_game& gamestate_;
 
 	std::string error_message_; /** Error message to be displayed if the savefile could not be generated. */
 
@@ -262,7 +267,7 @@ private:
 class ingame_savegame : public savegame
 {
 public:
-	ingame_savegame(saved_game& gamestate, const compression::format compress_saves);
+	ingame_savegame(const saved_game& gamestate, const compression::format compress_saves);
 
 private:
 	/** Create a filename for automatic saves */
@@ -276,7 +281,7 @@ private:
 class replay_savegame : public savegame
 {
 public:
-	replay_savegame(saved_game& gamestate, const compression::format compress_saves);
+	replay_savegame(const saved_game& gamestate, const compression::format compress_saves);
 
 private:
 	/** Create a filename for automatic saves */
@@ -289,7 +294,7 @@ private:
 class autosave_savegame : public ingame_savegame
 {
 public:
-	autosave_savegame(saved_game &gamestate, const compression::format compress_saves);
+	autosave_savegame(const saved_game &gamestate, const compression::format compress_saves);
 
 	void autosave(const bool disable_autosave, const int autosave_max, const int infinite_autosaves);
 private:
@@ -300,7 +305,7 @@ private:
 class oos_savegame : public ingame_savegame
 {
 public:
-	oos_savegame(saved_game& gamestate, bool& ignore);
+	oos_savegame(const saved_game& gamestate, bool& ignore);
 
 	/** Customize the dialog's caption. */
 	void set_title(const std::string& val) { title_ = val; }
@@ -315,7 +320,7 @@ private:
 class scenariostart_savegame : public savegame
 {
 public:
-	scenariostart_savegame(saved_game& gamestate, const compression::format compress_saves);
+	scenariostart_savegame(const saved_game& gamestate, const compression::format compress_saves);
 
 private:
 	/** Create a filename for automatic saves */

@@ -25,6 +25,7 @@
 #include "formula/string_utils.hpp"
 #include "game_end_exceptions.hpp"
 #include "game_errors.hpp"
+#include "game_launcher.hpp"	// for the canceled_by_user exception
 #include "preferences/game.hpp"
 #include "gettext.hpp"
 #include "gui/dialogs/game_load.hpp"
@@ -81,9 +82,9 @@ void clean_saves(const std::string& label)
 	}
 }
 
-loadgame::loadgame(const std::shared_ptr<save_index_class>& index, const game_config_view& game_config, saved_game& gamestate)
+loadgame::loadgame(const std::shared_ptr<save_index_class>& index, const game_config_view& game_config)
 	: game_config_(game_config)
-	, gamestate_(gamestate)
+	, gamestate_{}
 	, load_data_(index)
 {}
 
@@ -164,31 +165,33 @@ bool loadgame::load_game_ingame()
 	throw load_game_exception(std::move(load_data_));
 }
 
-bool loadgame::load_game()
+saved_game loadgame::load_game()
 {
 	bool skip_version_check = true;
 
 	if(load_data_.filename.empty()){
 		if(!gui2::dialogs::game_load::execute(game_config_, load_data_)) {
-			return false;
+			// \todo what triggers this, is it really canceled by the user?
+			throw game_launcher::canceled_by_user();
 		}
 		skip_version_check = false;
 		load_data_.show_replay |= is_replay_save(load_data_.summary);
 	}
 
 	if(load_data_.filename.empty()) {
-		return false;
+		// \todo what triggers this, is it really canceled by the user?
+		throw game_launcher::canceled_by_user();
 	}
 
 	if(load_data_.select_difficulty) {
 		if(!show_difficulty_dialog()) {
-			return false;
+			throw game_launcher::canceled_by_user();
 		}
 	}
 
 	if(!load_data_.manager) {
 		ERR_SAVE << "Null pointer in save index" << std::endl;
-		return false;
+		throw std::logic_error("null pointer in save index");
 	}
 
 	std::string error_log;
@@ -218,11 +221,13 @@ bool loadgame::load_game()
 	// read classification to for loading the game_config config object.
 	gamestate_.classification() = game_classification(load_data_.load_config);
 
-	if (skip_version_check) {
-		return true;
+	if(!(skip_version_check || check_version_compatibility())) {
+		throw config::error("Version check failed");
 	}
 
-	return check_version_compatibility();
+	set_gamestate();
+
+	return gamestate_;
 }
 
 bool loadgame::check_version_compatibility()
@@ -344,7 +349,7 @@ void loadgame::copy_era(config &cfg)
 	snapshot.add_child("era", era);
 }
 
-savegame::savegame(saved_game& gamestate, const compression::format compress_saves, const std::string& title)
+savegame::savegame(const saved_game& gamestate, const compression::format compress_saves, const std::string& title)
 	: filename_()
 	, title_(title)
 	, save_index_manager_(save_index_class::default_saves_dir())
@@ -542,7 +547,7 @@ filesystem::scoped_ostream savegame::open_save_game(const std::string &label)
 	}
 }
 
-scenariostart_savegame::scenariostart_savegame(saved_game &gamestate, const compression::format compress_saves)
+scenariostart_savegame::scenariostart_savegame(const saved_game &gamestate, const compression::format compress_saves)
 	: savegame(gamestate, compress_saves)
 {
 	filename_ = create_filename();
@@ -558,7 +563,7 @@ void scenariostart_savegame::write_game(config_writer &out){
 	gamestate().write_carryover(out);
 }
 
-replay_savegame::replay_savegame(saved_game &gamestate, const compression::format compress_saves)
+replay_savegame::replay_savegame(const saved_game &gamestate, const compression::format compress_saves)
 	: savegame(gamestate, compress_saves, _("Save Replay"))
 {}
 
@@ -584,7 +589,7 @@ void replay_savegame::write_game(config_writer &out) {
 
 }
 
-autosave_savegame::autosave_savegame(saved_game &gamestate, const compression::format compress_saves)
+autosave_savegame::autosave_savegame(const saved_game &gamestate, const compression::format compress_saves)
 	: ingame_savegame(gamestate, compress_saves)
 {
 	set_error_message(_("Could not auto save the game. Please save the game manually."));
@@ -612,7 +617,7 @@ std::string autosave_savegame::create_initial_filename(unsigned int turn_number)
 	return filename;
 }
 
-oos_savegame::oos_savegame(saved_game& gamestate, bool& ignore)
+oos_savegame::oos_savegame(const saved_game& gamestate, bool& ignore)
 	: ingame_savegame(gamestate, preferences::save_compression_format())
 	, ignore_(ignore)
 {}
@@ -634,7 +639,7 @@ int oos_savegame::show_save_dialog(const std::string& message, DIALOG_TYPE /*dia
 	return res;
 }
 
-ingame_savegame::ingame_savegame(saved_game &gamestate, const compression::format compress_saves)
+ingame_savegame::ingame_savegame(const saved_game &gamestate, const compression::format compress_saves)
 	: savegame(gamestate, compress_saves, _("Save Game"))
 {
 }

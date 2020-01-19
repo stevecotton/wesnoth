@@ -51,6 +51,11 @@ public:
 class game_launcher
 {
 public:
+	/**
+	 * Thrown to indicate that a GUI dialog's "cancel" button was pressed, or similar.
+	 */
+	struct canceled_by_user : public std::exception {};
+
 	game_launcher(const commandline_options& cmdline_opts, const char* appname);
 	~game_launcher();
 
@@ -86,13 +91,13 @@ public:
 
 	bool is_loading() const;
 	void clear_loaded_game();
-	bool load_game();
-	void set_tutorial();
-	void set_test(const std::string& id);
+	saved_game load_game();
+	saved_game new_tutorial();
+	saved_game new_test(const std::string& id);
 
 	/// Return the ID of the campaign to jump to (skipping the main menu).
 	std::string jump_to_campaign_id() const;
-	bool new_campaign();
+	saved_game new_campaign();
 	bool goto_campaign();
 	bool goto_multiplayer();
 	bool goto_editor();
@@ -107,8 +112,8 @@ public:
 	void show_preferences();
 
 	enum RELOAD_GAME_DATA { RELOAD_DATA, NO_RELOAD_DATA };
-	void launch_game(RELOAD_GAME_DATA reload=RELOAD_DATA);
-	void play_replay();
+	void launch_game(saved_game state, RELOAD_GAME_DATA reload=RELOAD_DATA);
+	void play_replay(saved_game state);
 
 	editor::EXIT_STATUS start_editor() { return start_editor(""); }
 
@@ -126,7 +131,7 @@ private:
 
 	/// Internal to the implementation of unit_test(). If a single instance of
 	/// Wesnoth is running multiple unit tests, this gets called once per test.
-	unit_test_result single_unit_test();
+	unit_test_result single_unit_test(saved_game state);
 
 	const commandline_options& cmdline_opts_;
 	//Never null.
@@ -144,7 +149,6 @@ private:
 
 	std::string screenshot_map_, screenshot_filename_;
 
-	saved_game state_;
 	bool play_replay_;
 
 	std::string multiplayer_server_;

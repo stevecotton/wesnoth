@@ -22,6 +22,7 @@
 #include "menu_events.hpp"
 #include "mouse_events.hpp"
 #include "persist_manager.hpp"
+#include "saved_game.hpp"
 #include "terrain/type_data.hpp"
 #include "tod_manager.hpp"
 #include "game_state.hpp"
@@ -35,7 +36,6 @@ class team;
 class unit;
 class replay;
 class replay_controller;
-class saved_game;
 struct mp_game_settings;
 class game_classification;
 struct unit_experience_accelerator;
@@ -337,7 +337,7 @@ protected:
 	const ter_data_cache& tdata_;
 	std::unique_ptr<game_state> gamestate_;
 	config level_;
-	saved_game& saved_game_;
+	saved_game& saved_game_; // this is both an input and an output - the replay data is recorded to this instance
 
 	//managers
 	std::unique_ptr<tooltips::manager> tooltips_manager_;

@@ -887,11 +887,13 @@ static int do_gameloop(const std::vector<std::string>& args)
 
 		// If loading a game, skip the titlescreen entirely
 		if(game->is_loading()) {
-			if(!game->load_game()) {
+			try {
+				auto state = game->load_game();
+				game->launch_game(state, should_reload);
+			} catch (...) {
 				game->clear_loaded_game();
+				throw;
 			}
-
-			game->launch_game(should_reload);
 			continue;
 		}
 
@@ -945,9 +947,11 @@ static int do_gameloop(const std::vector<std::string>& args)
 		case gui2::dialogs::title_screen::SHOW_ABOUT:
 			gui2::dialogs::end_credits::display();
 			break;
-		case gui2::dialogs::title_screen::LAUNCH_GAME:
-			game->launch_game(should_reload);
-			break;
+		case gui2::dialogs::title_screen::LAUNCH_GAME: {
+				auto game_to_launch = dlg.get_game_to_launch();
+				game->launch_game(std::move(*game_to_launch), should_reload);
+				break;
+			}
 		case gui2::dialogs::title_screen::REDRAW_BACKGROUND:
 			break;
 		}

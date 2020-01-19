@@ -319,18 +319,23 @@ void title_screen::pre_show(window& win)
 	// Tutorial
 	//
 	register_button(win, "tutorial", hotkey::TITLE_SCREEN__TUTORIAL, [this, &win]() {
-		game_.set_tutorial();
-		win.set_retval(LAUNCH_GAME);
+		try {
+			// \todo decide whether to use unique_ptr or not
+			game_to_launch_ = std::make_unique<saved_game>(game_.new_tutorial());
+			win.set_retval(LAUNCH_GAME);
+		} catch (const game_launcher::canceled_by_user&) {
+		}
 	});
 
 	//
 	// Campaign
 	//
 	register_button(win, "campaign", hotkey::TITLE_SCREEN__CAMPAIGN, [this, &win]() {
-		try{
-			if(game_.new_campaign()) {
-				win.set_retval(LAUNCH_GAME);
-			}
+		try {
+			// \todo decide whether to use unique_ptr or not
+			game_to_launch_ = std::make_unique<saved_game>(game_.new_campaign());
+			win.set_retval(LAUNCH_GAME);
+		} catch (const game_launcher::canceled_by_user&) {
 		} catch (const config::error& e) {
 			gui2::show_error_message(e.what());
 		}
@@ -346,10 +351,13 @@ void title_screen::pre_show(window& win)
 	// Load game
 	//
 	register_button(win, "load", hotkey::HOTKEY_LOAD_GAME, [this, &win]() {
-		if(game_.load_game()) {
+		try {
+			// \todo decide whether to use unique_ptr or not
+			game_to_launch_ = std::make_unique<saved_game>(game_.load_game());
 			win.set_retval(LAUNCH_GAME);
-		} else {
-			game_.clear_loaded_game();
+		} catch (const game_launcher::canceled_by_user&) {
+		} catch (const config::error& e) {
+			gui2::show_error_message(e.what());
 		}
 	});
 
@@ -492,7 +500,7 @@ void title_screen::hotkey_callback_select_tests()
 
 	int choice = dlg.selected_index();
 	if(choice >= 0) {
-		game_.set_test(options[choice]);
+		game_to_launch_ = std::make_unique<saved_game>(game_.new_test(options[choice]));
 		get_window()->set_retval(LAUNCH_GAME);
 	}
 }

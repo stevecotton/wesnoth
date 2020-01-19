@@ -15,6 +15,7 @@
 #pragma once
 
 #include "gui/dialogs/modal_dialog.hpp"
+#include "saved_game.hpp"
 
 class game_launcher;
 
@@ -66,6 +67,13 @@ public:
 		RELOAD_GAME_DATA,
 	};
 
+	/**
+	 * When this dialog returns LAUNCH_GAME, the data to use.
+	 */
+	std::unique_ptr<saved_game> get_game_to_launch() {
+		return std::move(game_to_launch_);
+	}
+
 private:
 	/** Inherited from modal_dialog, implemented by REGISTER_DIALOG. */
 	virtual const std::string& window_id() const override;
@@ -97,7 +105,7 @@ private:
 	std::unique_ptr<modeless_dialog> debug_clock_;
 
 	game_launcher& game_;
-
+	std::unique_ptr<saved_game> game_to_launch_;
 };
 
 } // namespace dialogs

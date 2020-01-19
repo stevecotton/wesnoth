@@ -113,7 +113,6 @@ game_launcher::game_launcher(const commandline_options& cmdline_opts, const char
 	test_scenarios_{"test"},
 	screenshot_map_(),
 	screenshot_filename_(),
-	state_(),
 	play_replay_(false),
 	multiplayer_server_(),
 	jump_to_multiplayer_(false),
@@ -434,17 +433,18 @@ bool game_launcher::init_lua_script()
 	return !error;
 }
 
-void game_launcher::set_test(const std::string& id)
+saved_game game_launcher::new_test(const std::string& id)
 {
-	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::TEST;
-	state_.classification().campaign_define = "TEST";
-	state_.classification().era_id = "era_default";
+	saved_game state;
+	state.classification().campaign_type = game_classification::CAMPAIGN_TYPE::TEST;
+	state.classification().campaign_define = "TEST";
+	state.classification().era_id = "era_default";
 
-
-	state_.set_carryover_sides_start(
+	state.set_carryover_sides_start(
 		config {"next_scenario", id}
 	);
+
+	return state;
 }
 
 bool game_launcher::play_test()
@@ -470,13 +470,13 @@ bool game_launcher::play_test()
 	if(test_scenarios_.size() > 1) {
 		std::cerr << "You can't run more than one unit test in interactive mode" << std::endl;
 	}
-	set_test(test_scenarios_.at(0));
+	auto state = new_test(test_scenarios_.at(0));
 
 	game_config_manager::get()->
-		load_game_config_for_game(state_.classification(), state_.get_scenario_id());
+		load_game_config_for_game(state.classification(), state.get_scenario_id());
 
 	try {
-		campaign_controller ccontroller(state_, game_config_manager::get()->terrain_types());
+		campaign_controller ccontroller(state, game_config_manager::get()->terrain_types());
 		ccontroller.play_game();
 	} catch(const savegame::load_game_exception &e) {
 		load_data_.reset(new savegame::load_game_metadata(std::move(e.data_)));
@@ -504,8 +504,8 @@ game_launcher::unit_test_result game_launcher::unit_test()
 
 	auto ret = unit_test_result::TEST_FAIL; // will only be returned if no test is run
 	for(const auto& scenario : test_scenarios_) {
-		set_test(scenario);
-		ret = single_unit_test();
+		auto state = new_test(scenario);
+		ret = single_unit_test(std::move(state));
 		const char* describe_result;
 		switch(ret) {
 			case unit_test_result::TEST_PASS:
@@ -541,14 +541,14 @@ game_launcher::unit_test_result game_launcher::unit_test()
 	return ret;
 }
 
-game_launcher::unit_test_result game_launcher::single_unit_test()
+game_launcher::unit_test_result game_launcher::single_unit_test(saved_game state)
 {
 	game_config_manager::get()->
-		load_game_config_for_game(state_.classification(), state_.get_scenario_id());
+		load_game_config_for_game(state.classification(), state.get_scenario_id());
 
 	LEVEL_RESULT game_res = LEVEL_RESULT::TEST_FAIL;
 	try {
-		campaign_controller ccontroller(state_, game_config_manager::get()->terrain_types(), true);
+		campaign_controller ccontroller(state, game_config_manager::get()->terrain_types(), true);
 		game_res = ccontroller.play_game();
 		// TODO: How to handle the case where a unit test scenario ends without an explicit {SUCCEED} or {FAIL}?
 		// ex: check_victory_never_ai_fail results in victory by killing one side's leaders
@@ -563,24 +563,27 @@ game_launcher::unit_test_result game_launcher::single_unit_test()
 		return unit_test_result::TEST_FAIL_WML_EXCEPTION;
 	}
 
-	savegame::clean_saves(state_.classification().label);
+	savegame::clean_saves(state.classification().label);
 
 	if (cmdline_opts_.noreplaycheck) {
 		return pass_victory_or_defeat(game_res);
 	}
 
-	savegame::replay_savegame save(state_, compression::NONE);
-	save.save_game_automatic(false, "unit_test_replay");
+	savegame::replay_savegame save(state, compression::NONE);
+	save.save_game_automatic(false, "unit_test_replay"); //false means don't check for overwrite
 
 	load_data_.reset(new savegame::load_game_metadata{ savegame::save_index_class::default_saves_dir(), save.filename() , "", true, true, false });
 
-	if (!load_game()) {
+	std::unique_ptr<saved_game> replay_state;
+	try {
+		replay_state = std::make_unique<saved_game>(load_game());
+	} catch (...) {
 		std::cerr << "Failed to load the replay!" << std::endl;
 		return unit_test_result::TEST_FAIL_LOADING_REPLAY; //failed to load replay
 	}
 
 	try {
-		campaign_controller ccontroller(state_, game_config_manager::get()->terrain_types(), true);
+		campaign_controller ccontroller(*replay_state, game_config_manager::get()->terrain_types(), true);
 		ccontroller.play_replay();
 		if (lg::broke_strict()) {
 			std::cerr << "Observed failure on replay" << std::endl;
@@ -623,12 +626,14 @@ bool game_launcher::play_render_image_mode()
 		return true;
 	}
 
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
-	DBG_GENERAL << "Current campaign type: " << state_.classification().campaign_type << std::endl;
+	// \todo how should this be initialized?
+	saved_game state;
+	state.classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
+	DBG_GENERAL << "Current campaign type: " << state.classification().campaign_type << std::endl;
 
 	try {
 		game_config_manager::get()->
-			load_game_config_for_game(state_.classification(), state_.get_scenario_id());
+			load_game_config_for_game(state.classification(), state.get_scenario_id());
 	} catch(const config::error& e) {
 		std::cerr << "Error loading game config: " << e.what() << std::endl;
 		return false;
@@ -654,32 +659,21 @@ bool game_launcher::is_loading() const
 	return !!load_data_;
 }
 
-bool game_launcher::load_game()
+saved_game game_launcher::load_game()
 {
 	assert(game_config_manager::get());
 
-	DBG_GENERAL << "Current campaign type: " << state_.classification().campaign_type << std::endl;
-
-	savegame::loadgame load(savegame::save_index_class::default_saves_dir(), game_config_manager::get()->game_config(), state_);
+	savegame::loadgame load(savegame::save_index_class::default_saves_dir(), game_config_manager::get()->game_config());
 	if (load_data_) {
 		std::unique_ptr<savegame::load_game_metadata> load_data = std::move(load_data_);
 		load.data() = std::move(*load_data);
 	}
 
+	// \todo: needs to be inside the next try block
+	saved_game state = load.load_game();
+
 	try {
-		if(!load.load_game()) {
-			return false;
-		}
-
-		load.set_gamestate();
-		try {
-			game_config_manager::get()->
-				load_game_config_for_game(state_.classification(), state_.get_scenario_id());
-		} catch(const config::error&) {
-			return false;
-		}
-
-
+		game_config_manager::get()->load_game_config_for_game(state.classification(), state.get_scenario_id());
 	} catch(const config::error& e) {
 		if(e.message.empty()) {
 			gui2::show_error_message(_("The file you have tried to load is corrupt"));
@@ -687,17 +681,17 @@ bool game_launcher::load_game()
 		else {
 			gui2::show_error_message(_("The file you have tried to load is corrupt: '") + e.message + '\'');
 		}
-		return false;
+		throw;
 	} catch(const wml_exception& e) {
 		e.show();
-		return false;
+		throw;
 	} catch(const filesystem::io_exception& e) {
 		if(e.message.empty()) {
 			gui2::show_error_message(_("File I/O Error while reading the game"));
 		} else {
 			gui2::show_error_message(_("File I/O Error while reading the game: '") + e.message + '\'');
 		}
-		return false;
+		throw;
 	} catch(const game::error& e) {
 		if(e.message.empty()) {
 			gui2::show_error_message(_("The file you have tried to load is corrupt"));
@@ -705,44 +699,47 @@ bool game_launcher::load_game()
 		else {
 			gui2::show_error_message(_("The file you have tried to load is corrupt: '") + e.message + '\'');
 		}
-		return false;
+		throw;
 	}
 
+	// \todo: as part of refactoring/removing the state_ member, this play_replay_ member
+	// needs to be refactored to be a non-member too
 	play_replay_ = load.data().show_replay;
-	LOG_CONFIG << "is middle game savefile: " << (state_.is_mid_game_save() ? "yes" : "no") << "\n";
+	LOG_CONFIG << "is middle game savefile: " << (state.is_mid_game_save() ? "yes" : "no") << "\n";
 	LOG_CONFIG << "show replay: " << (play_replay_ ? "yes" : "no") << "\n";
 	// in case load.data().show_replay && !state_.is_mid_game_save()
 	// there won't be any turns to replay, but the
 	// user gets to watch the intro sequence again ...
 
-	if(state_.is_mid_game_save() && load.data().show_replay)
+	if(state.is_mid_game_save() && load.data().show_replay)
 	{
 		statistics::clear_current_scenario();
 	}
 
-	if(state_.classification().campaign_type == game_classification::CAMPAIGN_TYPE::MULTIPLAYER) {
-		state_.unify_controllers();
+	if(state.classification().campaign_type == game_classification::CAMPAIGN_TYPE::MULTIPLAYER) {
+		state.unify_controllers();
 	}
 
 	if (load.data().cancel_orders) {
-		state_.cancel_orders();
+		state.cancel_orders();
 	}
 
-	return true;
+	return state;
 }
 
-void game_launcher::set_tutorial()
+saved_game game_launcher::new_tutorial()
 {
-	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::TUTORIAL;
-	state_.classification().campaign_define = "TUTORIAL";
-	state_.classification().campaign = "Tutorial";
-	state_.classification().era_id = "era_default";
+	saved_game state;
+	state.classification().campaign_type = game_classification::CAMPAIGN_TYPE::TUTORIAL;
+	state.classification().campaign_define = "TUTORIAL";
+	state.classification().campaign = "Tutorial";
+	state.classification().era_id = "era_default";
 
-	state_.set_carryover_sides_start(
+	state.set_carryover_sides_start(
 		config {"next_scenario", "tutorial"}
 	);
 
+	return state;
 }
 
 void game_launcher::mark_completed_campaigns(std::vector<config> &campaigns)
@@ -752,13 +749,16 @@ void game_launcher::mark_completed_campaigns(std::vector<config> &campaigns)
 	}
 }
 
-bool game_launcher::new_campaign()
+saved_game game_launcher::new_campaign()
 {
-	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::SCENARIO;
+	saved_game state;
+	state.classification().campaign_type = game_classification::CAMPAIGN_TYPE::SCENARIO;
 	play_replay_ = false;
 
-	return sp::enter_create_mode(state_, jump_to_campaign_);
+	if(!sp::enter_create_mode(state, jump_to_campaign_)) {
+		throw canceled_by_user();
+	}
+	return state;
 }
 
 std::string game_launcher::jump_to_campaign_id() const
@@ -769,11 +769,12 @@ std::string game_launcher::jump_to_campaign_id() const
 bool game_launcher::goto_campaign()
 {
 	if(jump_to_campaign_.jump_){
-		if(new_campaign()) {
-			state_.set_skip_story(jump_to_campaign_.skip_story_);
+		try {
+			auto state = new_campaign();
+			state.set_skip_story(jump_to_campaign_.skip_story_);
 			jump_to_campaign_.jump_ = false;
-			launch_game(NO_RELOAD_DATA);
-		}else{
+			launch_game(std::move(state), NO_RELOAD_DATA);
+		} catch (canceled_by_user& e) {
 			jump_to_campaign_.jump_ = false;
 			return false;
 		}
@@ -846,9 +847,6 @@ void game_launcher::start_wesnothd()
 
 bool game_launcher::play_multiplayer(mp_selection res)
 {
-	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
-
 	try {
 		if (res == MP_HOST)
 		{
@@ -890,9 +888,9 @@ bool game_launcher::play_multiplayer(mp_selection res)
 		cursor::set(cursor::NORMAL);
 
 		if(res == MP_LOCAL) {
-			mp::start_local_game(state_);
+			mp::start_local_game();
 		} else {
-			mp::start_client(state_, multiplayer_server_);
+			mp::start_client(multiplayer_server_);
 			multiplayer_server_.clear();
 		}
 
@@ -952,6 +950,7 @@ bool game_launcher::play_multiplayer(mp_selection res)
 	}
 
 	return false;
+	// \todo: how does this return the state
 }
 
 bool game_launcher::play_multiplayer_commandline()
@@ -962,10 +961,6 @@ bool game_launcher::play_multiplayer_commandline()
 
 	DBG_MP << "starting multiplayer game from the commandline" << std::endl;
 
-	// These are all the relevant lines taken literally from play_multiplayer() above
-	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
-
 	game_config_manager::get()->
 		load_game_config_for_create(true);
 
@@ -973,7 +968,7 @@ bool game_launcher::play_multiplayer_commandline()
 	cursor::set(cursor::NORMAL);
 
 	mp::start_local_game_commandline(
-	    game_config_manager::get()->game_config(), state_, cmdline_opts_);
+	    game_config_manager::get()->game_config(), cmdline_opts_);
 
 	return false;
 }
@@ -996,22 +991,22 @@ void game_launcher::show_preferences()
 	gui2::dialogs::preferences_dialog::display(game_config_manager::get()->game_config());
 }
 
-void game_launcher::launch_game(RELOAD_GAME_DATA reload)
+void game_launcher::launch_game(saved_game state, RELOAD_GAME_DATA reload)
 {
 	assert(!load_data_);
 	if(play_replay_)
 	{
-		play_replay();
+		play_replay(state);
 		return;
 	}
 
-	gui2::dialogs::loading_screen::display([this, reload]() {
+	gui2::dialogs::loading_screen::display([this, reload, state]() {
 
 		gui2::dialogs::loading_screen::progress(loading_stage::load_data);
 		if(reload == RELOAD_DATA) {
 			try {
 				game_config_manager::get()->
-					load_game_config_for_game(state_.classification(), state_.get_scenario_id());
+					load_game_config_for_game(state.classification(), state.get_scenario_id());
 			} catch(const config::error&) {
 				return;
 			}
@@ -1019,15 +1014,15 @@ void game_launcher::launch_game(RELOAD_GAME_DATA reload)
 	});
 
 	try {
-		campaign_controller ccontroller(state_, game_config_manager::get()->terrain_types());
+		campaign_controller ccontroller(state, game_config_manager::get()->terrain_types());
 		LEVEL_RESULT result = ccontroller.play_game();
 		ai::manager::singleton_ = nullptr;
 		// don't show The End for multiplayer scenario
 		// change this if MP campaigns are implemented
-		if(result == LEVEL_RESULT::VICTORY && !state_.classification().is_normal_mp_game()) {
-			preferences::add_completed_campaign(state_.classification().campaign, state_.classification().difficulty);
+		if(result == LEVEL_RESULT::VICTORY && !state.classification().is_normal_mp_game()) {
+			preferences::add_completed_campaign(state.classification().campaign, state.classification().difficulty);
 
-			gui2::dialogs::outro::display(state_.classification());
+			gui2::dialogs::outro::display(state.classification());
 		}
 	} catch (const savegame::load_game_exception &e) {
 		load_data_.reset(new savegame::load_game_metadata(std::move(e.data_)));
@@ -1039,11 +1034,11 @@ void game_launcher::launch_game(RELOAD_GAME_DATA reload)
 	}
 }
 
-void game_launcher::play_replay()
+void game_launcher::play_replay(saved_game state)
 {
 	assert(!load_data_);
 	try {
-		campaign_controller ccontroller(state_, game_config_manager::get()->terrain_types());
+		campaign_controller ccontroller(state, game_config_manager::get()->terrain_types());
 		ccontroller.play_replay();
 	} catch (const savegame::load_game_exception &e) {
 		load_data_.reset(new savegame::load_game_metadata(std::move(e.data_)));
