@@ -1017,7 +1017,7 @@ void play_controller::check_victory()
 	set_end_level_data(el_data);
 }
 
-void play_controller::process_oos(const std::string& msg) const
+void play_controller::process_oos(const std::string& msg)
 {
 	if (gui_->video().non_interactive()) {
 		throw game::game_error(msg);
@@ -1054,7 +1054,7 @@ void play_controller::do_consolesave(const std::string& filename)
 	save.save_game_automatic(true, filename);
 }
 
-void play_controller::update_savegame_snapshot() const
+void play_controller::update_savegame_snapshot()
 {
 	//note: this writes to level_ if this is not a replay.
 	this->saved_game_.set_snapshot(to_config());
@@ -1300,7 +1300,7 @@ void play_controller::check_time_over()
 	}
 }
 
-play_controller::scoped_savegame_snapshot::scoped_savegame_snapshot(const play_controller& controller)
+play_controller::scoped_savegame_snapshot::scoped_savegame_snapshot(play_controller& controller)
 	: controller_(controller)
 {
 	controller_.update_savegame_snapshot();

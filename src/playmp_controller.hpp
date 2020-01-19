@@ -28,7 +28,7 @@ public:
 	virtual ~playmp_controller();
 
 	void maybe_linger() override;
-	void process_oos(const std::string& err_msg) const override;
+	void process_oos(const std::string& err_msg) override;
 
 	void pull_remote_choice() override;
 	void send_user_choice() override;

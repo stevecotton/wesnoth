@@ -127,7 +127,7 @@ public:
 	 *
 	 * @throw quit_game_exception If the user wants to abort.
 	 */
-	virtual void process_oos(const std::string& msg) const;
+	virtual void process_oos(const std::string& msg);
 
 	void set_end_level_data(const end_level_data& data) {
 		gamestate().end_level_data_ = data;
@@ -280,7 +280,7 @@ public:
 	int ticks() const { return ticks_; }
 	game_display& get_display() override;
 
-	void update_savegame_snapshot() const;
+	void update_savegame_snapshot();
 	/**
 	 * Changes the UI for this client to the passed side index.
 	 */
@@ -295,9 +295,9 @@ public:
 
 	struct scoped_savegame_snapshot
 	{
-		scoped_savegame_snapshot(const play_controller& controller);
+		scoped_savegame_snapshot(play_controller& controller);
 		~scoped_savegame_snapshot();
-		const play_controller& controller_;
+		play_controller& controller_;
 	};
 
 	saved_game& get_saved_game() { return saved_game_; }

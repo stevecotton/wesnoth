@@ -355,7 +355,7 @@ void playmp_controller::play_network_turn(){
 }
 
 
-void playmp_controller::process_oos(const std::string& err_msg) const {
+void playmp_controller::process_oos(const std::string& err_msg) {
 	// Notify the server of the oos error.
 	config cfg;
 	config& info = cfg.add_child("info");
