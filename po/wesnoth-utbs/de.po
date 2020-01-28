@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Battle for Wesnoth 1.12\n"
 "Report-Msgid-Bugs-To: https://bugs.wesnoth.org/\n"
 "POT-Creation-Date: 2020-01-12 16:29 UTC\n"
-"PO-Revision-Date: 2020-01-13 03:40+0100\n"
+"PO-Revision-Date: 2020-01-28 10:46+0100\n"
 "Last-Translator: Christoph Berg <christoph.berg@kpm-sport.de>\n"
 "Language-Team: irc://irc.freenode.net/#wesnoth-de\n"
 "Language: de_DE\n"
@@ -1167,6 +1167,8 @@ msgid ""
 "Your units become dehydrated during the day, losing hitpoints and damage "
 "when they are not on a water hex"
 msgstr ""
+"Tagsüber leiden Einheiten, außerdem die auf einem Wasserfeld steht, unter "
+"Durst. Dadurch verlieren sie Angriffstärke und Lebenspunkt"
 
 #. [note]
 #: data/campaigns/Under_the_Burning_Suns/scenarios/02_Across_the_Harsh_Sands.cfg:218
@@ -1174,16 +1176,18 @@ msgid ""
 "Units are refreshed at the start of your turn when they are on a water or "
 "oasis hex"
 msgstr ""
+"Zu Beginn jeden Zuges wird jede Einheit auf ein Wasser oder Oase sich "
+"erfrischen"
 
 #. [note]
 #: data/campaigns/Under_the_Burning_Suns/scenarios/02_Across_the_Harsh_Sands.cfg:221
 msgid "Healers can prevent dehydration from getting worse, but cannot heal it"
-msgstr ""
+msgstr "Heiler können Dehydration verhindern, aber sie können es nicht heilen"
 
 #. [note]
 #: data/campaigns/Under_the_Burning_Suns/scenarios/02_Across_the_Harsh_Sands.cfg:224
 msgid "Healers are unable to heal adjacent units during the day"
-msgstr ""
+msgstr "Tagesüber können Heiler benachbarte Einheiten nicht heilen"
 
 #. [label]
 #: data/campaigns/Under_the_Burning_Suns/scenarios/02_Across_the_Harsh_Sands.cfg:248
@@ -1736,17 +1740,12 @@ msgstr ""
 
 #. [message]: speaker=Vengeful Lord
 #: data/campaigns/Under_the_Burning_Suns/scenarios/02_Across_the_Harsh_Sands.cfg:1287
-#, fuzzy
-#| msgid ""
-#| "Elf with a bow, I remember you. You thought me defeated, but I am back "
-#| "even more powerful than before. Death reigns eternal, your scorched bones "
-#| "and lifeless body will join my host."
 msgid ""
 "Elf of the sands, I remember you. You thought me defeated, but I am back "
 "even more powerful than before. Death reigns eternal, your scorched bones "
 "and lifeless body will join my host."
 msgstr ""
-"Elfe mit dem Bogen, ich erinnere mich an dich. Du hast gedacht, ich sei "
+"Elfe der Sandes, ich erinnere mich an dich. Du hast gedacht, ich sei "
 "besiegt, aber ich bin zurück und noch mächtiger als zuvor. Der Tod herrscht "
 "ewig und bald werden deine verbrannten Gebeine und dein lebloser Körper "
 "einem neuen Herrn gehorchen!"
@@ -2421,6 +2420,10 @@ msgid ""
 "Whether used offensively or defensively, this attack presses the engagement "
 "until one of the champions is slain, or 30 rounds of attacks have occurred."
 msgstr ""
+"Gegen einen der Meisterkämpfer sind die Wut und Rachedurst dieser Einheit "
+"unbändig. Ob als Angreifer oder Verteidiger, sie ruht nicht eher, als bis "
+"der Tod die Entscheidung fällt oder im Kampfrausch 30 Runden verstrichen "
+"sind."
 
 #. [chance_to_hit]: id=magical
 #: data/campaigns/Under_the_Burning_Suns/scenarios/03_Stirring_in_the_Night.cfg:697
@@ -2433,6 +2436,9 @@ msgid ""
 "This attack always has a 70% chance to hit regardless of the defensive "
 "ability of the champion being attacked."
 msgstr ""
+"In Angriff gegen einen der Meisterkämpfe hat dieser Angriff einen 70% "
+"Trefferwahrscheinlichkeit, unabhängig von der Verteidigungsstärke des "
+"Gegners."
 
 #. [message]: speaker=Garak
 #: data/campaigns/Under_the_Burning_Suns/scenarios/03_Stirring_in_the_Night.cfg:763
@@ -4440,16 +4446,12 @@ msgstr "Haltet stand, Jungs, da kommen sie!"
 
 #. [message]: speaker=Troll Leader
 #: data/campaigns/Under_the_Burning_Suns/scenarios/05_A_Subterranean_Struggle.cfg:1236
-#, fuzzy
-#| msgid ""
-#| "You invade our tunnels, you slaughter our women and children, by Griknagh "
-#| "we will make you pay!"
 msgid ""
 "You invade our tunnels, you slaughter our people, by Griknagh we will make "
 "you pay!"
 msgstr ""
-"Ihr eindringen in unsere Tunnel, schlachten unsere Frauen und Kinder, bei "
-"Griknagh, wir lassen euch dafür bezahlen!"
+"Ihr eindringen in unsere Tunnel, schlachten uns, bei Griknagh, wir lassen "
+"euch dafür bezahlen!"
 
 #. [message]: speaker=Dwarf Leader
 #: data/campaigns/Under_the_Burning_Suns/scenarios/05_A_Subterranean_Struggle.cfg:1241
@@ -11196,18 +11198,6 @@ msgstr ""
 
 #. [message]: speaker=Kaleh
 #: data/campaigns/Under_the_Burning_Suns/scenarios/09_Blood_is_Thicker_Than_Water.cfg:1830
-#, fuzzy
-#| msgid ""
-#| "She claims to be the one who has shepherded us during his journey, but "
-#| "who protected you across the harsh sands, who fought the orcs and led you "
-#| "under the mountains, who led you out again, against all odds? I did. I "
-#| "have bled for you, every step of the way. If you will not trust me based "
-#| "on my words, then trust me based on my actions. I have done the best I "
-#| "could for my people, and I stand by my actions. I believe that the "
-#| "merfolk are our friends, as the dwarves were. I refuse to bow down to "
-#| "harsh words and threats; we elves have always been free to make our own "
-#| "choices. We are not slaves, and will not blindly follow either humans or "
-#| "some false god."
 msgid ""
 "She claims to be the one who has shepherded us during this journey, but who "
 "protected you across the harsh sands, who fought the orcs and led you under "
@@ -11266,18 +11256,6 @@ msgstr ""
 
 #. [message]: speaker=Kaleh
 #: data/campaigns/Under_the_Burning_Suns/scenarios/09_Blood_is_Thicker_Than_Water.cfg:1844
-#, fuzzy
-#| msgid ""
-#| "She claims to be the one who has shepherded us during his journey, but "
-#| "who protected you across the harsh sands, who fought the orcs and led you "
-#| "under the mountains, who led you out again, against all odds? I did. I "
-#| "have bled for you, every step of the way. If you will not trust me based "
-#| "on my words, then trust me based on my actions. I have done the best I "
-#| "could for my people, and I stand by my actions. I believe that the "
-#| "merfolk are our friends, as the trolls were. I refuse to bow down to "
-#| "harsh words and threats; we elves have always been free to make our own "
-#| "choices. We are not slaves, and will not blindly follow either the humans "
-#| "or some false god."
 msgid ""
 "She claims to be the one who has shepherded us during this journey, but who "
 "protected you across the harsh sands, who fought the orcs and led you under "
@@ -11328,10 +11306,6 @@ msgstr ""
 
 #. [message]: speaker=Nym
 #: data/campaigns/Under_the_Burning_Suns/scenarios/09_Blood_is_Thicker_Than_Water.cfg:1858
-#, fuzzy
-#| msgid ""
-#| "I have followed you this far Kaleh, I will not abandon you now. But I "
-#| "admit that my faith is shaken. If that is not our god, than what is it?"
 msgid ""
 "I have followed you this far Kaleh, I will not abandon you now. But I admit "
 "that my faith is shaken. If that is not our god, then what is it?"
@@ -16747,6 +16721,13 @@ msgid ""
 "Magical attacks will still have a 70% chance to hit.\n"
 "Marksman attacks are only affected if the chance to hit is greater than 60%."
 msgstr ""
+"Wenn dieser Angriff trifft, wird der Gegner einen 10% Malus für eine Runde "
+"sowohl auf Verteidigung als auch ihre Trefferchance erleiden.\n"
+"\n"
+"Magieangriffe sind nicht beeinflusst, und habe wie immer eine 70% "
+"Trefferwahrscheinlichkeit.\n"
+"Angriff mit Treffsicherheit sind nur beeinflusst, wenn die "
+"Trefferwahrscheinlichkeit besser als 60% ist."
 
 #. [skirmisher]: id=distract
 #: data/campaigns/Under_the_Burning_Suns/utils/abilities.cfg:129
