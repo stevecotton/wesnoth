@@ -216,7 +216,11 @@ constexpr std::array<hotkey_command_temp, HOTKEY_NULL - 1> master_hotkey_list {{
 	{ HOTKEY_EDITOR_UNIT_FACING, "menu-unit-facing", "", true, scope_editor, HKCAT_PLACEHOLDER, "" },
 
 	{ HOTKEY_MINIMAP_CODING_UNIT, "minimap-unit-coding", N_("Toggle Minimap Unit Coding"), false, scope_game | scope_editor, HKCAT_MAP, "" },
-	{ HOTKEY_MINIMAP_CODING_TERRAIN, "minimap-terrain-coding", N_("Toggle Minimap Terrain Coding"), false, scope_game | scope_editor, HKCAT_MAP, "" },
+	{ HOTKEY_MINIMAP_CODING_TERRAIN, "minimap-terrain-coding", N_("Toggle Minimap Terrain Coding"), false, scope_game | scope_editor, HKCAT_MAP, 
+		// TRANSLATORS: Additional text in the tooltip for the minimap's "terrain-coding" toggle
+		// button. Avoid saying which option is "on" and which is "off", as at the time of writing
+		// having terrain-coding "on" uses the main map graphics, and "off" uses the single colors.
+		N_("Show a single solid color for each terrain hex, or show a scaled-down version of the main map’s graphics.") },
 
 	{ HOTKEY_MINIMAP_DRAW_UNITS, "minimap-draw-units", N_("Toggle Minimap Unit Drawing"), false, scope_game | scope_editor, HKCAT_MAP, "" },
 	{ HOTKEY_MINIMAP_DRAW_VILLAGES, "minimap-draw-villages", N_("Toggle Minimap Village Drawing"), false, scope_game | scope_editor, HKCAT_MAP, "" },
