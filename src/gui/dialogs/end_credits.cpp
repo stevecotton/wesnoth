@@ -20,6 +20,7 @@
 #include "game_config.hpp"
 #include "gui/auxiliary/find_widget.hpp"
 #include "gui/widgets/grid.hpp"
+#include "gui/widgets/listbox.hpp"
 #include "gui/widgets/repeating_button.hpp"
 #include "gui/widgets/scrollbar.hpp"
 #include "gui/widgets/scroll_label.hpp"
@@ -41,7 +42,9 @@ REGISTER_DIALOG(end_credits)
 end_credits::end_credits(const std::string& campaign)
 	: focus_on_(campaign)
 	, backgrounds_()
+#ifdef TODO_REIMPLEMENT_OR_REENABLE
 	, text_widget_(nullptr)
+#endif
 	, scroll_speed_(100)
 	, last_scroll_(std::numeric_limits<uint32_t>::max())
 {
@@ -59,6 +62,33 @@ void end_credits::pre_show(window& window)
 
 	connect_signal_pre_key_press(window, std::bind(&end_credits::key_press_callback, this, _5));
 
+	listbox& list = find_widget<listbox>(&window, "listbox", false);
+	window.keyboard_capture(&list);
+
+	for(const about::credits_group& group : about::get_credits_data()) {
+		bool first_of_group = true;
+		for(const about::credits_group::about_group& about : group.sections) {
+			for(const auto& entry : about.names) {
+				std::map<std::string, string_map> data;
+				string_map item;
+
+				if(first_of_group) {
+					item["label"] = group.header;
+					first_of_group = false;
+				} else {
+					item["label"] = "";
+				}
+				data.emplace("header", item);
+
+				item["label"] = entry.first;
+				data.emplace("entry", item);
+
+				list.add_row(data);
+			}
+		}
+	}
+
+#ifdef TODO_REIMPLEMENT_OR_REENABLE
 	std::stringstream ss;
 	std::stringstream focus_ss;
 
@@ -78,11 +108,14 @@ void end_credits::pre_show(window& window)
 			}
 		}
 	}
+#endif
 
+#ifdef TODO_REIMPLEMENT_OR_REENABLE
 	// If a section is focused, move it to the top
 	if(!focus_ss.str().empty()) {
 		focus_ss << ss.rdbuf();
 	}
+#endif
 
 	// Get the appropriate background images
 	backgrounds_ = about::get_background_images(focus_on_);
@@ -94,6 +127,7 @@ void end_credits::pre_show(window& window)
 	// TODO: implement showing all available images as the credits scroll
 	window.get_canvas(0).set_variable("background_image", wfl::variant(backgrounds_[0]));
 
+#ifdef TODO_REIMPLEMENT_OR_REENABLE
 	text_widget_ = find_widget<scroll_label>(&window, "text", false, true);
 
 	text_widget_->set_use_markup(true);
@@ -110,10 +144,12 @@ void end_credits::pre_show(window& window)
 		//find_widget<repeating_button>(v_grid, "_half_page_up", false).set_visible(widget::visibility::hidden);
 		//find_widget<repeating_button>(v_grid, "_half_page_down", false).set_visible(widget::visibility::hidden);
 	}
+#endif
 }
 
 void end_credits::timer_callback()
 {
+#ifdef TODO_REIMPLEMENT_OR_REENABLE
 	uint32_t now = SDL_GetTicks();
 	if(last_scroll_ > now) {
 		return;
@@ -130,6 +166,7 @@ void end_credits::timer_callback()
 	text_widget_->set_vertical_scrollbar_item_position(cur_pos + needed_dist);
 
 	last_scroll_ = now;
+#endif
 }
 
 void end_credits::key_press_callback(const SDL_Keycode key)
