@@ -25,15 +25,33 @@ class context_free_grammar_generator : public name_generator
 private:
 
 	struct nonterminal {
-		nonterminal() : last_(1) {}
 		std::vector<std::vector<std::string>> possibilities_;
-		mutable unsigned int last_;
 	};
 
-	void init_seed(uint32_t seed[]) const;
+	/**
+	 * Exactly one instance of this is created and used for each call to generate().
+	 */
+	struct internal_state {
+		// ensure we're passing around references to a single instance
+		internal_state(const internal_state&) = delete;
+		internal_state& operator=(const internal_state&) = delete;
+
+		// Construction results in a fixed number of calls to one of the main random number generators
+		internal_state();
+		// Reuses the data generated during the construction, does not result in any additional calls to the
+		// main RNG.
+		unsigned int get_random();
+
+		static const short unsigned int seed_size = 20;
+		std::array<uint32_t, seed_size> seed;
+		short int seed_pos;
+
+		/** This map uses the same keys as context_free_grammar_generator::nonterminals_ */
+		std::map<std::string, unsigned int> last_picked;
+	};
+
 	std::map<std::string, nonterminal> nonterminals_;
-	std::string print_nonterminal(const std::string& name, uint32_t seed[], short int seed_pos) const;
-	static const short unsigned int seed_size = 20;
+	std::string print_nonterminal(const std::string& name, internal_state& state) const;
 
 public:
 	/** Initialisation

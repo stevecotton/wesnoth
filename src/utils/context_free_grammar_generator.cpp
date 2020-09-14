@@ -128,7 +128,7 @@ context_free_grammar_generator::context_free_grammar_generator(const std::map<st
 	}
 }
 
-std::string context_free_grammar_generator::print_nonterminal(const std::string& name, uint32_t* seed, short seed_pos) const {
+std::string context_free_grammar_generator::print_nonterminal(const std::string& name, internal_state& state) const {
 	if (name == "!") {
 		return "|";
 	}
@@ -147,16 +147,18 @@ std::string context_free_grammar_generator::print_nonterminal(const std::string&
 			return "!" + name;
 		}
 		const context_free_grammar_generator::nonterminal& got = found->second;
-		unsigned int picked = seed[seed_pos++] % got.possibilities_.size();
-		if (seed_pos >= seed_size) seed_pos = 0;
-		if (picked == got.last_) {
-			picked = seed[seed_pos++] % got.possibilities_.size();
-			if (seed_pos >= seed_size) seed_pos = 0;
+		if (state.last_picked.count(name) == 0) {
+			state.last_picked[name] = 1; // matching the old behavior, assign one instead of zero
 		}
-		got.last_ = picked;
+		auto& last_picked = state.last_picked[name];
+		unsigned int picked = state.get_random() % got.possibilities_.size();
+		if (picked == last_picked) {
+			picked = state.get_random() % got.possibilities_.size();
+		}
+		last_picked = picked;
 		const std::vector<std::string>& used = got.possibilities_[picked];
 		for (unsigned int i = 0; i < used.size(); i++) {
-			if (used[i][0] == '{') result += print_nonterminal(used[i].substr(1), seed, seed_pos);
+			if (used[i][0] == '{') result += print_nonterminal(used[i].substr(1), state);
 			else result += used[i];
 		}
 		return result;
@@ -164,13 +166,20 @@ std::string context_free_grammar_generator::print_nonterminal(const std::string&
 }
 
 std::string context_free_grammar_generator::generate() const {
-	uint32_t seed[seed_size];
-	init_seed(seed);
-	return print_nonterminal("main", seed, 0);
+	internal_state state;
+	return print_nonterminal("main", state);
 }
 
-void context_free_grammar_generator::init_seed(uint32_t seed[]) const {
-	for (unsigned short int i = 0; i < seed_size; i++) {
-		seed[i] = randomness::generator->next_random();
+context_free_grammar_generator::internal_state::internal_state() :
+	seed_pos{0}
+{
+	for (auto& s : seed) {
+		s = randomness::generator->next_random();
 	}
+}
+
+uint32_t context_free_grammar_generator::internal_state::get_random() {
+	auto result = seed[seed_pos];
+	seed_pos = (seed_pos + 1) % seed.size();
+	return result;
 }
