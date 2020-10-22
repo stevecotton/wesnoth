@@ -2,6 +2,8 @@
  ### Language and i18n
    * Updated translations: British English, Catalan, French, Japanese, Polish,
      Portuguese (Brazil)
+ ### Miscellaneous and bug fixes
+   * Fixed a potential crash when drawing many images on the story screens.
 
 ## Version 1.14.14
  ### Add-ons client

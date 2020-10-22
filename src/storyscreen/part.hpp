@@ -96,7 +96,10 @@ public:
 		return centered_;
 	}
 
-	/** Delay before displaying, in milliseconds. */
+	/**
+	 * Delay after displaying this image and before displaying the next image,
+	 * in milliseconds.
+	 */
 	int display_delay() const
 	{
 		return delay_;
