@@ -1,0 +1,6 @@
+# Intended to be run with the run_wml_tests script, with arguments:
+# run_wml_tests -a '--preprocess-defines=NORMAL,CAMPAIGN_SECRETS_OF_THE_ANCIENTS,ENABLE_TESTS' data/campaigns/Secrets_of_the_Ancients/test/campaign_test_schedule
+#
+# That currently isn't supported, instead it's run by putting those defines into <<wesnoth_source_dir>>/data/_main.cfg
+
+0 sota_zombie_list_save_load
