@@ -125,10 +125,6 @@ public:
 	saved_game load_game();
 	/** Loading a game from within the multiplayer-create dialog. */
 	bool load_multiplayer_game();
-private:
-	/** Generate the gamestate out of the loaded game config. */
-	void set_gamestate();
-public:
 
 	// Getter-methods
 	load_game_metadata& data()
@@ -147,14 +143,10 @@ public:
 private:
 	/** Display the difficulty dialog. */
 	bool show_difficulty_dialog();
-	/** Call check_version_compatibility above, using the version of this savefile. */
-	bool check_version_compatibility();
 	/** Copy era information into the snapshot. */
 	void copy_era(config& cfg);
 
 	const game_config_view& game_config_;
-
-	saved_game gamestate_; /** Primary output information. */
 
 	load_game_metadata load_data_;
 };

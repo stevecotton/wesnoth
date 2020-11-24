@@ -996,7 +996,9 @@ void game_launcher::launch_game(saved_game state, RELOAD_GAME_DATA reload)
 	assert(!load_data_);
 	if(play_replay_)
 	{
-		play_replay(state);
+		// \todo: is a copy necessary here, could launch_game instead take a saved_game&& ?
+		auto copied_game = saved_game {state};
+		play_replay(std::move(copied_game));
 		return;
 	}
 

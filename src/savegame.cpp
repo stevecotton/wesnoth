@@ -84,7 +84,6 @@ void clean_saves(const std::string& label)
 
 loadgame::loadgame(const std::shared_ptr<save_index_class>& index, const game_config_view& game_config)
 	: game_config_(game_config)
-	, gamestate_{}
 	, load_data_(index)
 {}
 
@@ -218,21 +217,18 @@ saved_game loadgame::load_game()
 	if (!load_data_.difficulty.empty()){
 		load_data_.load_config["difficulty"] = load_data_.difficulty;
 	}
-	// read classification to for loading the game_config config object.
-	gamestate_.classification() = game_classification(load_data_.load_config);
 
-	if(!(skip_version_check || check_version_compatibility())) {
+	saved_game gamestate;
+	// read classification to for loading the game_config config object.
+	gamestate.classification() = game_classification(load_data_.load_config);
+
+	if(!(skip_version_check || check_version_compatibility(gamestate.classification().version))) {
 		throw config::error("Version check failed");
 	}
 
-	set_gamestate();
+	gamestate.set_data(load_data_.load_config);
 
-	return gamestate_;
-}
-
-bool loadgame::check_version_compatibility()
-{
-	return loadgame::check_version_compatibility(gamestate_.classification().version);
+	return gamestate;
 }
 
 bool loadgame::check_version_compatibility(const version_info & save_version)
@@ -278,11 +274,6 @@ bool loadgame::check_version_compatibility(const version_info & save_version)
 	return true;
 }
 
-void loadgame::set_gamestate()
-{
-	gamestate_.set_data(load_data_.load_config);
-}
-
 bool loadgame::load_multiplayer_game()
 {
 	if(!gui2::dialogs::game_load::execute(game_config_, load_data_)) {
@@ -324,15 +315,17 @@ bool loadgame::load_multiplayer_game()
 	}
 
 	// We want to verify the game classification before setting the data, so we don't check on
-	// gamestate_.classification() and instead construct a game_classification object manually.
+	// gamestate.classification() and instead construct a game_classification object manually.
 	if(game_classification(load_data_.load_config).campaign_type != game_classification::CAMPAIGN_TYPE::MULTIPLAYER) {
 		gui2::show_transient_error_message(_("This is not a multiplayer save."));
 		return false;
 	}
 
-	set_gamestate();
+	saved_game gamestate;
+	gamestate.set_data(load_data_.load_config);
+	// \todo how does the caller receive this gamestate object?
 
-	return check_version_compatibility();
+	return check_version_compatibility(gamestate.classification().version);
 }
 
 void loadgame::copy_era(config &cfg)

@@ -787,6 +787,8 @@ void saved_game::set_data(config& cfg)
 	classification_ = game_classification(cfg);
 	mp_settings_ = mp_game_settings(cfg.child_or_empty("multiplayer"));
 
+	// \todo: why clear the cfg here? If it was used up by std::moving its members above
+	// then that would be obvious, but it seems to be simply copied from.
 	cfg.clear();
 }
 
