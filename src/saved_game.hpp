@@ -35,8 +35,9 @@ class saved_game
 		STARTING_POINT_INVALID
 	};
 public:
-	saved_game();
-	saved_game(const saved_game& state);
+	explicit saved_game();
+	explicit saved_game(const saved_game& state);
+	saved_game(saved_game&& state) = default;
 	explicit saved_game(config cfg);
 	~saved_game(){}
 
@@ -144,7 +145,7 @@ private:
 	STARTING_POINT_TYPE starting_point_type_;
 	/**
 		The starting pos where the (non replay) game will be started from.
-		This can eigher be a [scenario] for a fresh game or a [snapshot] if this is a reloaded game
+		This can either be a [scenario] for a fresh game or a [snapshot] if this is a reloaded game
 	*/
 	config starting_point_;
 
