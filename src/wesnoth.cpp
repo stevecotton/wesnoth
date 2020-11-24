@@ -889,7 +889,7 @@ static int do_gameloop(const std::vector<std::string>& args)
 		if(game->is_loading()) {
 			try {
 				auto state = game->load_game();
-				game->launch_game(state, should_reload);
+				game->launch_game(std::move(state), should_reload);
 			} catch (...) {
 				game->clear_loaded_game();
 				throw;
