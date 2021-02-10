@@ -22,6 +22,7 @@
  ### User interface
    * Added a "disengaged" orb, shown instead of the partially-moved orb for units that can move but can't attack.
    * Added information about the build's (not runtime) target CPU architecture to the game version info dialog and --report.
+   * The preferences dialog can be larger on large screens; this fixes a usability issue with HDPI font sizes (issue #5185).
  ### WML Engine
  ### Miscellaneous and Bug Fixes
 
