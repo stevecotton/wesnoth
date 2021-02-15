@@ -131,6 +131,7 @@ void set_debug(bool new_debug) {
 bool show_ally_orb;
 bool show_disengaged_orb;
 bool show_enemy_orb;
+bool show_engaged_orb;
 bool show_moved_orb;
 bool show_partial_orb;
 bool show_unmoved_orb;
@@ -165,7 +166,6 @@ std::vector<std::string> default_colors;
 namespace colors
 {
 std::string ally_orb_color;
-std::string disengaged_orb_color;
 std::string enemy_orb_color;
 std::string moved_orb_color;
 std::string partial_orb_color;
@@ -309,15 +309,15 @@ void load_config(const config &v)
 		partial_orb_color  = i["partial_orb_color"].str();
 		enemy_orb_color    = i["enemy_orb_color"].str();
 		ally_orb_color     = i["ally_orb_color"].str();
-		disengaged_orb_color = i["disengaged_orb_color"].str();
 	} // colors
 
 	show_ally_orb     = v["show_ally_orb"].to_bool(true);
+	show_disengaged_orb = v["show_disengaged_orb"].to_bool(true);
 	show_enemy_orb    = v["show_enemy_orb"].to_bool(false);
+	show_engaged_orb = v["show_disengaged_orb"].to_bool(true);
 	show_moved_orb    = v["show_moved_orb"].to_bool(true);
 	show_partial_orb  = v["show_partly_orb"].to_bool(true);
 	show_unmoved_orb  = v["show_unmoved_orb"].to_bool(true);
-	show_disengaged_orb = v["show_disengaged_orb"].to_bool(true);
 
 	if(const config& i = v.child("images")){
 		using namespace game_config::images;

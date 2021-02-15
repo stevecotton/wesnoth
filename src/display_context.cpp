@@ -110,6 +110,8 @@ orb_status display_context::unit_orb_status(const unit& u) const
 	auto can_move = unit_can_move(u);
 	if(!can_move)
 		return orb_status::moved;
+	if(!can_move.move && can_move.attack_here && u.attacks_left() > 0)
+		return orb_status::engaged;
 	if(can_move.move && u.attacks_left() == 0)
 		return orb_status::disengaged;
 	return orb_status::partial;

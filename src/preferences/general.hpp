@@ -165,9 +165,6 @@ namespace preferences {
 	std::string moved_color();
 	void set_moved_color(const std::string& color_id);
 
-	std::string disengaged_color();
-	void set_disengaged_color(const std::string& color_id);
-
 	bool show_allied_orb();
 	void set_show_allied_orb(bool show_orb);
 
@@ -185,6 +182,9 @@ namespace preferences {
 
 	bool show_disengaged_orb();
 	void set_show_disengaged_orb(bool show_orb);
+
+	bool show_engaged_orb();
+	void set_show_engaged_orb(bool show_orb);
 
 	bool use_color_cursors();
 	void _set_color_cursors(bool value);

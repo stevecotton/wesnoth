@@ -46,6 +46,7 @@ private:
 
 	bool show_unmoved_;
 	bool show_partial_;
+	bool show_engaged_;
 	bool show_disengaged_;
 	bool show_moved_;
 	bool show_ally_;

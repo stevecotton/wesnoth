@@ -46,6 +46,7 @@ REGISTER_DIALOG(select_orb_colors)
 select_orb_colors::select_orb_colors()
 	: show_unmoved_(preferences::show_unmoved_orb())
 	, show_partial_(preferences::show_partial_orb())
+	, show_engaged_(preferences::show_engaged_orb())
 	, show_disengaged_(preferences::show_disengaged_orb())
 	, show_moved_(preferences::show_moved_orb())
 	, show_ally_(preferences::show_allied_orb())
@@ -57,6 +58,7 @@ void select_orb_colors::pre_show(window& window)
 {
 	setup_orb_group("unmoved", show_unmoved_, preferences::unmoved_color());
 	setup_orb_group("partial", show_partial_, preferences::partial_color());
+	setup_orb_toggle("engaged", show_engaged_);
 	setup_orb_toggle("disengaged", show_disengaged_);
 	setup_orb_group("moved", show_moved_, preferences::moved_color());
 	setup_orb_group("ally", show_ally_, preferences::allied_color());
@@ -74,6 +76,7 @@ void select_orb_colors::post_show(window&)
 
 	preferences::set_show_unmoved_orb(show_unmoved_);
 	preferences::set_show_partial_orb(show_partial_);
+	preferences::set_show_engaged_orb(show_engaged_);
 	preferences::set_show_disengaged_orb(show_disengaged_);
 	preferences::set_show_moved_orb(show_moved_);
 	preferences::set_show_allied_orb(show_ally_);
@@ -81,8 +84,6 @@ void select_orb_colors::post_show(window&)
 
 	preferences::set_unmoved_color(groups_["unmoved"].get_active_member_value());
 	preferences::set_partial_color(groups_["partial"].get_active_member_value());
-	// For the minimap, show disengaged units as partially moved
-	preferences::set_disengaged_color(groups_["partial"].get_active_member_value());
 	preferences::set_moved_color(groups_["moved"].get_active_member_value());
 	preferences::set_allied_color(groups_["ally"].get_active_member_value());
 	preferences::set_enemy_color(groups_["enemy"].get_active_member_value());
@@ -143,6 +144,7 @@ void select_orb_colors::reset_orb_callback()
 {
 	show_unmoved_ = game_config::show_unmoved_orb;
 	show_partial_ = game_config::show_partial_orb;
+	show_engaged_ = game_config::show_engaged_orb;
 	show_disengaged_ = game_config::show_disengaged_orb;
 	show_moved_ = game_config::show_moved_orb;
 	show_ally_ = game_config::show_ally_orb;
@@ -150,6 +152,7 @@ void select_orb_colors::reset_orb_callback()
 
 	reset_orb_group("unmoved", show_unmoved_, game_config::colors::unmoved_orb_color);
 	reset_orb_group("partial", show_partial_, game_config::colors::partial_orb_color);
+	reset_orb_toggle("engaged", show_engaged_);
 	reset_orb_toggle("disengaged", show_disengaged_);
 	reset_orb_group("moved", show_moved_, game_config::colors::moved_orb_color);
 	reset_orb_group("ally", show_ally_, game_config::colors::ally_orb_color);

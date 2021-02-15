@@ -43,12 +43,15 @@ namespace
  */
 std::unique_ptr<image::locator> get_orb_image(orb_status os)
 {
-	if(os == orb_status::disengaged) {
+	if(os == orb_status::disengaged || os == orb_status::engaged) {
 		if(orb_status_helper::prefs_show_orb(os)) {
-			auto partial_color = orb_status_helper::get_orb_color(orb_status::partial);
-			auto moved_color = orb_status_helper::get_orb_color(orb_status::moved);
+			auto color1 = orb_status_helper::get_orb_color(orb_status::partial);
+			auto color2 = orb_status_helper::get_orb_color(orb_status::moved);
+			if(os == orb_status::engaged) {
+				std::swap(color1, color2);
+			}
 			return std::make_unique<image::locator>(game_config::images::orb_two_color + "~RC(ellipse_red>"
-				+ moved_color + ")~RC(magenta>" + partial_color + ")");
+				+ color1 + ")~RC(magenta>" + color2 + ")");
 		}
 		os = orb_status::partial;
 	}
