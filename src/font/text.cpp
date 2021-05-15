@@ -38,6 +38,15 @@
 #include <cstring>
 #include <stdexcept>
 
+namespace {
+
+bool debugging_trigger(const std::string& text) {
+	return text == "All human players are on the same team, versus the AI"
+		|| text == "Affect the luck mechanics"
+		;
+}
+};
+
 namespace font {
 
 pango_text::pango_text()
@@ -510,6 +519,14 @@ void pango_text::recalculate() const
 
 PangoRectangle pango_text::calculate_size(PangoLayout& layout) const
 {
+	if(debugging_trigger(text_)) {
+		ERR_GUI_L << "entering pango_text::" << __func__
+			<< " text '" << gui2::debug_truncate(text_)
+			<< " ' maximum_width_ " << maximum_width_
+			<< ".\n";
+	}
+
+	PangoRectangle ink_extents;
 	PangoRectangle size;
 
 	p_font font{ get_font_families(font_class_), font_size_, font_style_ };
@@ -551,7 +568,12 @@ PangoRectangle pango_text::calculate_size(PangoLayout& layout) const
 	pango_layout_set_width(&layout, maximum_width == -1
 		? -1
 		: maximum_width * PANGO_SCALE);
-	pango_layout_get_pixel_extents(&layout, nullptr, &size);
+	if(debugging_trigger(text_)) {
+		pango_layout_get_extents(&layout, &ink_extents, &size);
+		ERR_GUI_L << "using unscaled extents, size=" << size.width << "x" << size.height
+		<< ", ink=" << ink_extents.width << "x" << ink_extents.height << "\n";
+	}
+	pango_layout_get_pixel_extents(&layout, &ink_extents, &size);
 
 	DBG_GUI_L << "pango_text::" << __func__
 		<< " text '" << gui2::debug_truncate(text_)
@@ -574,6 +596,37 @@ PangoRectangle pango_text::calculate_size(PangoLayout& layout) const
 			<< " ' width " << size.x + size.width
 			<< " greater as the wanted maximum of " << maximum_width
 			<< ".\n";
+	}
+
+	if(debugging_trigger(text_)) {
+		ERR_GUI_L << "leaving pango_text::" << __func__
+			<< " text '" << gui2::debug_truncate(text_)
+			<< " ' width " << size.width
+			<< ".\n";
+	}
+
+	// Check that putting the calculated size as the maximum still results in the same size.
+	//
+	// This sometimes fails, and that doesn't seem related to the PANGO_SCALE conversion -
+	// the sizes that can be accessed via ..._get_extents instead of ..._get_pixel_extents are
+	// exact multiples of 1024; however this adds an extra pixel to the size to ensure that that
+	// isn't the problem.
+	//
+	// The PANGO_RBEARING macro is equivalent to size.x + size.width, just in case the x
+	// coordinate was non-zero.
+	PangoRectangle check_ink, check_size;
+	pango_layout_set_width(&layout, (std::max(size.width, PANGO_RBEARING(size)) + 1) * PANGO_SCALE);
+	pango_layout_get_pixel_extents(&layout, &check_ink, &check_size);
+	if(size.height < check_size.height) {
+		ERR_GUI_L << "pango_text could not fit text inside calculated size, using "
+			<< size.width << "×" << size.height << " resulted in a second rect of "
+			<< check_size.width << "×" << check_size.height
+			<< " for text '" << gui2::debug_truncate(text_) << "'.\n";
+	} else if(size.width != check_size.width || size.height != check_size.height) {
+		WRN_GUI_L << "pango_text recalculation changed size "
+			<< size.width << "×" << size.height << " resulted in a second rect of "
+			<< check_size.width << "×" << check_size.height
+			<< " for text '" << gui2::debug_truncate(text_) << "'.\n";
 	}
 
 	return size;
@@ -649,6 +702,13 @@ static void from_cairo_format(uint32_t & c)
 
 void pango_text::render(PangoLayout& layout, const SDL_Rect& viewport, const unsigned stride)
 {
+	if(debugging_trigger(text_)) {
+		ERR_GUI_L << "pango_text::" << __func__
+			<< " text '" << gui2::debug_truncate(text_)
+			<< " ' viewport width " << viewport.w
+			<< ".\n";
+	}
+
 	cairo_format_t format = CAIRO_FORMAT_ARGB32;
 
 	uint8_t* buffer = &surface_buffer_[0];
