@@ -83,6 +83,13 @@ public:
 
 	static void progress(loading_stage stage = loading_stage::none);
 
+	/**
+	 * Block the event thread while running the given function. For example,
+	 * this can ensure that no hotkey events are processed while the list of
+	 * hotkeys is reloaded.
+	 */
+	static void run_synchronously(std::function<void()> f);
+
 private:
 	virtual const std::string& window_id() const override;
 
@@ -108,6 +115,15 @@ private:
 	std::optional<decltype(std::chrono::steady_clock::now())> animation_start_;
 
 	std::atomic<loading_stage> current_stage_;
+
+	/**
+	 * Queue from run_synchronously() to process().
+	 * This will probably never have more than one element.
+	 *
+	 * Should only be accessed while holding the sync_queue_mutex_.
+	 */
+	std::vector<std::packaged_task<void()>> sync_queue_;
+	std::mutex sync_queue_mutex_;
 
 	using stage_map = std::map<loading_stage, t_string>;
 	stage_map visible_stages_;

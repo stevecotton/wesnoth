@@ -127,9 +127,34 @@ void loading_screen::progress(loading_stage stage)
 	}
 }
 
+void loading_screen::run_synchronously(std::function<void()> f)
+{
+	std::packaged_task<void()> task(f);
+	auto result = task.get_future();
+
+	if(singleton_) {
+		std::lock_guard lock{singleton_->sync_queue_mutex_};
+		singleton_->sync_queue_.push_back(std::move(task));
+	} else {
+		// Happens during the Boost unit tests
+		task();
+	}
+
+	result.get();
+}
+
 void loading_screen::process(events::pump_info&)
 {
 	using namespace std::chrono_literals;
+
+	// scope for the guard
+	{
+		std::lock_guard lock{sync_queue_mutex_};
+		for(auto& t : sync_queue_) {
+			t();
+		}
+		sync_queue_.clear();
+	}
 
 	if(!load_func_ || worker_result_.wait_for(0ms) == std::future_status::ready) {
 		// The worker returns void, so this is only to handle any exceptions thrown from the worker.
