@@ -4075,7 +4075,7 @@ msgstr "Sconfitta:"
 msgid "(this turn left)"
 msgid_plural "($remaining_turns turns left)"
 msgstr[0] "(ultimo turno)"
-msgstr[1] "(%d turni rimasti)"
+msgstr[1] "($remaining_turns turni rimasti)"
 
 #. [lua]: generate_objectives
 #: data/lua/wml/objectives.lua:119

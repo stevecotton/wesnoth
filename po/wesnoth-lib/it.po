@@ -846,7 +846,7 @@ msgstr ""
 "di un bonus difensivo del 60% sulla breccia di cava.\n"
 "\n"
 "Occasionalmente queste caverne possono essere <italic>text='illuminate'</"
-"ref>."
+"italic>."
 
 #. [terrain_type]: id=earthy_rocky_cave
 #: data/core/terrain.cfg:1099
