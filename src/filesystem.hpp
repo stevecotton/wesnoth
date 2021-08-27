@@ -175,11 +175,22 @@ struct other_version_dir
 	 * "1.16.0") is encapsulated in find_other_version_saves_dirs().
 	 */
 	std::string version;
+	/**
+	 * Subdirectories, called category here because maybe it'll become some other divider
+	 * for separate directories related to the same version.
+	 *
+	 * Will be an empty string for the given version's main directory.
+	 */
+	std::string category;
+	/**
+	 * Where on the filesystem this directory is.
+	 */
 	std::string path;
 
 	// constructor because emplace_back() doesn't use aggregate initialization
-	other_version_dir(const std::string& v, const std::string& p)
+	other_version_dir(const std::string& v, const std::string& c, const std::string& p)
 		: version(v)
+		, category(c)
 		, path(p)
 	{
 	}

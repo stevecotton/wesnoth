@@ -144,8 +144,16 @@ void game_load::set_save_dir_list(menu_button& dir_list)
 	options.emplace_back("label",  _("game_version^Current Version"), "path", "");
 
 	for(const auto& known_dir : other_dirs) {
+		std::string label;
+		if(known_dir.category.empty()) {
+			label = VGETTEXT("game_version^Wesnoth $version", utils::string_map{{"version", known_dir.version}});
+		} else {
+			// TRANSLATORS: This is shown in the load-game dialog if a directory has subdirectories. It will be
+			// shown on a line after that version's main directory, so it's like a tree-view.
+			label = VGETTEXT("load_subdir^.../$category", utils::string_map{{"category", known_dir.category}});
+		}
 		options.emplace_back(
-			"label", VGETTEXT("game_version^Wesnoth $version", utils::string_map{{"version", known_dir.version}}),
+			"label", std::move(label),
 			"path", known_dir.path
 		);
 	}
