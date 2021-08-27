@@ -821,6 +821,17 @@ std::vector<other_version_dir> find_other_version_saves_dirs()
 
 	std::vector<other_version_dir> result;
 
+	// First add any subdirectories of the current version
+	// \todo: rename this function to reflect that it also adds subdirs, and change the labels
+	// in the load game dialog to match.
+	std::vector<std::string> subdirs;
+	
+	get_files_in_dir(get_saves_dir(), nullptr, &subdirs, name_mode::ENTIRE_FILE_PATH);
+	// if there's a non-empty list of subdirs, assume there was no error encountered in the previous call
+	for(const auto& subdir : subdirs) {
+		result.emplace_back("current_version", bfs::path(subdir).filename().generic_string(), subdir);
+	}
+
 	// For 1.16, check for saves from all versions up to 1.20.
 	for(auto minor = ms_ver.minor_version(); minor <= w_ver.minor_version() + 4; ++minor) {
 		if(minor == w_ver.minor_version())
@@ -832,7 +843,13 @@ std::vector<other_version_dir> find_other_version_saves_dirs()
 		auto suffix = get_version_path_suffix(version);
 		auto path = get_user_data_path().parent_path() / suffix / "saves";
 		if(bfs::exists(path)) {
-			result.emplace_back(suffix, path.string());
+			result.emplace_back(suffix, "", path.string());
+
+			std::vector<std::string> subdirs;
+			get_files_in_dir(path.string(), nullptr, &subdirs, name_mode::ENTIRE_FILE_PATH);
+			for(const auto& subdir : subdirs) {
+				result.emplace_back(suffix, bfs::path(subdir).filename().generic_string(), subdir);
+			}
 		}
 	}
 
