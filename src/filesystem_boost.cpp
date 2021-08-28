@@ -826,7 +826,7 @@ std::vector<other_version_dir> find_other_version_saves_dirs()
 	// in the load game dialog to match.
 	std::vector<std::string> subdirs;
 	
-	get_files_in_dir(get_saves_dir(), nullptr, &subdirs, name_mode::ENTIRE_FILE_PATH);
+	get_files_in_dir(get_saves_dir(), nullptr, &subdirs, ENTIRE_FILE_PATH);
 	// if there's a non-empty list of subdirs, assume there was no error encountered in the previous call
 	for(const auto& subdir : subdirs) {
 		result.emplace_back("current_version", bfs::path(subdir).filename().generic_string(), subdir);
@@ -846,7 +846,7 @@ std::vector<other_version_dir> find_other_version_saves_dirs()
 			result.emplace_back(suffix, "", path.string());
 
 			std::vector<std::string> subdirs;
-			get_files_in_dir(path.string(), nullptr, &subdirs, name_mode::ENTIRE_FILE_PATH);
+			get_files_in_dir(path.string(), nullptr, &subdirs, ENTIRE_FILE_PATH);
 			for(const auto& subdir : subdirs) {
 				result.emplace_back(suffix, bfs::path(subdir).filename().generic_string(), subdir);
 			}
