@@ -19,6 +19,7 @@
 #include "font/standard_colors.hpp"
 #include "game_display.hpp"
 #include "help/help.hpp"
+#include "log.hpp"
 #include "video.hpp"
 
 #include <SDL2/SDL_rect.h> // Travis doesn't like this, although it works on my machine -> '#include <SDL2/SDL_sound.h>
@@ -27,6 +28,8 @@ namespace {
 
 static const int font_size = font::SIZE_SMALL;
 static const int text_width = 400;
+
+static lg::log_domain log_tooltip("tooltip");
 
 struct tooltip
 {
@@ -60,6 +63,7 @@ static void clear_tooltip()
 
 static void show_tooltip(const tooltip& tip)
 {
+	LOG_STREAM(debug, log_tooltip) << "Showing tooltip " << tip.message << "\n";
 	CVideo& video = CVideo::get_singleton();
 
 	if(video.faked()) {
@@ -132,6 +136,16 @@ void clear_tooltips(const SDL_Rect& rect)
 			if (i==current_tooltip) {
 				clear_tooltip();
 			}
+
+			// The logging here is for debugging tooltips that are missing because of a small
+			// overlap between their areas. Areas with have the same top-left corner are filtered
+			// out because that's likely to be intentional, as with the defense stats updating when
+			// the mouse moves over different terrain.
+			if (i->second.rect.x != rect.x || i->second.rect.y != rect.y) {
+				LOG_STREAM(debug, log_tooltip) << "Removing tooltip with rect " << i->second.rect
+					<< " because of " << rect << "\n";
+			}
+
 			i = tips.erase(i);
 			current_tooltip = tips.end();
 		} else {

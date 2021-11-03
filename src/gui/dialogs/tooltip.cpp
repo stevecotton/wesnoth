@@ -25,6 +25,7 @@
 #include "gui/widgets/window.hpp"
 
 static lg::log_domain log_config("config");
+static lg::log_domain log_tooltip("tooltip");
 #define ERR_CFG LOG_STREAM(warn, log_config)
 
 namespace gui2::dialogs
@@ -153,6 +154,7 @@ void show(const std::string& window_id,
 	t.set_source_rect(source_rect);
 	try
 	{
+		LOG_STREAM(debug, log_tooltip) << "Showing tooltip " << message << "\n";
 		t.show();
 	}
 	catch(const window_builder_invalid_id&)

@@ -68,6 +68,7 @@
 // Includes for bug #17573
 
 static lg::log_domain log_display("display");
+static lg::log_domain log_tooltip("tooltip");
 #define ERR_DP LOG_STREAM(err, log_display)
 #define LOG_DP LOG_STREAM(info, log_display)
 #define DBG_DP LOG_STREAM(debug, log_display)
@@ -2860,6 +2861,7 @@ void display::refresh_report(const std::string& report_name, const config * new_
 		}
 	}
 
+	LOG_STREAM(debug, log_tooltip) << "Removing tooltips that overlap with " << report_name << "\n";
 	tooltips::clear_tooltips(rect);
 
 	if (report.empty()) return;
