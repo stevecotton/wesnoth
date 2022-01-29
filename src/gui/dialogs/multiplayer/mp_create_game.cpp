@@ -108,12 +108,6 @@ mp_create_game::mp_create_game(saved_game& state, bool local_mode)
 		return create_engine_.get_levels_by_type_unfiltered(type_info.first).empty();
 	}), level_types_.end());
 
-	rfm_types_ = {
-		mp_game_settings::RANDOM_FACTION_MODE::DEFAULT,
-		mp_game_settings::RANDOM_FACTION_MODE::NO_MIRROR,
-		mp_game_settings::RANDOM_FACTION_MODE::NO_ALLY_MIRROR,
-	};
-
 	set_show_even_without_video(true);
 
 	create_engine_.init_active_mods();
@@ -259,23 +253,19 @@ void mp_create_game::pre_show(window& win)
 	//
 	// Set up random faction mode menu_button
 	//
+	static const std::array<t_string, random_faction_mode::size()> names {{_("Independent"), _("No Mirror"), _("No Ally Mirror")}};
+	static const std::array<t_string, random_faction_mode::size()> tooltips {{
+		_("Independent: Random factions assigned independently"),
+		_("No Mirror: No two players will get the same faction"),
+		_("No Ally Mirror: No two allied players will get the same faction")
+	}};
 	std::vector<config> rfm_options;
-	for(const auto& type : rfm_types_) {
-		// HACK: The labels are defined for the wesnoth textdomain in a header,
-		//       see mp_game_settings::RANDOM_FACTION_MODE in src/mp_game_settings.hpp
-		rfm_options.emplace_back("label",
-			translation::dsgettext("wesnoth", mp_game_settings::RANDOM_FACTION_MODE::enum_to_string(type).c_str())
-		);
+	for(std::size_t i = 0; i < random_faction_mode::size(); i++) {
+		rfm_options.emplace_back("label", names[i]);
+		rfm_options[i]["tooltip"] = tooltips[i];
 	};
 
-	// Manually insert tooltips. Need to find a better way to do this
-	rfm_options[0]["tooltip"] = _("Independent: Random factions assigned independently");
-	rfm_options[1]["tooltip"] = _("No Mirror: No two players will get the same faction");
-	rfm_options[2]["tooltip"] = _("No Ally Mirror: No two allied players will get the same faction");
-
-	const int initial_index = std::distance(rfm_types_.begin(), std::find(rfm_types_.begin(), rfm_types_.end(),
-		mp_game_settings::RANDOM_FACTION_MODE::string_to_enum(prefs::random_faction_mode(), mp_game_settings::RANDOM_FACTION_MODE::DEFAULT))
-	);
+	const int initial_index = static_cast<int>(random_faction_mode::get_enum(prefs::random_faction_mode()).value_or(random_faction_mode::type::INDEPENDENT));
 
 	menu_button& rfm_menu_button = find_widget<menu_button>(&win, "random_faction_mode", false);
 
@@ -935,10 +925,11 @@ void mp_create_game::post_show(window& window)
 		config_engine_->set_oos_debug(strict_sync_->get_widget_value(window));
 		config_engine_->set_shuffle_sides(shuffle_sides_->get_widget_value(window));
 
-		config_engine_->set_random_faction_mode(rfm_types_[selected_rfm_index_]);
+		random_faction_mode::type type = random_faction_mode::get_enum(selected_rfm_index_).value_or(random_faction_mode::type::INDEPENDENT);
+		config_engine_->set_random_faction_mode(type);
 
 		// Since we don't have a field handling this option, we need to save the value manually
-		prefs::set_random_faction_mode(mp_game_settings::RANDOM_FACTION_MODE::enum_to_string(rfm_types_[selected_rfm_index_]));
+		prefs::set_random_faction_mode(random_faction_mode::get_string(type));
 
 		// Save custom option settings
 		config_engine_->set_options(options_manager_->get_options_config());

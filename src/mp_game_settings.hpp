@@ -19,7 +19,9 @@
 #include "config.hpp"
 #include "game_version.hpp"
 #include "gettext.hpp"
+#include "string_enums/random_faction_mode.hpp"
 #include "utils/make_enum.hpp"
+
 #include <optional>
 
 struct mp_game_settings
@@ -65,17 +67,7 @@ struct mp_game_settings
 
 	SAVED_GAME_MODE saved_game;
 
-	// HACK: The Create Game dialog has special knowledge of these strings
-	//       and the fact that they're placed in the default (wesnoth)
-	//       textdomain by xgettext due to the absence of a GETTEXT_DOMAIN
-	//       declaration in this file. See gui2::dialogs::mp_create_game::pre_show().
-	MAKE_ENUM(RANDOM_FACTION_MODE,
-		(DEFAULT, N_("Independent"))
-		(NO_MIRROR, N_("No Mirror"))
-		(NO_ALLY_MIRROR, N_("No Ally Mirror"))
-	)
-
-	RANDOM_FACTION_MODE random_faction_mode;
+	random_faction_mode::type mode;
 
 	config options;
 

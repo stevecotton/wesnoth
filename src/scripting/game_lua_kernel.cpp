@@ -1458,7 +1458,7 @@ static int impl_mp_settings_get(lua_State* L)
 		return_bool_attrib("allow_observers", settings.allow_observers);
 		return_bool_attrib("private_replay", settings.private_replay);
 		return_bool_attrib("shuffle_sides", settings.shuffle_sides);
-		return_string_attrib("random_faction_mode", settings.random_faction_mode.to_string());
+		return_string_attrib("random_faction_mode", random_faction_mode::get_string(settings.mode));
 		return_cfgref_attrib("options", settings.options);
 		if(strcmp(m, "savegame") == 0) {
 			auto savegame = settings.saved_game;
