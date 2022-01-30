@@ -569,7 +569,7 @@ void unit_filter_compound::fill(vconfig cfg)
 			[](const config::attribute_value& c) { return c.str(); },
 			[](const std::string& alignment, const unit_filter_args& args)
 			{
-				return args.u.alignment().to_string() == alignment;
+				return unit_alignments::get_string(args.u.alignment()) == alignment;
 			}
 		);
 

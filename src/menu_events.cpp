@@ -1992,8 +1992,8 @@ void console_handler::do_unit()
 	}
 
 	if(parameters[0] == "alignment") {
-		unit_type::ALIGNMENT alignment;
-		if(!alignment.parse(parameters[1])) {
+		auto alignment = unit_alignments::get_enum(parameters[1]);
+		if(!alignment) {
 			utils::string_map symbols;
 			symbols["alignment"] = get_arg(1);
 			command_failed(VGETTEXT(

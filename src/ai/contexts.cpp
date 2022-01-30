@@ -43,6 +43,7 @@
 #include "pathfind/pathfind.hpp"        // for paths::dest_vect, paths, etc
 #include "resources.hpp"             // for units, gameboard, etc
 #include "serialization/string_utils.hpp"  // for split, etc
+#include "string_enums/unit_alignments.hpp"
 #include "team.hpp"                     // for team
 #include "terrain/filter.hpp"  // for terrain_filter
 #include "terrain/translation.hpp"      // for terrain_code
@@ -1031,11 +1032,11 @@ double readonly_context_impl::power_projection(const map_location& loc, const mo
 			// Considering the unit location would be too slow, we only apply the bonus granted by the global ToD
 			const int lawful_bonus = resources::tod_manager->get_time_of_day(attack_turn).lawful_bonus;
 			int tod_modifier = 0;
-			if(un.alignment() == unit_type::ALIGNMENT::LAWFUL) {
+			if(un.alignment() == unit_alignments::type::LAWFUL) {
 				tod_modifier = lawful_bonus;
-			} else if(un.alignment() == unit_type::ALIGNMENT::CHAOTIC) {
+			} else if(un.alignment() == unit_alignments::type::CHAOTIC) {
 				tod_modifier = -lawful_bonus;
-			} else if(un.alignment() == unit_type::ALIGNMENT::LIMINAL) {
+			} else if(un.alignment() == unit_alignments::type::LIMINAL) {
 				tod_modifier = -(std::abs(lawful_bonus));
 			}
 
