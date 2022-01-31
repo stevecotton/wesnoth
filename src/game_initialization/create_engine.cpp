@@ -255,10 +255,10 @@ create_engine::create_engine(saved_game& state)
 	DBG_MP << "restoring game config\n";
 
 	// Restore game config for multiplayer.
-	game_classification::CAMPAIGN_TYPE type = state_.classification().campaign_type;
+	campaign_type::type type = state_.classification().type;
 
 	state_.clear();
-	state_.classification().campaign_type = type;
+	state_.classification().type = type;
 
 	game_config_manager::get()->load_game_config_for_create(state_.classification().is_multiplayer());
 
@@ -547,7 +547,7 @@ void create_engine::set_current_era_index(const std::size_t index, bool force)
 
 bool create_engine::toggle_mod(int index, bool force)
 {
-	force |= state_.classification().campaign_type != game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
+	force |= state_.classification().type != campaign_type::type::MULTIPLAYER;
 
 	bool is_active = dependency_manager_->is_modification_active(index);
 	dependency_manager_->try_modification_by_index(index, !is_active, force);

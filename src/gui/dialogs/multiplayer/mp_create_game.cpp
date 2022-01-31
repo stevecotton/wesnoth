@@ -113,7 +113,7 @@ mp_create_game::mp_create_game(saved_game& state, bool local_mode)
 	create_engine_.init_active_mods();
 
 	create_engine_.get_state().clear();
-	create_engine_.get_state().classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
+	create_engine_.get_state().classification().type = campaign_type::type::MULTIPLAYER;
 
 	// Need to set this in the constructor, pre_show() is too late
 	set_allow_plugin_skip(false);

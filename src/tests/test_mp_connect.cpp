@@ -58,7 +58,7 @@ struct mp_connect_fixture {
 		config_manager->init_game_config(game_config_manager::NO_FORCE_RELOAD);
 
 		state.reset(new saved_game());
-		state->classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
+		state->classification().type = campaign_type::type::MULTIPLAYER;
 		state->classification().era_id = "era_default";
 		config_manager->load_game_config_for_game(state->classification(), state->get_scenario_id());
 

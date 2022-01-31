@@ -1293,8 +1293,8 @@ int game_lua_kernel::impl_game_config_get(lua_State *L)
 	const mp_game_settings& mp_settings = play_controller_.get_mp_settings();
 	const game_classification & classification = play_controller_.get_classification();
 
-	return_string_attrib_deprecated("campaign_type", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.type instead", classification.campaign_type.to_string());
-	if(classification.campaign_type==game_classification::CAMPAIGN_TYPE::MULTIPLAYER) {
+	return_string_attrib_deprecated("campaign_type", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.type instead", campaign_type::get_string(classification.type));
+	if(classification.type==campaign_type::type::MULTIPLAYER) {
 		return_cfgref_attrib_deprecated("mp_settings", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.mp_settings instead", mp_settings.to_config());
 		return_cfgref_attrib_deprecated("era", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.era instead",
 			game_config_manager::get()->game_config().find_child("era","id",classification.era_id));
@@ -1555,7 +1555,7 @@ int game_lua_kernel::impl_scenario_get(lua_State *L)
 	}
 
 	const game_classification& classification = play_controller_.get_classification();
-	return_string_attrib("type", classification.campaign_type.to_string());
+	return_string_attrib("type", campaign_type::get_string(classification.type));
 	return_string_attrib("difficulty", classification.difficulty);
 	return_bool_attrib("show_credits", classification.end_credits);
 	return_tstring_attrib("end_text", classification.end_text);

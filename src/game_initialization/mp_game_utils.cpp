@@ -131,9 +131,9 @@ config initial_level_config(saved_game& state)
 
 void level_to_gamestate(const config& level, saved_game& state)
 {
-	game_classification::CAMPAIGN_TYPE type = state.classification().campaign_type;
+	campaign_type::type type = state.classification().type;
 	state = saved_game(level);
-	state.classification().campaign_type = type;
+	state.classification().type = type;
 }
 
 } // end namespace mp

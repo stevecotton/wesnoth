@@ -364,10 +364,11 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 
 	const std::string& campaign_type = cfg_summary["campaign_type"];
 	const std::string campaign_id = cfg_summary["campaign"];
+	auto campaign_type_enum = campaign_type::get_enum(campaign_type);
 
-	try {
-		switch(game_classification::CAMPAIGN_TYPE::string_to_enum(campaign_type).v) {
-			case game_classification::CAMPAIGN_TYPE::SCENARIO: {
+	if(campaign_type_enum) {
+		switch(*campaign_type_enum) {
+			case campaign_type::type::SCENARIO: {
 				const config* campaign = nullptr;
 				if(!campaign_id.empty()) {
 					if(const config& c = cache_config_.find_child("campaign", "id", campaign_id)) {
@@ -391,17 +392,20 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 				}
 				break;
 			}
-			case game_classification::CAMPAIGN_TYPE::MULTIPLAYER:
+			case campaign_type::type::MULTIPLAYER:
 				str << _("Multiplayer");
 				break;
-			case game_classification::CAMPAIGN_TYPE::TUTORIAL:
+			case campaign_type::type::TUTORIAL:
 				str << _("Tutorial");
 				break;
-			case game_classification::CAMPAIGN_TYPE::TEST:
+			case campaign_type::type::TEST:
 				str << _("Test scenario");
 				break;
+			case campaign_type::type::ENUM_MAX:
+				str << campaign_type;
+				break;
 		}
-	} catch(const bad_enum_cast&) {
+	} else {
 		str << campaign_type;
 	}
 
@@ -416,10 +420,10 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 	}
 
 	str << "\n" << _("Difficulty: ");
-	try {
-		switch (game_classification::CAMPAIGN_TYPE::string_to_enum(campaign_type).v) {
-		case game_classification::CAMPAIGN_TYPE::SCENARIO:
-		case game_classification::CAMPAIGN_TYPE::MULTIPLAYER: {
+	if(campaign_type_enum) {
+		switch (*campaign_type_enum) {
+		case campaign_type::type::SCENARIO:
+		case campaign_type::type::MULTIPLAYER: {
 			const config* campaign = nullptr;
 			if (!campaign_id.empty()) {
 				if (const config& c = cache_config_.find_child("campaign", "id", campaign_id)) {
@@ -449,13 +453,15 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 
 			break;
 		}
-		case game_classification::CAMPAIGN_TYPE::TUTORIAL:
-		case game_classification::CAMPAIGN_TYPE::TEST:
+		case campaign_type::type::TUTORIAL:
+		case campaign_type::type::TEST:
 			str << "—";
 			break;
+		case campaign_type::type::ENUM_MAX:
+			str << campaign_type;
+			break;
 		}
-	}
-	catch (const bad_enum_cast&) {
+	} else {
 		str << "—";
 	}
 

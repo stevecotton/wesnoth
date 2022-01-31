@@ -434,7 +434,7 @@ bool game_launcher::init_lua_script()
 void game_launcher::set_test(const std::string& id)
 {
 	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::TEST;
+	state_.classification().type = campaign_type::type::TEST;
 	state_.classification().campaign_define = "TEST";
 	state_.classification().era_id = "era_default";
 
@@ -645,8 +645,8 @@ bool game_launcher::play_render_image_mode()
 		return true;
 	}
 
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::MULTIPLAYER;
-	DBG_GENERAL << "Current campaign type: " << state_.classification().campaign_type << std::endl;
+	state_.classification().type = campaign_type::type::MULTIPLAYER;
+	DBG_GENERAL << "Current campaign type: " << campaign_type::get_string(state_.classification().type) << std::endl;
 
 	try {
 		game_config_manager::get()->load_game_config_for_game(state_.classification(), state_.get_scenario_id());
@@ -679,7 +679,7 @@ bool game_launcher::load_game()
 {
 	assert(game_config_manager::get());
 
-	DBG_GENERAL << "Current campaign type: " << state_.classification().campaign_type << std::endl;
+	DBG_GENERAL << "Current campaign type: " << campaign_type::get_string(state_.classification().type) << std::endl;
 
 	savegame::loadgame load(savegame::save_index_class::default_saves_dir(), state_);
 	if(load_data_) {
@@ -753,7 +753,7 @@ bool game_launcher::load_game()
 bool game_launcher::new_campaign()
 {
 	state_.clear();
-	state_.classification().campaign_type = game_classification::CAMPAIGN_TYPE::SCENARIO;
+	state_.classification().type = campaign_type::type::SCENARIO;
 	play_replay_ = false;
 
 	return sp::select_campaign(state_, jump_to_campaign_);
