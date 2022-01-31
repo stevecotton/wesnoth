@@ -250,15 +250,17 @@ bool unit_filter_compound::matches(const unit_filter_args& args) const
 
 	// Handle [and], [or], and [not] with in-order precedence
 	for(const auto & filter : cond_children_) {
-		switch (filter.first.v) {
-		case CONDITIONAL_TYPE::AND:
+		switch (filter.first) {
+		case conditional_type::type::FILTER_AND:
 			res = res && filter.second.matches(args);
 			break;
-		case CONDITIONAL_TYPE::OR:
+		case conditional_type::type::FILTER_OR:
 			res = res || filter.second.matches(args);
 			break;
-		case CONDITIONAL_TYPE::NOT:
+		case conditional_type::type::FILTER_NOT:
 			res = res && !filter.second.matches(args);
+			break;
+		case conditional_type::type::ENUM_MAX:
 			break;
 		}
 	}
@@ -754,9 +756,9 @@ void unit_filter_compound::fill(vconfig cfg)
 		}
 
 		for(auto child : cfg.all_ordered()) {
-			CONDITIONAL_TYPE cond;
-			if(cond.parse(child.first)) {
-				cond_children_.emplace_back(std::piecewise_construct_t(), std::tuple(cond), std::tuple(child.second));
+			auto cond = conditional_type::get_enum(child.first);
+			if(cond) {
+				cond_children_.emplace_back(std::piecewise_construct_t(), std::tuple(*cond), std::tuple(child.second));
 			}
 			else if (child.first == "filter_wml") {
 				create_child(child.second, [](const vconfig& c, const unit_filter_args& args) {
