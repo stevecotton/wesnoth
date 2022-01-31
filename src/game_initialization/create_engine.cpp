@@ -27,6 +27,7 @@
 #include "minimap.hpp"
 #include "saved_game.hpp"
 #include "wml_exception.hpp"
+#include "string_enums/component_availability.hpp"
 #include "string_enums/side_controller.hpp"
 
 #include "serialization/preprocessor.hpp"
@@ -764,17 +765,17 @@ void create_engine::init_extras(const MP_EXTRA extra_type)
 	std::vector<extras_metadata_ptr>& extras = get_extras_by_type(extra_type);
 	const std::string extra_name = (extra_type == ERA) ? "era" : "modification";
 
-	ng::depcheck::component_availability default_availabilty = (extra_type == ERA)
-		? ng::depcheck::component_availability::MP
-		: ng::depcheck::component_availability::HYBRID;
+	component_availability::type default_availabilty = (extra_type == ERA)
+		? component_availability::type::MP
+		: component_availability::type::HYBRID;
 
 	std::set<std::string> found_ids;
 	for(const config& extra : game_config_.child_range(extra_name))
 	{
-		ng::depcheck::component_availability type = extra["type"].to_enum(default_availabilty);
+		component_availability::type type = component_availability::get_enum(extra["type"].str()).value_or(default_availabilty);
 		const bool mp = state_.classification().is_multiplayer();
 
-		if((type != ng::depcheck::component_availability::MP || mp) && (type != ng::depcheck::component_availability::SP || !mp) )
+		if((type != component_availability::type::MP || mp) && (type != component_availability::type::SP || !mp) )
 		{
 			if(found_ids.insert(extra["id"]).second) {
 				extras_metadata_ptr new_extras_metadata(new extras_metadata());

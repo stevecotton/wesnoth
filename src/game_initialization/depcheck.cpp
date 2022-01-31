@@ -21,6 +21,7 @@
 #include "gettext.hpp"
 #include "log.hpp"
 #include "utils/general.hpp"
+#include "string_enums/component_availability.hpp"
 
 #include "gui/dialogs/depcheck_confirm_change.hpp"
 #include "gui/dialogs/depcheck_select_new.hpp"
@@ -69,9 +70,9 @@ manager::manager(const game_config_view& gamecfg, bool mp)
 	DBG_MP << "Initializing the dependency manager" << std::endl;
 
 	for(const config& cfg : gamecfg.child_range("modification")) {
-		component_availability type = cfg["type"].to_enum<component_availability>(component_availability::HYBRID);
+		component_availability::type type = component_availability::get_enum(cfg["type"].str()).value_or(component_availability::type::HYBRID);
 
-		if((type != component_availability::MP || mp) && (type != component_availability::SP || !mp)) {
+		if((type != component_availability::type::MP || mp) && (type != component_availability::type::SP || !mp)) {
 			config info;
 			info["id"] = cfg["id"];
 			info["name"] = cfg["name"];
@@ -85,9 +86,9 @@ manager::manager(const game_config_view& gamecfg, bool mp)
 	}
 
 	for(const config& cfg : gamecfg.child_range("era")) {
-		component_availability type = cfg["type"].to_enum<component_availability>(component_availability::MP);
+		component_availability::type type = component_availability::get_enum(cfg["type"].str()).value_or(component_availability::type::MP);
 
-		if((type != component_availability::MP || mp) && (type != component_availability::SP || !mp)) {
+		if((type != component_availability::type::MP || mp) && (type != component_availability::type::SP || !mp)) {
 			config info;
 			info["id"] = cfg["id"];
 			info["name"] = cfg["name"];
