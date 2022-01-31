@@ -143,7 +143,7 @@ team::team_info::team_info()
 	, objectives_changed(false)
 	, controller()
 	, is_local(true)
-	, defeat_condition(team::DEFEAT_CONDITION::NO_LEADER)
+	, defeat_cond(defeat_condition::type::NO_LEADER_LEFT)
 	, proxy_controller(team::PROXY_CONTROLLER::PROXY_HUMAN)
 	, share_vision(team::SHARE_VISION::ALL)
 	, disallow_observers(false)
@@ -186,7 +186,7 @@ void team::team_info::read(const config& cfg)
 	allow_player = cfg["allow_player"].to_bool(true);
 	chose_random = cfg["chose_random"].to_bool(false);
 	no_leader = cfg["no_leader"].to_bool();
-	defeat_condition = cfg["defeat_condition"].to_enum<team::DEFEAT_CONDITION>(team::DEFEAT_CONDITION::NO_LEADER);
+	defeat_cond = defeat_condition::get_enum(cfg["defeat_condition"].str()).value_or(defeat_condition::type::NO_LEADER_LEFT);
 	lost = cfg["lost"].to_bool(false);
 	hidden = cfg["hidden"].to_bool();
 	no_turn_confirmation = cfg["suppress_end_turn_confirmation"].to_bool();
@@ -304,7 +304,7 @@ void team::team_info::write(config& cfg) const
 	cfg["allow_player"] = allow_player;
 	cfg["chose_random"] = chose_random;
 	cfg["no_leader"] = no_leader;
-	cfg["defeat_condition"] = defeat_condition;
+	cfg["defeat_condition"] = defeat_condition::get_string(defeat_cond);
 	cfg["hidden"] = hidden;
 	cfg["suppress_end_turn_confirmation"] = no_turn_confirmation;
 	cfg["scroll_to_leader"] = scroll_to_leader;

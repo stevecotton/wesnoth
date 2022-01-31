@@ -126,16 +126,16 @@ void game_board::check_victory(bool& continue_level,
 	for(const unit& i : units()) {
 		DBG_EE << "Found a unit: " << i.id() << " on side " << i.side() << std::endl;
 		const team& tm = get_team(i.side());
-		DBG_EE << "That team's defeat condition is: " << tm.defeat_condition() << std::endl;
-		if(i.can_recruit() && tm.defeat_condition() == team::DEFEAT_CONDITION::NO_LEADER) {
+		DBG_EE << "That team's defeat condition is: " << defeat_condition::get_string(tm.defeat_cond()) << std::endl;
+		if(i.can_recruit() && tm.defeat_cond() == defeat_condition::type::NO_LEADER_LEFT) {
 			not_defeated.insert(i.side());
-		} else if(tm.defeat_condition() == team::DEFEAT_CONDITION::NO_UNITS) {
+		} else if(tm.defeat_cond() == defeat_condition::type::NO_UNITS_LEFT) {
 			not_defeated.insert(i.side());
 		}
 	}
 
 	for(team& tm : teams_) {
-		if(tm.defeat_condition() == team::DEFEAT_CONDITION::NEVER) {
+		if(tm.defeat_cond() == defeat_condition::type::NEVER) {
 			not_defeated.insert(tm.side());
 		}
 
@@ -264,18 +264,18 @@ void game_board::side_change_controller(
 
 bool game_board::team_is_defeated(const team& t) const
 {
-	switch(t.defeat_condition().v) {
-	case team::DEFEAT_CONDITION::ALWAYS:
+	switch(t.defeat_cond()) {
+	case defeat_condition::type::ALWAYS:
 		return true;
-	case team::DEFEAT_CONDITION::NO_LEADER:
+	case defeat_condition::type::NO_LEADER_LEFT:
 		return !units_.find_leader(t.side()).valid();
-	case team::DEFEAT_CONDITION::NO_UNITS:
+	case defeat_condition::type::NO_UNITS_LEFT:
 		for(const unit& u : units_) {
 			if(u.side() == t.side())
 				return false;
 		}
 		return true;
-	case team::DEFEAT_CONDITION::NEVER:
+	case defeat_condition::type::NEVER:
 	default:
 		return false;
 	}

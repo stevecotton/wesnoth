@@ -24,6 +24,7 @@
 #include "units/ptr.hpp"
 #include "config.hpp"
 #include "string_enums/side_controller.hpp"
+#include "string_enums/defeat_condition.hpp"
 
 #include <set>
 
@@ -79,13 +80,6 @@ public:
 		(PROXY_IDLE,  "idle")
 	)
 
-	MAKE_ENUM(DEFEAT_CONDITION,
-		(NO_LEADER, "no_leader_left")
-		(NO_UNITS, "no_units_left")
-		(NEVER, "never")
-		(ALWAYS, "always")
-	)
-
 	MAKE_ENUM(SHARE_VISION,
 		(ALL, "all")
 		(SHROUD, "shroud")
@@ -133,7 +127,7 @@ private:
 
 		side_controller::type controller;
 		bool is_local;
-		DEFEAT_CONDITION defeat_condition;
+		defeat_condition::type defeat_cond;
 
 		PROXY_CONTROLLER proxy_controller;	// when controller == HUMAN, the proxy controller determines what input method is actually used.
 							// proxy controller is an interface property, not gamestate. it is not synced, not known to server.
@@ -345,10 +339,10 @@ public:
 	void set_auto_shroud_updates(bool value) { auto_shroud_updates_ = value; }
 	bool get_disallow_observers() const {return info_.disallow_observers; }
 	bool no_leader() const { return info_.no_leader; }
-	DEFEAT_CONDITION defeat_condition() const { return info_.defeat_condition; }
-	void set_defeat_condition(DEFEAT_CONDITION value) { info_.defeat_condition = value; }
+	defeat_condition::type defeat_cond() const { return info_.defeat_cond; }
+	void set_defeat_condition(defeat_condition::type value) { info_.defeat_cond = value; }
 	/** sets the defeat condition if @param value is a valid defeat condition, otherwise nothing happes. */
-	void set_defeat_condition_string(const std::string& value) { info_.defeat_condition.parse(value); }
+	void set_defeat_condition_string(const std::string& value) { info_.defeat_cond = defeat_condition::get_enum(value).value_or(info_.defeat_cond); }
 	void have_leader(bool value=true) { info_.no_leader = !value; }
 	bool hidden() const { return info_.hidden; }
 	void set_hidden(bool value) { info_.hidden=value; }

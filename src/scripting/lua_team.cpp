@@ -82,7 +82,7 @@ static int impl_side_get(lua_State *L)
 	return_string_attrib("color", t.color());
 	return_string_attrib("controller", side_controller::get_string(t.controller()));
 	return_bool_attrib("is_local", t.is_local());
-	return_string_attrib("defeat_condition", t.defeat_condition().to_string());
+	return_string_attrib("defeat_condition", defeat_condition::get_string(t.defeat_cond()));
 	return_string_attrib("share_vision", t.share_vision().to_string());
 	return_float_attrib("carryover_bonus", t.carryover_bonus());
 	return_int_attrib("carryover_percentage", t.carryover_percentage());
