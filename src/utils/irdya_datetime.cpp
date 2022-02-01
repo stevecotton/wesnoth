@@ -41,10 +41,10 @@ irdya_date irdya_date::read_date(const std::string& date)
 
 	std::size_t epoch_start = date.find_first_not_of(' ', year_end);
 	if(epoch_start == std::string::npos) {
-		date_result.epoch = EPOCH::WESNOTH;
+		date_result.epoch = wesnoth_epoch::type::WESNOTH;
 	} else {
 		std::size_t epoch_end = date.find_first_of(' ', epoch_start);
-		date_result.epoch = EPOCH::string_to_enum(date.substr(epoch_start, epoch_end - epoch_start), EPOCH::WESNOTH);
+		date_result.epoch = wesnoth_epoch::get_enum(date.substr(epoch_start, epoch_end - epoch_start)).value_or(wesnoth_epoch::type::WESNOTH);
 	}
 
 	return date_result;
@@ -54,19 +54,21 @@ std::string irdya_date::to_string() const
 {
 	utils::string_map args {{"year", std::to_string(year)}};
 
-	switch(epoch.v) {
-	case EPOCH::BEFORE_WESNOTH:
+	switch(epoch) {
+	case wesnoth_epoch::type::BEFORE_WESNOTH:
 		// TRANSLATORS: "Before Wesnoth"   - format for years prior to the founding of Wesnoth
 		return VGETTEXT("$year BW", args);
-	case EPOCH::WESNOTH:
+	case wesnoth_epoch::type::WESNOTH:
 		// TRANSLATORS: "Year of Wesnoth"  - format for years after the founding of Wesnoth
 		return VGETTEXT("$year YW", args);
-	case EPOCH::BEFORE_FALL:
+	case wesnoth_epoch::type::BEFORE_FALL:
 		// TRANSLATORS: "Before the Fall" -  format for years prior to the fall of Wesnoth
 		return VGETTEXT("$year BF", args);
-	case EPOCH::AFTER_FALL:
+	case wesnoth_epoch::type::AFTER_FALL:
 		// TRANSLATORS: "After the Fall"   - format for years after the fall of Wesnoth
 		return VGETTEXT("$year AF", args);
+	case wesnoth_epoch::type::ENUM_MAX:
+		break;
 	}
 
 	return "";
@@ -82,18 +84,16 @@ bool operator<(const irdya_date& a, const irdya_date& b)
 		return false;
 	}
 
-	if(a.get_epoch().v < b.get_epoch().v) {
+	if(a.get_epoch() < b.get_epoch()) {
 		return true;
 	}
 
-	if(a.get_epoch().v > b.get_epoch().v) {
+	if(a.get_epoch() > b.get_epoch()) {
 		return false;
 	}
 
-	using EPOCH = irdya_date::EPOCH;
-
 	// The BW and BF epochs count backward, much like BCE
-	if(a.get_epoch() == EPOCH::BEFORE_WESNOTH || a.get_epoch() == EPOCH::BEFORE_FALL) {
+	if(a.get_epoch() == wesnoth_epoch::type::BEFORE_WESNOTH || a.get_epoch() == wesnoth_epoch::type::BEFORE_FALL) {
 		return (a.get_year() > b.get_year());
 	} else {
 		return (a.get_year() < b.get_year());
