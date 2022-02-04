@@ -218,7 +218,7 @@ unit* game_board::get_visible_unit(const map_location& loc, const team& current_
 	return &*ui;
 }
 
-void game_board::side_drop_to(int side_num, side_controller::type ctrl, team::PROXY_CONTROLLER proxy)
+void game_board::side_drop_to(int side_num, side_controller::type ctrl, side_proxy_controller::type proxy)
 {
 	team& tm = get_team(side_num);
 

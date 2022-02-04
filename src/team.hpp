@@ -23,8 +23,9 @@
 #include "recall_list_manager.hpp"
 #include "units/ptr.hpp"
 #include "config.hpp"
-#include "string_enums/side_controller.hpp"
 #include "string_enums/defeat_condition.hpp"
+#include "string_enums/side_controller.hpp"
+#include "string_enums/side_proxy_controller.hpp"
 
 #include <set>
 
@@ -74,17 +75,11 @@ private:
 class team
 {
 public:
-	MAKE_ENUM(PROXY_CONTROLLER,
-		(PROXY_HUMAN, "human")
-		(PROXY_AI,    "ai")
-		(PROXY_IDLE,  "idle")
-	)
-
 	MAKE_ENUM(SHARE_VISION,
 		(ALL, "all")
 		(SHROUD, "shroud")
 		(NONE, "none")
-	)
+	);
 
 private:
 	struct team_info
@@ -129,7 +124,7 @@ private:
 		bool is_local;
 		defeat_condition::type defeat_cond;
 
-		PROXY_CONTROLLER proxy_controller;	// when controller == HUMAN, the proxy controller determines what input method is actually used.
+		side_proxy_controller::type proxy_controller;	// when controller == HUMAN, the proxy controller determines what input method is actually used.
 							// proxy controller is an interface property, not gamestate. it is not synced, not known to server.
 							// also not saved in save game file
 		SHARE_VISION share_vision;
@@ -278,20 +273,20 @@ public:
 	void change_controller(side_controller::type controller) { info_.controller = controller; }
 	void change_controller_by_wml(const std::string& new_controller);
 
-	PROXY_CONTROLLER proxy_controller() const { return info_.proxy_controller; }
-	bool is_proxy_human() const { return info_.proxy_controller == PROXY_CONTROLLER::PROXY_HUMAN; }
-	bool is_droid() const { return info_.proxy_controller == PROXY_CONTROLLER::PROXY_AI; }
-	bool is_idle() const { return info_.proxy_controller == PROXY_CONTROLLER::PROXY_IDLE; }
+	side_proxy_controller::type proxy_controller() const { return info_.proxy_controller; }
+	bool is_proxy_human() const { return info_.proxy_controller == side_proxy_controller::type::HUMAN; }
+	bool is_droid() const { return info_.proxy_controller == side_proxy_controller::type::AI; }
+	bool is_idle() const { return info_.proxy_controller == side_proxy_controller::type::IDLE; }
 
-	void make_droid() { info_.proxy_controller = PROXY_CONTROLLER::PROXY_AI; }
-	void make_idle() { info_.proxy_controller = PROXY_CONTROLLER::PROXY_IDLE; }
-	void make_proxy_human() { info_.proxy_controller = PROXY_CONTROLLER::PROXY_HUMAN; }
+	void make_droid() { info_.proxy_controller = side_proxy_controller::type::AI; }
+	void make_idle() { info_.proxy_controller = side_proxy_controller::type::IDLE; }
+	void make_proxy_human() { info_.proxy_controller = side_proxy_controller::type::HUMAN; }
 	void clear_proxy() { make_proxy_human(); }
 
-	void change_proxy(PROXY_CONTROLLER proxy) { info_.proxy_controller = proxy; }
+	void change_proxy(side_proxy_controller::type proxy) { info_.proxy_controller = proxy; }
 
-	void toggle_droid() { info_.proxy_controller = (info_.proxy_controller == PROXY_CONTROLLER::PROXY_AI  ) ? PROXY_CONTROLLER::PROXY_HUMAN : PROXY_CONTROLLER::PROXY_AI;   }
-	void toggle_idle()  { info_.proxy_controller = (info_.proxy_controller == PROXY_CONTROLLER::PROXY_IDLE) ? PROXY_CONTROLLER::PROXY_HUMAN : PROXY_CONTROLLER::PROXY_IDLE; }
+	void toggle_droid() { info_.proxy_controller = (info_.proxy_controller == side_proxy_controller::type::AI  ) ? side_proxy_controller::type::HUMAN : side_proxy_controller::type::AI;   }
+	void toggle_idle()  { info_.proxy_controller = (info_.proxy_controller == side_proxy_controller::type::IDLE) ? side_proxy_controller::type::HUMAN : side_proxy_controller::type::IDLE; }
 
 	const std::string& team_name() const { return info_.team_name; }
 	const t_string &user_team_name() const { return info_.user_team_name; }

@@ -317,7 +317,7 @@ turn_info::PROCESS_DATA_RESULT turn_info::process_network_data(const config& cfg
 
 			{
 				// Server thinks this side is ours now so in case of error transferring side we have to make local state to same as what server thinks it is.
-				resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, team::PROXY_CONTROLLER::PROXY_IDLE);
+				resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, side_proxy_controller::type::IDLE);
 			}
 
 			if (action < first_observer_option_idx) {
@@ -336,17 +336,17 @@ turn_info::PROCESS_DATA_RESULT turn_info::process_network_data(const config& cfg
 			switch(action) {
 				case 0:
 					resources::controller->on_not_observer();
-					resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, team::PROXY_CONTROLLER::PROXY_AI);
+					resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, side_proxy_controller::type::AI);
 
 					return restart?PROCESS_RESTART_TURN:PROCESS_CONTINUE;
 
 				case 1:
 					resources::controller->on_not_observer();
-					resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, team::PROXY_CONTROLLER::PROXY_HUMAN);
+					resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, side_proxy_controller::type::HUMAN);
 
 					return restart?PROCESS_RESTART_TURN:PROCESS_CONTINUE;
 				case 2:
-					resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, team::PROXY_CONTROLLER::PROXY_IDLE);
+					resources::gameboard->side_drop_to(side_drop, side_controller::type::HUMAN, side_proxy_controller::type::IDLE);
 
 					return restart?PROCESS_RESTART_TURN:PROCESS_CONTINUE;
 

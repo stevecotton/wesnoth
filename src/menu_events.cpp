@@ -1715,7 +1715,7 @@ void console_handler::do_controller()
 
 	std::string report = side_controller::get_string(menu_handler_.board().get_team(side_num).controller());
 	if(!menu_handler_.board().get_team(side_num).is_proxy_human()) {
-		report += " (" + menu_handler_.board().get_team(side_num).proxy_controller().to_string() + ")";
+		report += " (" + side_proxy_controller::get_string(menu_handler_.board().get_team(side_num).proxy_controller()) + ")";
 	}
 
 	if(menu_handler_.board().get_team(side_num).is_network()) {
