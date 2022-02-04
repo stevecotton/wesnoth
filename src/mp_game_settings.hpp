@@ -20,7 +20,7 @@
 #include "game_version.hpp"
 #include "gettext.hpp"
 #include "string_enums/random_faction_mode.hpp"
-#include "utils/make_enum.hpp"
+#include "string_enums/saved_game_mode.hpp"
 
 #include <optional>
 
@@ -59,13 +59,7 @@ struct mp_game_settings
 	bool private_replay;
 	bool shuffle_sides;
 
-	MAKE_ENUM(SAVED_GAME_MODE,
-		(NONE, "no")
-		(MIDGAME, "midgame")
-		(SCENARIO_START, "scenaro_start")
-	)
-
-	SAVED_GAME_MODE saved_game;
+	saved_game_mode::type saved_game;
 
 	random_faction_mode::type mode;
 

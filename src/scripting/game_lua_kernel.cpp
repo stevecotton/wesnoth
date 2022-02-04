@@ -1461,10 +1461,10 @@ static int impl_mp_settings_get(lua_State* L)
 		return_cfgref_attrib("options", settings.options);
 		if(strcmp(m, "savegame") == 0) {
 			auto savegame = settings.saved_game;
-			if(savegame == mp_game_settings::SAVED_GAME_MODE::NONE) {
+			if(savegame == saved_game_mode::type::NO) {
 				lua_pushboolean(L, false);
 			} else {
-				lua_push(L, savegame.to_string());
+				lua_push(L, saved_game_mode::get_string(savegame));
 			}
 			return 1;
 		}

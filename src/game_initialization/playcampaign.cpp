@@ -379,8 +379,8 @@ level_result::type campaign_controller::play_game()
 				const bool is_mp = state_.classification().is_normal_mp_game();
 				state_.mp_settings().num_turns = starting_pos["turns"].to_int(-1);
 
-				if(state_.mp_settings().saved_game == mp_game_settings::SAVED_GAME_MODE::MIDGAME) {
-					state_.mp_settings().saved_game = mp_game_settings::SAVED_GAME_MODE::SCENARIO_START;
+				if(state_.mp_settings().saved_game == saved_game_mode::type::MIDGAME) {
+					state_.mp_settings().saved_game = saved_game_mode::type::SCENARIO_START;
 				}
 
 				state_.mp_settings().use_map_settings = starting_pos["force_lock_settings"].to_bool(!is_mp);
