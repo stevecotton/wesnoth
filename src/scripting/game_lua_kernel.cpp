@@ -269,9 +269,8 @@ static int impl_add_animation(lua_State* L)
 	unit& u = *up;
 	std::string which = luaL_checkstring(L, 3);
 
-	using hit_type = unit_animation::hit_type;
 	std::string hits_str = luaL_checkstring(L, 4);
-	hit_type hits = hit_type::string_to_enum(hits_str, hit_type::INVALID);
+	attack_result::type hits = attack_result::get_enum(hits_str).value_or(attack_result::type::INVALID);
 
 	map_location dest;
 	int v1 = 0, v2 = 0;
