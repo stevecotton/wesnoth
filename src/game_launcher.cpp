@@ -553,11 +553,11 @@ game_launcher::unit_test_result game_launcher::single_unit_test()
 {
 	game_config_manager::get()->load_game_config_for_game(state_.classification(), state_.get_scenario_id());
 
-	LEVEL_RESULT game_res = LEVEL_RESULT::TEST_FAIL;
+	level_result::type game_res = level_result::type::FAIL;
 	try {
 		campaign_controller ccontroller(state_, true);
 		game_res = ccontroller.play_game();
-		if(game_res == LEVEL_RESULT::TEST_FAIL) {
+		if(game_res == level_result::type::FAIL) {
 			if(lg::broke_strict()) {
 				return unit_test_result::BROKE_STRICT_TEST_FAIL;
 			} else {
@@ -602,15 +602,15 @@ game_launcher::unit_test_result game_launcher::single_unit_test()
 	return pass_victory_or_defeat(game_res);
 }
 
-game_launcher::unit_test_result game_launcher::pass_victory_or_defeat(LEVEL_RESULT res)
+game_launcher::unit_test_result game_launcher::pass_victory_or_defeat(level_result::type res)
 {
-	if(res == LEVEL_RESULT::DEFEAT) {
+	if(res == level_result::type::DEFEAT) {
 		if(lg::broke_strict()) {
 			return unit_test_result::BROKE_STRICT_TEST_FAIL_BY_DEFEAT;
 		} else {
 			return unit_test_result::TEST_FAIL_BY_DEFEAT;
 		}
-	} else if(res == LEVEL_RESULT::VICTORY) {
+	} else if(res == level_result::type::VICTORY) {
 		if(lg::broke_strict()) {
 			return unit_test_result::BROKE_STRICT_TEST_PASS_BY_VICTORY;
 		} else {

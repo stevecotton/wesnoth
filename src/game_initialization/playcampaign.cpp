@@ -57,7 +57,7 @@ static lg::log_domain log_enginerefac("enginerefac");
 #define LOG_RG LOG_STREAM(info, log_enginerefac)
 
 void campaign_controller::show_carryover_message(
-	playsingle_controller& playcontroller, const end_level_data& end_level, const LEVEL_RESULT res)
+	playsingle_controller& playcontroller, const end_level_data& end_level, const level_result::type res)
 {
 	// We need to write the carryover amount to the team that's why we need non const
 	std::vector<team>& teams = playcontroller.get_teams();
@@ -74,7 +74,7 @@ void campaign_controller::show_carryover_message(
 
 	if(obs) {
 		title = _("Scenario Report");
-	} else if(res == LEVEL_RESULT::VICTORY) {
+	} else if(res == level_result::type::VICTORY) {
 		title = _("Victory");
 		report << "<b>" << _("You have emerged victorious!") << "</b>";
 	} else {
@@ -179,7 +179,7 @@ void campaign_controller::show_carryover_message(
 	}
 }
 
-LEVEL_RESULT campaign_controller::playsingle_scenario(end_level_data &end_level)
+level_result::type campaign_controller::playsingle_scenario(end_level_data &end_level)
 {
 	const config& starting_point = is_replay_
 		? state_.get_replay_starting_point()
@@ -192,9 +192,9 @@ LEVEL_RESULT campaign_controller::playsingle_scenario(end_level_data &end_level)
 		playcontroller.enable_replay(is_unit_test_);
 	}
 
-	LEVEL_RESULT res = playcontroller.play_scenario(starting_point);
-	if(res == LEVEL_RESULT::QUIT) {
-		return LEVEL_RESULT::QUIT;
+	level_result::type res = playcontroller.play_scenario(starting_point);
+	if(res == level_result::type::QUIT) {
+		return level_result::type::QUIT;
 	}
 
 	if(!is_unit_test_) {
@@ -216,19 +216,19 @@ LEVEL_RESULT campaign_controller::playsingle_scenario(end_level_data &end_level)
 	return res;
 }
 
-LEVEL_RESULT campaign_controller::playmp_scenario(end_level_data &end_level)
+level_result::type campaign_controller::playmp_scenario(end_level_data &end_level)
 {
 	playmp_controller playcontroller(state_.get_starting_point(), state_, mp_info_);
-	LEVEL_RESULT res = playcontroller.play_scenario(state_.get_starting_point());
+	level_result::type res = playcontroller.play_scenario(state_.get_starting_point());
 
 	// Check if the player started as mp client and changed to host
-	if(res == LEVEL_RESULT::QUIT) {
-		return LEVEL_RESULT::QUIT;
+	if(res == level_result::type::QUIT) {
+		return level_result::type::QUIT;
 	}
 
 	end_level = playcontroller.get_end_level_data();
 
-	if(res != LEVEL_RESULT::OBSERVER_END) {
+	if(res != level_result::type::OBSERVER_END) {
 		// We need to call this before linger because it prints the defeated/victory message.
 		//(we want to see that message before entering the linger mode)
 		show_carryover_message(playcontroller, end_level, res);
@@ -246,7 +246,7 @@ LEVEL_RESULT campaign_controller::playmp_scenario(end_level_data &end_level)
 	return res;
 }
 
-LEVEL_RESULT campaign_controller::play_game()
+level_result::type campaign_controller::play_game()
 {
 	if(is_replay_) {
 		state_.get_replay().set_pos(0);
@@ -257,7 +257,7 @@ LEVEL_RESULT campaign_controller::play_game()
 	state_.expand_scenario();
 
 	while(state_.valid()) {
-		LEVEL_RESULT res = LEVEL_RESULT::VICTORY;
+		level_result::type res = level_result::type::VICTORY;
 		end_level_data end_level;
 
 		try {
@@ -286,34 +286,34 @@ LEVEL_RESULT campaign_controller::play_game()
 			}
 		} catch(const leavegame_wesnothd_error&) {
 			LOG_NG << "The game was remotely ended\n";
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		} catch(const game::load_game_failed& e) {
 			gui2::show_error_message(_("The game could not be loaded: ") + e.message);
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		} catch(const quit_game_exception&) {
 			LOG_NG << "The game was aborted\n";
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		} catch(const game::game_error& e) {
 			gui2::show_error_message(_("Error while playing the game: ") + e.message);
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		} catch(const incorrect_map_format_error& e) {
 			gui2::show_error_message(_("The game map could not be loaded: ") + e.message);
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		} catch(const mapgen_exception& e) {
 			gui2::show_error_message(_("Map generator error: ") + e.message);
 		} catch(const config::error& e) {
 			gui2::show_error_message(_("Error while reading the WML: ") + e.message);
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		} catch(const wml_exception& e) {
 			e.show();
-			return LEVEL_RESULT::QUIT;
+			return level_result::type::QUIT;
 		}
 
 		if(is_unit_test_) {
 			return res;
 		}
 
-		if(res == LEVEL_RESULT::QUIT) {
+		if(res == level_result::type::QUIT) {
 			return res;
 		}
 
@@ -338,7 +338,7 @@ LEVEL_RESULT campaign_controller::play_game()
 		// If there is no next scenario we're done now.
 		if(state_.get_scenario_id().empty()) {
 			// Don't show The End for multiplayer scenarios.
-			if(res == LEVEL_RESULT::VICTORY && !state_.classification().is_normal_mp_game()) {
+			if(res == level_result::type::VICTORY && !state_.classification().is_normal_mp_game()) {
 				preferences::add_completed_campaign(
 					state_.classification().campaign, state_.classification().difficulty);
 
@@ -348,7 +348,7 @@ LEVEL_RESULT campaign_controller::play_game()
 			}
 
 			return res;
-		} else if(res == LEVEL_RESULT::OBSERVER_END && mp_info_ && !mp_info_->is_host) {
+		} else if(res == level_result::type::OBSERVER_END && mp_info_ && !mp_info_->is_host) {
 			const int dlg_res = gui2::show_message(_("Game Over"),
 				_("This scenario has ended. Do you want to continue the campaign?"),
 				gui2::dialogs::message::yes_no_buttons);
@@ -360,8 +360,8 @@ LEVEL_RESULT campaign_controller::play_game()
 
 		if(mp_info_ && !mp_info_->is_host) {
 			// Opens join game dialog to get a new gamestate.
-			if(!mp::goto_mp_wait(res == LEVEL_RESULT::OBSERVER_END)) {
-				return LEVEL_RESULT::QUIT;
+			if(!mp::goto_mp_wait(res == level_result::type::OBSERVER_END)) {
+				return level_result::type::QUIT;
 			}
 
 			// The host should send the complete savegame now that also contains the carryover sides start.
@@ -390,7 +390,7 @@ LEVEL_RESULT campaign_controller::play_game()
 				if(!connect_engine.can_start_game() || (game_config::debug && state_.classification().is_multiplayer())) {
 					// Opens staging dialog to allow users to make an adjustments for scenario.
 					if(!mp::goto_mp_staging(connect_engine)) {
-						return LEVEL_RESULT::QUIT;
+						return level_result::type::QUIT;
 					}
 				} else {
 					// Start the next scenario immediately.
@@ -422,7 +422,7 @@ LEVEL_RESULT campaign_controller::play_game()
 		message = utils::interpolate_variables_into_string(message, &symbols);
 
 		gui2::show_error_message(message);
-		return LEVEL_RESULT::QUIT;
+		return level_result::type::QUIT;
 	}
 
 	if(state_.classification().is_scenario()) {
@@ -431,5 +431,5 @@ LEVEL_RESULT campaign_controller::play_game()
 		}
 	}
 
-	return LEVEL_RESULT::VICTORY;
+	return level_result::type::VICTORY;
 }

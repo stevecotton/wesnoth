@@ -1356,7 +1356,7 @@ static int impl_end_level_data_get(lua_State* L)
 	return_bool_attrib("proceed_to_next_level", data.proceed_to_next_level);
 	return_bool_attrib("is_victory", data.is_victory);
 	return_bool_attrib("is_loss", !data.is_victory);
-	return_cstring_attrib("result", data.is_victory ? "victory" : "loss"); // to match wesnoth.end_level()
+	return_cstring_attrib("result", data.is_victory ? level_result::victory : "loss"); // to match wesnoth.end_level()
 	return_string_attrib("test_result", data.test_result);
 	return_cfg_attrib("__cfg", data.to_config_full());
 
@@ -1642,8 +1642,8 @@ int game_lua_kernel::impl_scenario_set(lua_State *L)
 		data.replay_save = cfg["replay_save"].to_bool(true);
 		data.transient.linger_mode = cfg["linger_mode"].to_bool(true) && !teams().empty();
 		data.transient.reveal_map = cfg["reveal_map"].to_bool(true);
-		data.is_victory = cfg["result"] == "victory";
-		data.test_result = cfg["test_result"].str(LEVEL_RESULT::enum_to_string(LEVEL_RESULT::TEST_NOT_SET));
+		data.is_victory = cfg["result"] == level_result::victory;
+		data.test_result = cfg["test_result"].str(level_result::result_not_set);
 		play_controller_.set_end_level_data(data);
 
 		return 1;
