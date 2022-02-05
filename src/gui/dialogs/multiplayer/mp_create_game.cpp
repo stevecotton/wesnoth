@@ -95,12 +95,12 @@ mp_create_game::mp_create_game(saved_game& state, bool local_mode)
 	, local_mode_(local_mode)
 {
 	level_types_ = {
-		{ng::level::TYPE::SCENARIO, _("Scenarios")},
-		{ng::level::TYPE::CAMPAIGN, _("Multiplayer Campaigns")},
-		{ng::level::TYPE::SP_CAMPAIGN, _("Singleplayer Campaigns")},
-		{ng::level::TYPE::USER_MAP, _("Custom Maps")},
-		{ng::level::TYPE::USER_SCENARIO, _("Custom Scenarios")},
-		{ng::level::TYPE::RANDOM_MAP, _("Random Maps")},
+		{level_type::type::SCENARIO, _("Scenarios")},
+		{level_type::type::CAMPAIGN, _("Multiplayer Campaigns")},
+		{level_type::type::SP_CAMPAIGN, _("Singleplayer Campaigns")},
+		{level_type::type::USER_MAP, _("Custom Maps")},
+		{level_type::type::USER_SCENARIO, _("Custom Scenarios")},
+		{level_type::type::RANDOM_MAP, _("Random Maps")},
 	};
 
 	level_types_.erase(std::remove_if(level_types_.begin(), level_types_.end(),
@@ -175,7 +175,7 @@ void mp_create_game::pre_show(window& win)
 	// Helper to make sure the initially selected level type is valid
 	auto get_initial_type_index = [this]()->int {
 		const auto index = std::find_if(level_types_.begin(), level_types_.end(), [](level_type_info& info) {
-			return info.first == ng::level::TYPE::from_int(preferences::level_type());
+			return info.first == *level_type::get_enum(preferences::level_type());
 		});
 
 		if(index != level_types_.end()) {
@@ -378,7 +378,7 @@ void mp_create_game::pre_show(window& win)
 	}, true);
 
 	plugins_context_->set_callback("select_type",  [this](const config& cfg) {
-		create_engine_.set_current_level_type(ng::level::TYPE::string_to_enum(cfg["type"], ng::level::TYPE::SCENARIO)); }, true);
+		create_engine_.set_current_level_type(level_type::get_enum(cfg["type"].str()).value_or(level_type::type::SCENARIO)); }, true);
 
 	plugins_context_->set_callback("select_era",   [this](const config& cfg) {
 		create_engine_.set_current_era_index(cfg["index"].to_int()); }, true);
@@ -395,7 +395,7 @@ void mp_create_game::pre_show(window& win)
 			"icon", current_level.icon(),
 			"description", current_level.description(),
 			"allow_era_choice", current_level.allow_era_choice(),
-			"type", create_engine_.current_level_type(),
+			"type", level_type::get_string(create_engine_.current_level_type()),
 		};
 	});
 
@@ -403,7 +403,7 @@ void mp_create_game::pre_show(window& win)
 		const std::string id = cfg["id"].str();
 		return config {
 			"index", create_engine_.find_level_by_id(id).second,
-			"type", create_engine_.find_level_by_id(id).first,
+			"type", level_type::get_string(create_engine_.find_level_by_id(id).first),
 		};
 	});
 
@@ -574,7 +574,7 @@ void mp_create_game::update_games_list()
 	display_games_of_type(level_types_[index].first, create_engine_.current_level().id());
 }
 
-void mp_create_game::display_games_of_type(ng::level::TYPE type, const std::string& level)
+void mp_create_game::display_games_of_type(level_type::type type, const std::string& level)
 {
 	create_engine_.set_current_level_type(type);
 
@@ -586,7 +586,7 @@ void mp_create_game::display_games_of_type(ng::level::TYPE type, const std::stri
 		std::map<std::string, string_map> data;
 		string_map item;
 
-		if(type == ng::level::TYPE::CAMPAIGN || type == ng::level::TYPE::SP_CAMPAIGN) {
+		if(type == level_type::type::CAMPAIGN || type == level_type::type::SP_CAMPAIGN) {
 			item["label"] = game->icon();
 			data.emplace("game_icon", item);
 		}
@@ -608,7 +608,7 @@ void mp_create_game::display_games_of_type(ng::level::TYPE type, const std::stri
 		}
 	}
 
-	const bool is_random_map = type == ng::level::TYPE::RANDOM_MAP;
+	const bool is_random_map = type == level_type::type::RANDOM_MAP;
 
 	find_widget<button>(get_window(), "random_map_regenerate", false).set_active(is_random_map);
 	find_widget<button>(get_window(), "random_map_settings", false).set_active(is_random_map);
@@ -644,7 +644,7 @@ void mp_create_game::update_details()
 	styled_widget& players = find_widget<styled_widget>(get_window(), "map_num_players", false);
 	styled_widget& map_size = find_widget<styled_widget>(get_window(), "map_size", false);
 
-	if(create_engine_.current_level_type() == ng::level::TYPE::RANDOM_MAP) {
+	if(create_engine_.current_level_type() == level_type::type::RANDOM_MAP) {
 		// If the current random map doesn't have data, generate it
 		if(create_engine_.generator_assigned() &&
 			create_engine_.current_level().data()["map_data"].empty() &&
@@ -669,11 +669,11 @@ void mp_create_game::update_details()
 
 	show_description(create_engine_.current_level().description());
 
-	switch(create_engine_.current_level_type().v) {
-		case ng::level::TYPE::SCENARIO:
-		case ng::level::TYPE::USER_MAP:
-		case ng::level::TYPE::USER_SCENARIO:
-		case ng::level::TYPE::RANDOM_MAP: {
+	switch(create_engine_.current_level_type()) {
+		case level_type::type::SCENARIO:
+		case level_type::type::USER_MAP:
+		case level_type::type::USER_SCENARIO:
+		case level_type::type::RANDOM_MAP: {
 			ng::scenario* current_scenario = dynamic_cast<ng::scenario*>(&create_engine_.current_level());
 
 			assert(current_scenario);
@@ -694,8 +694,8 @@ void mp_create_game::update_details()
 
 			break;
 		}
-		case ng::level::TYPE::CAMPAIGN:
-		case ng::level::TYPE::SP_CAMPAIGN: {
+		case level_type::type::CAMPAIGN:
+		case level_type::type::SP_CAMPAIGN: {
 			ng::campaign* current_campaign = dynamic_cast<ng::campaign*>(&create_engine_.current_level());
 
 			assert(current_campaign);
@@ -720,6 +720,9 @@ void mp_create_game::update_details()
 
 			break;
 		}
+		case level_type::type::ENUM_MAX:
+			ERR_MP << "Invalid level type provided.\n";
+			break;
 	}
 }
 
@@ -846,16 +849,16 @@ void mp_create_game::post_show(window& window)
 
 	if(get_retval() == retval::OK) {
 		prefs::set_modifications(create_engine_.active_mods());
-		prefs::set_level_type(create_engine_.current_level_type().v);
+		prefs::set_level_type(static_cast<int>(create_engine_.current_level_type()));
 		prefs::set_level(create_engine_.current_level().id());
 		prefs::set_era(create_engine_.current_era().id);
 
 		create_engine_.prepare_for_era_and_mods();
 
-		if(create_engine_.current_level_type() == ng::level::TYPE::CAMPAIGN ||
-			create_engine_.current_level_type() == ng::level::TYPE::SP_CAMPAIGN) {
+		if(create_engine_.current_level_type() == level_type::type::CAMPAIGN ||
+			create_engine_.current_level_type() == level_type::type::SP_CAMPAIGN) {
 			create_engine_.prepare_for_campaign();
-		} else if(create_engine_.current_level_type() == ng::level::TYPE::SCENARIO) {
+		} else if(create_engine_.current_level_type() == level_type::type::SCENARIO) {
 			create_engine_.prepare_for_scenario();
 		} else {
 			// This means define= doesn't work for randomly generated scenarios

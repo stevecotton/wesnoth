@@ -36,7 +36,7 @@ namespace dialogs
 
 class mp_create_game : public modal_dialog, private plugin_executor
 {
-	typedef std::pair<ng::level::TYPE, std::string> level_type_info;
+	typedef std::pair<level_type::type, std::string> level_type_info;
 
 public:
 	mp_create_game(saved_game& state, bool local_mode);
@@ -61,7 +61,7 @@ private:
 	std::vector<level_type_info> level_types_;
 
 	void update_games_list();
-	void display_games_of_type(ng::level::TYPE type, const std::string& level);
+	void display_games_of_type(level_type::type type, const std::string& level);
 
 	void show_generator_settings();
 	void regenerate_random_map();
