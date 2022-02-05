@@ -16,7 +16,6 @@
 #pragma once
 
 #include "gettext.hpp"
-#include "utils/make_enum.hpp"
 #include "map/location.hpp"
 #include "movetype.hpp"
 #include "string_enums/unit_alignments.hpp"

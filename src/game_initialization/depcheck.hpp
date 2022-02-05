@@ -19,7 +19,6 @@
 #include <vector>
 #include "config.hpp"
 #include "gettext.hpp"
-#include "utils/make_enum.hpp"
 
 class game_config_view;
 

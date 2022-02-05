@@ -26,7 +26,6 @@
 #include "gettext.hpp"                  // for _
 #include "gui/dialogs/simple_item_selector.hpp"
 #include "log.hpp"                      // for LOG_STREAM, logger, etc
-#include "utils/make_enum.hpp"                // for bad_enum_cast
 #include "map/label.hpp"
 #include "play_controller.hpp"          // for play_controller
 #include "playturn_network_adapter.hpp"  // for playturn_network_adapter

@@ -57,7 +57,6 @@
 #include "game_events/pump.hpp"         // for queued_event
 #include "preferences/game.hpp"         // for encountered_units
 #include "log.hpp"                      // for LOG_STREAM, logger, etc
-#include "utils/make_enum.hpp"                // for operator<<
 #include "map/map.hpp"                      // for gamemap
 #include "map/label.hpp"
 #include "map/location.hpp"             // for map_location

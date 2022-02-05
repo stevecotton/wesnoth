@@ -30,7 +30,6 @@
 #include "units/animation.hpp"
 #include "units/unit.hpp"
 #include "utils/iterable_pair.hpp"
-#include "utils/make_enum.hpp"
 
 #include "gui/auxiliary/typed_formula.hpp"
 #include "gui/dialogs/loading_screen.hpp"

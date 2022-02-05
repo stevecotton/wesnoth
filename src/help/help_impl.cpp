@@ -28,7 +28,6 @@
 #include "hotkey/hotkey_command.hpp"    // for is_scope_active, etc
 #include "picture.hpp"                    // for get_image, locator
 #include "log.hpp"                      // for LOG_STREAM, logger, etc
-#include "utils/make_enum.hpp"          // for operator<<
 #include "map/map.hpp"                  // for gamemap
 #include "font/standard_colors.hpp"     // for NORMAL_COLOR
 #include "font/sdl_ttf_compat.hpp"
