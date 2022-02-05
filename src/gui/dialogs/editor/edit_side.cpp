@@ -58,9 +58,9 @@ void editor_edit_side::pre_show(window& window)
 
 	controller_group.set_member_states(controller_);
 
-	vision_group.add_member(find_widget<toggle_button>(&window, "vision_all", false, true),    team::SHARE_VISION::ALL);
-	vision_group.add_member(find_widget<toggle_button>(&window, "vision_shroud", false, true), team::SHARE_VISION::SHROUD);
-	vision_group.add_member(find_widget<toggle_button>(&window, "vision_null", false, true),   team::SHARE_VISION::NONE);
+	vision_group.add_member(find_widget<toggle_button>(&window, "vision_all", false, true),    team_shared_vision::type::ALL);
+	vision_group.add_member(find_widget<toggle_button>(&window, "vision_shroud", false, true), team_shared_vision::type::SHROUD);
+	vision_group.add_member(find_widget<toggle_button>(&window, "vision_null", false, true),   team_shared_vision::type::NONE);
 
 	vision_group.set_member_states(share_vision_);
 

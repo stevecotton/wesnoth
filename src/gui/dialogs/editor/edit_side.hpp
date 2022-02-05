@@ -52,8 +52,8 @@ private:
 	side_controller::type& controller_;
 	group<side_controller::type> controller_group;
 
-	team::SHARE_VISION& share_vision_;
-	group<team::SHARE_VISION> vision_group;
+	team_shared_vision::type& share_vision_;
+	group<team_shared_vision::type> vision_group;
 
 	virtual const std::string& window_id() const override;
 };

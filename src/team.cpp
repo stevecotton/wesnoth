@@ -145,7 +145,7 @@ team::team_info::team_info()
 	, is_local(true)
 	, defeat_cond(defeat_condition::type::NO_LEADER_LEFT)
 	, proxy_controller(side_proxy_controller::type::HUMAN)
-	, share_vision(team::SHARE_VISION::ALL)
+	, share_vision(team_shared_vision::type::ALL)
 	, disallow_observers(false)
 	, allow_player(false)
 	, chose_random(false)
@@ -259,21 +259,21 @@ void team::team_info::read(const config& cfg)
 
 	// Share_view and share_maps can't both be enabled,
 	// so share_view overrides share_maps.
-	share_vision = cfg["share_vision"].to_enum<team::SHARE_VISION>(team::SHARE_VISION::ALL);
+	share_vision = team_shared_vision::get_enum(cfg["share_vision"].str()).value_or(team_shared_vision::type::ALL);
 	handle_legacy_share_vision(cfg);
 
-	LOG_NG << "team_info::team_info(...): team_name: " << team_name << ", share_vision: " << share_vision << ".\n";
+	LOG_NG << "team_info::team_info(...): team_name: " << team_name << ", share_vision: " << team_shared_vision::get_string(share_vision) << ".\n";
 }
 
 void team::team_info::handle_legacy_share_vision(const config& cfg)
 {
 	if(cfg.has_attribute("share_view") || cfg.has_attribute("share_maps")) {
 		if(cfg["share_view"].to_bool()) {
-			share_vision = team::SHARE_VISION::ALL;
+			share_vision = team_shared_vision::type::ALL;
 		} else if(cfg["share_maps"].to_bool(true)) {
-			share_vision = team::SHARE_VISION::SHROUD;
+			share_vision = team_shared_vision::type::SHROUD;
 		} else {
-			share_vision = team::SHARE_VISION::NONE;
+			share_vision = team_shared_vision::type::NONE;
 		}
 	}
 }
@@ -310,7 +310,7 @@ void team::team_info::write(config& cfg) const
 	cfg["scroll_to_leader"] = scroll_to_leader;
 	cfg["controller"] = side_controller::get_string(controller);
 	cfg["recruit"] = utils::join(can_recruit);
-	cfg["share_vision"] = share_vision;
+	cfg["share_vision"] = team_shared_vision::get_string(share_vision);
 
 	cfg["color"] = color;
 	cfg["persistent"] = persistent;

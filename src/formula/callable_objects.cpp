@@ -752,7 +752,7 @@ variant team_callable::get_value(const std::string& key) const
 	} else if(key == "color") {
 		return variant(team_.color());
 	} else if(key == "share_vision") {
-		return variant(team_.share_vision().to_string());
+		return variant(team_shared_vision::get_string(team_.share_vision()));
 	} else if(key == "carryover_bonus") {
 		return variant(team_.carryover_bonus(), variant::DECIMAL_VARIANT);
 	} else if(key == "carryover_percentage") {

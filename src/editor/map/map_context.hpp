@@ -45,7 +45,7 @@ struct editor_team_info {
 	int village_support;
 	bool fog;
 	bool shroud;
-	team::SHARE_VISION share_vision;
+	team_shared_vision::type share_vision;
 	side_controller::type controller;
 	bool no_leader;
 	bool hidden;

@@ -18,7 +18,6 @@
 #include "color_range.hpp"
 #include "game_config.hpp"
 #include "game_events/fwd.hpp"
-#include "utils/make_enum.hpp"
 #include "map/location.hpp"
 #include "recall_list_manager.hpp"
 #include "units/ptr.hpp"
@@ -26,6 +25,7 @@
 #include "string_enums/defeat_condition.hpp"
 #include "string_enums/side_controller.hpp"
 #include "string_enums/side_proxy_controller.hpp"
+#include "string_enums/team_shared_vision.hpp"
 
 #include <set>
 
@@ -74,13 +74,6 @@ private:
  */
 class team
 {
-public:
-	MAKE_ENUM(SHARE_VISION,
-		(ALL, "all")
-		(SHROUD, "shroud")
-		(NONE, "none")
-	);
-
 private:
 	struct team_info
 	{
@@ -127,7 +120,7 @@ private:
 		side_proxy_controller::type proxy_controller;	// when controller == HUMAN, the proxy controller determines what input method is actually used.
 							// proxy controller is an interface property, not gamestate. it is not synced, not known to server.
 							// also not saved in save game file
-		SHARE_VISION share_vision;
+		team_shared_vision::type share_vision;
 		bool disallow_observers;
 		bool allow_player;
 		bool chose_random;
@@ -381,17 +374,16 @@ public:
 
 	config to_config() const;
 
-	bool share_maps() const { return info_.share_vision != SHARE_VISION::NONE ; }
-	bool share_view() const { return info_.share_vision == SHARE_VISION::ALL; }
-	SHARE_VISION share_vision() const { return info_.share_vision; }
+	bool share_maps() const { return info_.share_vision != team_shared_vision::type::NONE ; }
+	bool share_view() const { return info_.share_vision == team_shared_vision::type::ALL; }
+	team_shared_vision::type share_vision() const { return info_.share_vision; }
 
 	void set_share_vision(const std::string& vision_status) {
-		info_.share_vision = SHARE_VISION::ALL;
-		info_.share_vision.parse(vision_status);
+		info_.share_vision = team_shared_vision::get_enum(vision_status).value_or(team_shared_vision::type::ALL);
 		clear_caches();
 	}
 
-	void set_share_vision(SHARE_VISION vision_status) {
+	void set_share_vision(team_shared_vision::type vision_status) {
 		info_.share_vision = vision_status;
 		clear_caches();
 	}
