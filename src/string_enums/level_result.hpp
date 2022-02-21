@@ -29,7 +29,6 @@ struct level_result_defines
 	static constexpr const char* const fail = "fail";
 	static constexpr const char* const test_invalid = "test_invalid";
 
-	enum class type { VICTORY, DEFEAT, QUIT, OBSERVER_END, RESULT_NOT_SET, PASS, FAIL, TEST_INVALID, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ victory, defeat, quit, observer_end, result_not_set, pass, fail, test_invalid };
+	ENUM_AND_ARRAY(victory, defeat, quit, observer_end, result_not_set, pass, fail, test_invalid)
 };
 using level_result = string_enums::enum_base<level_result_defines>;

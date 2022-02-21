@@ -65,7 +65,7 @@ config initial_level_config(saved_game& state)
 	}
 
 	config& scenario = state.get_starting_point();
-	if(state.mp_settings().saved_game == saved_game_mode::type::NO) {
+	if(state.mp_settings().saved_game == saved_game_mode::type::no) {
 		state.set_random_seed();
 	}
 
@@ -99,7 +99,7 @@ config initial_level_config(saved_game& state)
 	const config& era_cfg = game_config.find_child("era", "id", era);
 
 	if(!era_cfg) {
-		if(params.saved_game == saved_game_mode::type::NO) {
+		if(params.saved_game == saved_game_mode::type::no) {
 			throw config::error(VGETTEXT("Cannot find era '$era'", {{"era", era}}));
 		}
 

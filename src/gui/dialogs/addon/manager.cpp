@@ -420,7 +420,7 @@ void addon_manager::pre_show(window& window)
 			if(order_it != all_orders_.end()) {
 				int index = 2 * (std::distance(all_orders_.begin(), order_it));
 				addon_list::addon_sort_func func;
-				if(saved_order_direction == sort_order::type::ASCENDING) {
+				if(saved_order_direction == sort_order::type::ascending) {
 					func = order_it->sort_func_asc;
 				} else {
 					func = order_it->sort_func_desc;
@@ -706,9 +706,9 @@ void addon_manager::order_addons()
 {
 	const menu_button& order_menu = find_widget<const menu_button>(get_window(), "order_dropdown", false);
 	const addon_order& order_struct = all_orders_.at(order_menu.get_value() / 2);
-	sort_order::type order = order_menu.get_value() % 2 == 0 ? sort_order::type::ASCENDING : sort_order::type::DESCENDING;
+	sort_order::type order = order_menu.get_value() % 2 == 0 ? sort_order::type::ascending : sort_order::type::descending;
 	addon_list::addon_sort_func func;
-	if(order == sort_order::type::ASCENDING) {
+	if(order == sort_order::type::ascending) {
 		func = order_struct.sort_func_asc;
 	} else {
 		func = order_struct.sort_func_desc;
@@ -725,7 +725,7 @@ void addon_manager::on_order_changed(unsigned int sort_column, sort_order::type 
 	auto order_it = std::find_if(all_orders_.begin(), all_orders_.end(),
 		[sort_column](const addon_order& order) {return order.column_index == static_cast<int>(sort_column);});
 	int index = 2 * (std::distance(all_orders_.begin(), order_it));
-	if(order == sort_order::type::DESCENDING) {
+	if(order == sort_order::type::descending) {
 		++index;
 	}
 	order_menu.set_value(index);

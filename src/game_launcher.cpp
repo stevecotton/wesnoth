@@ -434,7 +434,7 @@ bool game_launcher::init_lua_script()
 void game_launcher::set_test(const std::string& id)
 {
 	state_.clear();
-	state_.classification().type = campaign_type::type::TEST;
+	state_.classification().type = campaign_type::type::test;
 	state_.classification().campaign_define = "TEST";
 	state_.classification().era_id = "era_default";
 
@@ -553,11 +553,11 @@ game_launcher::unit_test_result game_launcher::single_unit_test()
 {
 	game_config_manager::get()->load_game_config_for_game(state_.classification(), state_.get_scenario_id());
 
-	level_result::type game_res = level_result::type::FAIL;
+	level_result::type game_res = level_result::type::fail;
 	try {
 		campaign_controller ccontroller(state_, true);
 		game_res = ccontroller.play_game();
-		if(game_res == level_result::type::FAIL) {
+		if(game_res == level_result::type::fail) {
 			if(lg::broke_strict()) {
 				return unit_test_result::BROKE_STRICT_TEST_FAIL;
 			} else {
@@ -604,13 +604,13 @@ game_launcher::unit_test_result game_launcher::single_unit_test()
 
 game_launcher::unit_test_result game_launcher::pass_victory_or_defeat(level_result::type res)
 {
-	if(res == level_result::type::DEFEAT) {
+	if(res == level_result::type::defeat) {
 		if(lg::broke_strict()) {
 			return unit_test_result::BROKE_STRICT_TEST_FAIL_BY_DEFEAT;
 		} else {
 			return unit_test_result::TEST_FAIL_BY_DEFEAT;
 		}
-	} else if(res == level_result::type::VICTORY) {
+	} else if(res == level_result::type::victory) {
 		if(lg::broke_strict()) {
 			return unit_test_result::BROKE_STRICT_TEST_PASS_BY_VICTORY;
 		} else {
@@ -645,7 +645,7 @@ bool game_launcher::play_render_image_mode()
 		return true;
 	}
 
-	state_.classification().type = campaign_type::type::MULTIPLAYER;
+	state_.classification().type = campaign_type::type::multiplayer;
 	DBG_GENERAL << "Current campaign type: " << campaign_type::get_string(state_.classification().type) << std::endl;
 
 	try {
@@ -753,7 +753,7 @@ bool game_launcher::load_game()
 bool game_launcher::new_campaign()
 {
 	state_.clear();
-	state_.classification().type = campaign_type::type::SCENARIO;
+	state_.classification().type = campaign_type::type::scenario;
 	play_replay_ = false;
 
 	return sp::select_campaign(state_, jump_to_campaign_);

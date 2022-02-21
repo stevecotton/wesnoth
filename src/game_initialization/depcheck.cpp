@@ -70,9 +70,9 @@ manager::manager(const game_config_view& gamecfg, bool mp)
 	DBG_MP << "Initializing the dependency manager" << std::endl;
 
 	for(const config& cfg : gamecfg.child_range("modification")) {
-		component_availability::type type = component_availability::get_enum(cfg["type"].str()).value_or(component_availability::type::HYBRID);
+		component_availability::type type = component_availability::get_enum(cfg["type"].str()).value_or(component_availability::type::hybrid);
 
-		if((type != component_availability::type::MP || mp) && (type != component_availability::type::SP || !mp)) {
+		if((type != component_availability::type::mp || mp) && (type != component_availability::type::sp || !mp)) {
 			config info;
 			info["id"] = cfg["id"];
 			info["name"] = cfg["name"];
@@ -86,9 +86,9 @@ manager::manager(const game_config_view& gamecfg, bool mp)
 	}
 
 	for(const config& cfg : gamecfg.child_range("era")) {
-		component_availability::type type = component_availability::get_enum(cfg["type"].str()).value_or(component_availability::type::MP);
+		component_availability::type type = component_availability::get_enum(cfg["type"].str()).value_or(component_availability::type::mp);
 
-		if((type != component_availability::type::MP || mp) && (type != component_availability::type::SP || !mp)) {
+		if((type != component_availability::type::mp || mp) && (type != component_availability::type::sp || !mp)) {
 			config info;
 			info["id"] = cfg["id"];
 			info["name"] = cfg["name"];

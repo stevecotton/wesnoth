@@ -24,7 +24,6 @@ struct team_shared_vision_defines
 	static constexpr const char* const shroud = "shroud";
 	static constexpr const char* const none = "none";
 
-	enum class type { ALL, SHROUD, NONE, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ all, shroud, none };
+	ENUM_AND_ARRAY(all, shroud, none)
 };
 using team_shared_vision = string_enums::enum_base<team_shared_vision_defines>;

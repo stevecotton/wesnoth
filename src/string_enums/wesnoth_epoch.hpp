@@ -25,7 +25,6 @@ struct wesnoth_epoch_defines
 	static constexpr const char* const before_fall = "BF";
 	static constexpr const char* const after_fall = "AF";
 
-	enum class type { BEFORE_WESNOTH, WESNOTH, BEFORE_FALL, AFTER_FALL, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ before_wesnoth, wesnoth, before_fall, after_fall };
+	ENUM_AND_ARRAY(before_wesnoth, wesnoth, before_fall, after_fall)
 };
 using wesnoth_epoch = string_enums::enum_base<wesnoth_epoch_defines>;

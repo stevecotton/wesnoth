@@ -348,15 +348,15 @@ unit_animation::unit_animation(const config& cfg,const std::string& frame_string
 
 	for(const auto& h : utils::split(cfg["hits"])) {
 		if(h == "yes" || h == attack_result::hit) {
-			hits_.push_back(attack_result::type::HIT);
+			hits_.push_back(attack_result::type::hit);
 		}
 
 		if(h == "no" || h == attack_result::miss) {
-			hits_.push_back(attack_result::type::MISS);
+			hits_.push_back(attack_result::type::miss);
 		}
 
 		if(h == "yes" || h == attack_result::kill ) {
-			hits_.push_back(attack_result::type::KILL);
+			hits_.push_back(attack_result::type::kill);
 		}
 	}
 
@@ -551,8 +551,8 @@ void unit_animation::fill_initial_animations(std::vector<unit_animation>& animat
 		animations.back().event_ = { "defend" };
 		animations.back().unit_anim_.override(0, animations.back().unit_anim_.get_animation_duration(),
 			particle::NO_CYCLE, "", "0.0,0.5:75,0.0:75,0.5:75,0.0", {255,0,0});
-		animations.back().hits_.push_back(attack_result::type::HIT);
-		animations.back().hits_.push_back(attack_result::type::KILL);
+		animations.back().hits_.push_back(attack_result::type::hit);
+		animations.back().hits_.push_back(attack_result::type::kill);
 
 		animations.push_back(base);
 		animations.back().event_ = { "defend" };

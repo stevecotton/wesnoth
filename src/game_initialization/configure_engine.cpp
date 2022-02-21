@@ -152,7 +152,7 @@ bool configure_engine::shuffle_sides_default() const
 
 random_faction_mode::type configure_engine::random_faction_mode_default() const
 {
-	return random_faction_mode::get_enum(preferences::random_faction_mode()).value_or(random_faction_mode::type::INDEPENDENT);
+	return random_faction_mode::get_enum(preferences::random_faction_mode()).value_or(random_faction_mode::type::independent);
 }
 
 void configure_engine::set_options(const config& cfg)

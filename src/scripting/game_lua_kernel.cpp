@@ -269,7 +269,7 @@ static int impl_add_animation(lua_State* L)
 	std::string which = luaL_checkstring(L, 3);
 
 	std::string hits_str = luaL_checkstring(L, 4);
-	attack_result::type hits = attack_result::get_enum(hits_str).value_or(attack_result::type::INVALID);
+	attack_result::type hits = attack_result::get_enum(hits_str).value_or(attack_result::type::invalid);
 
 	map_location dest;
 	int v1 = 0, v2 = 0;
@@ -1292,7 +1292,7 @@ int game_lua_kernel::impl_game_config_get(lua_State *L)
 	const game_classification & classification = play_controller_.get_classification();
 
 	return_string_attrib_deprecated("campaign_type", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.type instead", campaign_type::get_string(classification.type));
-	if(classification.type==campaign_type::type::MULTIPLAYER) {
+	if(classification.type==campaign_type::type::multiplayer) {
 		return_cfgref_attrib_deprecated("mp_settings", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.mp_settings instead", mp_settings.to_config());
 		return_cfgref_attrib_deprecated("era", "wesnoth.game_config", INDEFINITE, "1.17", "Use wesnoth.scenario.era instead",
 			game_config_manager::get()->game_config().find_child("era","id",classification.era_id));
@@ -1460,7 +1460,7 @@ static int impl_mp_settings_get(lua_State* L)
 		return_cfgref_attrib("options", settings.options);
 		if(strcmp(m, "savegame") == 0) {
 			auto savegame = settings.saved_game;
-			if(savegame == saved_game_mode::type::NO) {
+			if(savegame == saved_game_mode::type::no) {
 				lua_pushboolean(L, false);
 			} else {
 				lua_push(L, saved_game_mode::get_string(savegame));

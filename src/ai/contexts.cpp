@@ -1032,11 +1032,11 @@ double readonly_context_impl::power_projection(const map_location& loc, const mo
 			// Considering the unit location would be too slow, we only apply the bonus granted by the global ToD
 			const int lawful_bonus = resources::tod_manager->get_time_of_day(attack_turn).lawful_bonus;
 			int tod_modifier = 0;
-			if(un.alignment() == unit_alignments::type::LAWFUL) {
+			if(un.alignment() == unit_alignments::type::lawful) {
 				tod_modifier = lawful_bonus;
-			} else if(un.alignment() == unit_alignments::type::CHAOTIC) {
+			} else if(un.alignment() == unit_alignments::type::chaotic) {
 				tod_modifier = -lawful_bonus;
-			} else if(un.alignment() == unit_alignments::type::LIMINAL) {
+			} else if(un.alignment() == unit_alignments::type::liminal) {
 				tod_modifier = -(std::abs(lawful_bonus));
 			}
 

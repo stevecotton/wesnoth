@@ -138,7 +138,7 @@ void target_unit_goal::add_targets(std::back_insert_iterator< std::vector< targe
 	for (const unit &u : resources::gameboard->units()) {
 		if (ufilt( u )) {
 			LOG_AI_GOAL << "found explicit target unit at ... " << u.get_location() << " with value: " << value() << "\n";
-			*target_list = target(u.get_location(), value(), ai_target::type::XPLICIT);
+			*target_list = target(u.get_location(), value(), ai_target::type::xplicit);
 		}
 	}
 
@@ -180,7 +180,7 @@ void target_location_goal::add_targets(std::back_insert_iterator< std::vector< t
 	for (const map_location &loc : items)
 	{
 		LOG_AI_GOAL << "found explicit target location ... " << loc << " with value: " << value() << std::endl;
-		*target_list = target(loc, value(), ai_target::type::XPLICIT);
+		*target_list = target(loc, value(), ai_target::type::xplicit);
 	}
 
 }
@@ -272,7 +272,7 @@ void protect_goal::add_targets(std::back_insert_iterator< std::vector< target >>
 				DBG_AI_GOAL << "side " << get_side() << ": in " << goal_type << ": found threat target. " << u.get_location() << " is a threat to "<< loc << '\n';
 				*target_list = target(u.get_location(),
 					value_ * static_cast<double>(radius_ - distance) /
-					radius_, ai_target::type::THREAT);
+					radius_, ai_target::type::threat);
 			}
 		}
 	}

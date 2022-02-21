@@ -27,7 +27,6 @@ struct level_type_defines
 	static constexpr const char* const campaign = "campaign";
 	static constexpr const char* const sp_campaign = "sp_campaign";
 
-	enum class type { SCENARIO, USER_MAP, USER_SCENARIO, RANDOM_MAP, CAMPAIGN, SP_CAMPAIGN, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ scenario, user_map, user_scenario, random_map, campaign, sp_campaign };
+	ENUM_AND_ARRAY(scenario, user_map, user_scenario, random_map, campaign, sp_campaign)
 };
 using level_type = string_enums::enum_base<level_type_defines>;

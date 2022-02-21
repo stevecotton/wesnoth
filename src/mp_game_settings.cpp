@@ -54,8 +54,8 @@ mp_game_settings::mp_game_settings() :
 	allow_observers(true),
 	private_replay(false),
 	shuffle_sides(false),
-	saved_game(saved_game_mode::type::NO),
-	mode(random_faction_mode::type::INDEPENDENT),
+	saved_game(saved_game_mode::type::no),
+	mode(random_faction_mode::type::independent),
 	options(),
 	addons()
 {}
@@ -85,8 +85,8 @@ mp_game_settings::mp_game_settings(const config& cfg)
 	, allow_observers(cfg["observer"].to_bool())
 	, private_replay(cfg["private_replay"].to_bool())
 	, shuffle_sides(cfg["shuffle_sides"].to_bool())
-	, saved_game(saved_game_mode::get_enum(cfg["savegame"].str()).value_or(saved_game_mode::type::NO))
-	, mode(random_faction_mode::get_enum(cfg["random_faction_mode"].str()).value_or(random_faction_mode::type::INDEPENDENT))
+	, saved_game(saved_game_mode::get_enum(cfg["savegame"].str()).value_or(saved_game_mode::type::no))
+	, mode(random_faction_mode::get_enum(cfg["random_faction_mode"].str()).value_or(random_faction_mode::type::independent))
 	, options(cfg.child_or_empty("options"))
 	, addons()
 {

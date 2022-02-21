@@ -292,7 +292,7 @@ level_result::type playsingle_controller::play_scenario(const config& level)
 			saved_game_.set_snapshot(config());
 
 			// this is probably only a story scenario, i.e. has its endlevel in the prestart event
-			return level_result::type::VICTORY;
+			return level_result::type::victory;
 		}
 
 		if(linger_) {
@@ -303,7 +303,7 @@ level_result::type playsingle_controller::play_scenario(const config& level)
 				persist_.end_transaction();
 			}
 
-			return level_result::type::VICTORY;
+			return level_result::type::victory;
 		}
 
 		pump().fire(is_victory ? "local_victory" : "local_defeat");
@@ -320,7 +320,7 @@ level_result::type playsingle_controller::play_scenario(const config& level)
 
 		if(is_observer()) {
 			gui2::show_transient_message(_("Game Over"), _("The game is over."));
-			return level_result::type::OBSERVER_END;
+			return level_result::type::observer_end;
 		}
 
 		// If we're a player, and the result is victory/defeat, then send
@@ -349,9 +349,9 @@ level_result::type playsingle_controller::play_scenario(const config& level)
 
 		persist_.end_transaction();
 
-		level_result::type res = level_result::get_enum(end_level.test_result).value_or(level_result::type::TEST_INVALID);
-		if(res == level_result::type::RESULT_NOT_SET) {
-			return is_victory ? level_result::type::VICTORY : level_result::type::DEFEAT;
+		level_result::type res = level_result::get_enum(end_level.test_result).value_or(level_result::type::test_invalid);
+		if(res == level_result::type::result_not_set) {
+			return is_victory ? level_result::type::victory : level_result::type::defeat;
 		} else {
 			return res;
 		}
@@ -373,7 +373,7 @@ level_result::type playsingle_controller::play_scenario(const config& level)
 		}
 
 		if(dynamic_cast<const ingame_wesnothd_error*>(&e)) {
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} else {
 			throw;
 		}

@@ -153,7 +153,7 @@ public:
 
 	// Manipulator from playturn
 
-	void side_drop_to (int side_num, side_controller::type ctrl, side_proxy_controller::type proxy = side_proxy_controller::type::HUMAN);
+	void side_drop_to (int side_num, side_controller::type ctrl, side_proxy_controller::type proxy = side_proxy_controller::type::human);
 	void side_change_controller (int side_num, bool is_local, const std::string& pname, const std::string& controller_type);
 
 	// Manipulator from actionwml

@@ -35,7 +35,7 @@ const std::string DEFAULT_DIFFICULTY("NORMAL");
 game_classification::game_classification(const config& cfg)
 	: label(cfg["label"])
 	, version(cfg["version"])
-	, type(campaign_type::get_enum(cfg["campaign_type"].str()).value_or(campaign_type::type::SCENARIO))
+	, type(campaign_type::get_enum(cfg["campaign_type"].str()).value_or(campaign_type::type::scenario))
 	, campaign_define(cfg["campaign_define"])
 	, campaign_xtra_defines(utils::split(cfg["campaign_extra_defines"]))
 	, scenario_define(cfg["scenario_define"])

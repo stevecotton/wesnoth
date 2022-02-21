@@ -24,7 +24,6 @@ struct conditional_type_defines
 	static constexpr const char* const filter_or = "or";
 	static constexpr const char* const filter_not = "not";
 
-	enum class type { FILTER_AND, FILTER_OR, FILTER_NOT, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ filter_and, filter_or, filter_not };
+	ENUM_AND_ARRAY(filter_and, filter_or, filter_not)
 };
 using conditional_type = string_enums::enum_base<conditional_type_defines>;

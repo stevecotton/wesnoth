@@ -24,7 +24,6 @@ struct side_proxy_controller_defines
 	static constexpr const char* const human = "human";
 	static constexpr const char* const ai = "ai";
 
-	enum class type { IDLE, HUMAN, AI, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ idle, human, ai };
+	ENUM_AND_ARRAY(idle, human, ai)
 };
 using side_proxy_controller = string_enums::enum_base<side_proxy_controller_defines>;

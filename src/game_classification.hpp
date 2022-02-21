@@ -66,21 +66,21 @@ public:
 
 	bool is_scenario() const
 	{
-		return type == campaign_type::type::SCENARIO;
+		return type == campaign_type::type::scenario;
 	}
 
 	bool is_multiplayer() const
 	{
-		return type == campaign_type::type::MULTIPLAYER;
+		return type == campaign_type::type::multiplayer;
 	}
 
 	bool is_test() const
 	{
-		return type == campaign_type::type::TEST;
+		return type == campaign_type::type::test;
 	}
 
 	bool is_tutorial() const
 	{
-		return type == campaign_type::type::TUTORIAL;
+		return type == campaign_type::type::tutorial;
 	}
 };

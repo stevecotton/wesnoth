@@ -74,7 +74,7 @@ void campaign_controller::show_carryover_message(
 
 	if(obs) {
 		title = _("Scenario Report");
-	} else if(res == level_result::type::VICTORY) {
+	} else if(res == level_result::type::victory) {
 		title = _("Victory");
 		report << "<b>" << _("You have emerged victorious!") << "</b>";
 	} else {
@@ -193,8 +193,8 @@ level_result::type campaign_controller::playsingle_scenario(end_level_data &end_
 	}
 
 	level_result::type res = playcontroller.play_scenario(starting_point);
-	if(res == level_result::type::QUIT) {
-		return level_result::type::QUIT;
+	if(res == level_result::type::quit) {
+		return level_result::type::quit;
 	}
 
 	if(!is_unit_test_) {
@@ -222,13 +222,13 @@ level_result::type campaign_controller::playmp_scenario(end_level_data &end_leve
 	level_result::type res = playcontroller.play_scenario(state_.get_starting_point());
 
 	// Check if the player started as mp client and changed to host
-	if(res == level_result::type::QUIT) {
-		return level_result::type::QUIT;
+	if(res == level_result::type::quit) {
+		return level_result::type::quit;
 	}
 
 	end_level = playcontroller.get_end_level_data();
 
-	if(res != level_result::type::OBSERVER_END) {
+	if(res != level_result::type::observer_end) {
 		// We need to call this before linger because it prints the defeated/victory message.
 		//(we want to see that message before entering the linger mode)
 		show_carryover_message(playcontroller, end_level, res);
@@ -257,7 +257,7 @@ level_result::type campaign_controller::play_game()
 	state_.expand_scenario();
 
 	while(state_.valid()) {
-		level_result::type res = level_result::type::VICTORY;
+		level_result::type res = level_result::type::victory;
 		end_level_data end_level;
 
 		try {
@@ -286,34 +286,34 @@ level_result::type campaign_controller::play_game()
 			}
 		} catch(const leavegame_wesnothd_error&) {
 			LOG_NG << "The game was remotely ended\n";
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} catch(const game::load_game_failed& e) {
 			gui2::show_error_message(_("The game could not be loaded: ") + e.message);
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} catch(const quit_game_exception&) {
 			LOG_NG << "The game was aborted\n";
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} catch(const game::game_error& e) {
 			gui2::show_error_message(_("Error while playing the game: ") + e.message);
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} catch(const incorrect_map_format_error& e) {
 			gui2::show_error_message(_("The game map could not be loaded: ") + e.message);
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} catch(const mapgen_exception& e) {
 			gui2::show_error_message(_("Map generator error: ") + e.message);
 		} catch(const config::error& e) {
 			gui2::show_error_message(_("Error while reading the WML: ") + e.message);
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		} catch(const wml_exception& e) {
 			e.show();
-			return level_result::type::QUIT;
+			return level_result::type::quit;
 		}
 
 		if(is_unit_test_) {
 			return res;
 		}
 
-		if(res == level_result::type::QUIT) {
+		if(res == level_result::type::quit) {
 			return res;
 		}
 
@@ -338,7 +338,7 @@ level_result::type campaign_controller::play_game()
 		// If there is no next scenario we're done now.
 		if(state_.get_scenario_id().empty()) {
 			// Don't show The End for multiplayer scenarios.
-			if(res == level_result::type::VICTORY && !state_.classification().is_normal_mp_game()) {
+			if(res == level_result::type::victory && !state_.classification().is_normal_mp_game()) {
 				preferences::add_completed_campaign(
 					state_.classification().campaign, state_.classification().difficulty);
 
@@ -348,7 +348,7 @@ level_result::type campaign_controller::play_game()
 			}
 
 			return res;
-		} else if(res == level_result::type::OBSERVER_END && mp_info_ && !mp_info_->is_host) {
+		} else if(res == level_result::type::observer_end && mp_info_ && !mp_info_->is_host) {
 			const int dlg_res = gui2::show_message(_("Game Over"),
 				_("This scenario has ended. Do you want to continue the campaign?"),
 				gui2::dialogs::message::yes_no_buttons);
@@ -360,8 +360,8 @@ level_result::type campaign_controller::play_game()
 
 		if(mp_info_ && !mp_info_->is_host) {
 			// Opens join game dialog to get a new gamestate.
-			if(!mp::goto_mp_wait(res == level_result::type::OBSERVER_END)) {
-				return level_result::type::QUIT;
+			if(!mp::goto_mp_wait(res == level_result::type::observer_end)) {
+				return level_result::type::quit;
 			}
 
 			// The host should send the complete savegame now that also contains the carryover sides start.
@@ -379,8 +379,8 @@ level_result::type campaign_controller::play_game()
 				const bool is_mp = state_.classification().is_normal_mp_game();
 				state_.mp_settings().num_turns = starting_pos["turns"].to_int(-1);
 
-				if(state_.mp_settings().saved_game == saved_game_mode::type::MIDGAME) {
-					state_.mp_settings().saved_game = saved_game_mode::type::SCENARIO_START;
+				if(state_.mp_settings().saved_game == saved_game_mode::type::midgame) {
+					state_.mp_settings().saved_game = saved_game_mode::type::scenaro_start;
 				}
 
 				state_.mp_settings().use_map_settings = starting_pos["force_lock_settings"].to_bool(!is_mp);
@@ -390,7 +390,7 @@ level_result::type campaign_controller::play_game()
 				if(!connect_engine.can_start_game() || (game_config::debug && state_.classification().is_multiplayer())) {
 					// Opens staging dialog to allow users to make an adjustments for scenario.
 					if(!mp::goto_mp_staging(connect_engine)) {
-						return level_result::type::QUIT;
+						return level_result::type::quit;
 					}
 				} else {
 					// Start the next scenario immediately.
@@ -422,7 +422,7 @@ level_result::type campaign_controller::play_game()
 		message = utils::interpolate_variables_into_string(message, &symbols);
 
 		gui2::show_error_message(message);
-		return level_result::type::QUIT;
+		return level_result::type::quit;
 	}
 
 	if(state_.classification().is_scenario()) {
@@ -431,5 +431,5 @@ level_result::type campaign_controller::play_game()
 		}
 	}
 
-	return level_result::type::VICTORY;
+	return level_result::type::victory;
 }

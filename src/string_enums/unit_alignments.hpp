@@ -25,7 +25,6 @@ struct unit_alignments_defines
 	static constexpr const char* const chaotic = "chaotic";
 	static constexpr const char* const liminal = "liminal";
 
-	enum class type { LAWFUL, NEUTRAL, CHAOTIC, LIMINAL, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ lawful, neutral, chaotic, liminal };
+	ENUM_AND_ARRAY(lawful, neutral, chaotic, liminal)
 };
 using unit_alignments = string_enums::enum_base<unit_alignments_defines>;

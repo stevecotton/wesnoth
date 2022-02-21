@@ -140,7 +140,7 @@ unit_type::unit_type(defaut_ctor_t, const config& cfg, const std::string & paren
 	, do_not_list_()
 	, advances_to_()
 	, experience_needed_(0)
-	, alignment_(unit_alignments::type::NEUTRAL)
+	, alignment_(unit_alignments::type::neutral)
 	, movement_type_()
 	, possible_traits_()
 	, genders_()
@@ -270,7 +270,7 @@ void unit_type::build_help_index(
 
 	adjust_profile(profile_);
 
-	alignment_ = unit_alignments::get_enum(cfg["alignment"].str()).value_or(unit_alignments::type::NEUTRAL);
+	alignment_ = unit_alignments::get_enum(cfg["alignment"].str()).value_or(unit_alignments::type::neutral);
 
 	for(int i = 0; i < 2; ++i) {
 		if(gender_types_[i]) {
@@ -348,7 +348,7 @@ void unit_type::build_help_index(
 			possible_traits_.clear();
 		} else {
 			for(const config& t : race_->additional_traits()) {
-				if(alignment_ != unit_alignments::type::NEUTRAL || t["id"] != "fearless")
+				if(alignment_ != unit_alignments::type::neutral || t["id"] != "fearless")
 					possible_traits_.add_child("trait", t);
 			}
 		}

@@ -312,9 +312,9 @@ bool mp_join_game::show_flg_select(int side_num, bool first_time)
 		const bool is_mp = state_.classification().is_normal_mp_game();
 		const bool lock_settings = get_scenario()["force_lock_settings"].to_bool(!is_mp);
 		const bool use_map_settings = level_.child("multiplayer")["mp_use_map_settings"].to_bool();
-		const saved_game_mode::type saved_game = saved_game_mode::get_enum(level_.child("multiplayer")["savegame"].str()).value_or(saved_game_mode::type::NO);
+		const saved_game_mode::type saved_game = saved_game_mode::get_enum(level_.child("multiplayer")["savegame"].str()).value_or(saved_game_mode::type::no);
 
-		ng::flg_manager flg(era_factions, side_choice, lock_settings, use_map_settings, saved_game == saved_game_mode::type::MIDGAME);
+		ng::flg_manager flg(era_factions, side_choice, lock_settings, use_map_settings, saved_game == saved_game_mode::type::midgame);
 
 		{
 			gui2::dialogs::faction_select flg_dialog(flg, color, side_num);

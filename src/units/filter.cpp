@@ -251,16 +251,14 @@ bool unit_filter_compound::matches(const unit_filter_args& args) const
 	// Handle [and], [or], and [not] with in-order precedence
 	for(const auto & filter : cond_children_) {
 		switch (filter.first) {
-		case conditional_type::type::FILTER_AND:
+		case conditional_type::type::filter_and:
 			res = res && filter.second.matches(args);
 			break;
-		case conditional_type::type::FILTER_OR:
+		case conditional_type::type::filter_or:
 			res = res || filter.second.matches(args);
 			break;
-		case conditional_type::type::FILTER_NOT:
+		case conditional_type::type::filter_not:
 			res = res && !filter.second.matches(args);
-			break;
-		case conditional_type::type::ENUM_MAX:
 			break;
 		}
 	}

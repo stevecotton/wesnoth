@@ -73,9 +73,9 @@ std::size_t plugins_manager::size() {
 plugin_manager_status::type plugins_manager::get_status(std::size_t idx) {
 	if (idx < plugins_.size()) {
 		if (!plugins_[idx].thread) {
-			return plugin_manager_status::type::NOT_CREATED;
+			return plugin_manager_status::type::not_created;
 		} else {
-			return plugins_[idx].thread->is_running() ? plugin_manager_status::type::RUNNING : plugin_manager_status::type::STOPPED;
+			return plugins_[idx].thread->is_running() ? plugin_manager_status::type::running : plugin_manager_status::type::stopped;
 		}
 	}
 	throw std::runtime_error("index out of bounds");
@@ -208,7 +208,7 @@ bool plugins_manager::any_running()
 {
 
 	for (std::size_t i = 0; i < size(); ++i) {
-		if (plugin_manager_status::type::RUNNING == get_status(i)) {
+		if (plugin_manager_status::type::running == get_status(i)) {
 			return true;
 		}
 	}

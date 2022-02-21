@@ -244,13 +244,13 @@ public:
 	const std::string& color() const { return info_.color; }
 	/** @note Call display::reinit_flag_for_side() after calling this */
 	void set_color(const std::string& color) { info_.color = color; }
-	bool is_empty() const { return info_.controller == side_controller::type::NONE; }
+	bool is_empty() const { return info_.controller == side_controller::type::none; }
 
 	bool is_local() const { return !is_empty() && info_.is_local; }
 	bool is_network() const { return !is_empty() && !info_.is_local; }
 
-	bool is_human() const { return info_.controller == side_controller::type::HUMAN; }
-	bool is_ai() const { return info_.controller == side_controller::type::AI; }
+	bool is_human() const { return info_.controller == side_controller::type::human; }
+	bool is_ai() const { return info_.controller == side_controller::type::ai; }
 
 	bool is_local_human() const {  return is_human() && is_local(); }
 	bool is_local_ai() const { return is_ai() && is_local(); }
@@ -258,28 +258,28 @@ public:
 	bool is_network_ai() const { return is_ai() && is_network(); }
 
 	void set_local(bool local) { info_.is_local = local; }
-	void make_human() { info_.controller = side_controller::type::HUMAN; }
-	void make_ai() { info_.controller = side_controller::type::AI; }
+	void make_human() { info_.controller = side_controller::type::human; }
+	void make_ai() { info_.controller = side_controller::type::ai; }
 	void change_controller(const std::string& new_controller) {
-		info_.controller = side_controller::get_enum(new_controller).value_or(side_controller::type::AI);
+		info_.controller = side_controller::get_enum(new_controller).value_or(side_controller::type::ai);
 	}
 	void change_controller(side_controller::type controller) { info_.controller = controller; }
 	void change_controller_by_wml(const std::string& new_controller);
 
 	side_proxy_controller::type proxy_controller() const { return info_.proxy_controller; }
-	bool is_proxy_human() const { return info_.proxy_controller == side_proxy_controller::type::HUMAN; }
-	bool is_droid() const { return info_.proxy_controller == side_proxy_controller::type::AI; }
-	bool is_idle() const { return info_.proxy_controller == side_proxy_controller::type::IDLE; }
+	bool is_proxy_human() const { return info_.proxy_controller == side_proxy_controller::type::human; }
+	bool is_droid() const { return info_.proxy_controller == side_proxy_controller::type::ai; }
+	bool is_idle() const { return info_.proxy_controller == side_proxy_controller::type::idle; }
 
-	void make_droid() { info_.proxy_controller = side_proxy_controller::type::AI; }
-	void make_idle() { info_.proxy_controller = side_proxy_controller::type::IDLE; }
-	void make_proxy_human() { info_.proxy_controller = side_proxy_controller::type::HUMAN; }
+	void make_droid() { info_.proxy_controller = side_proxy_controller::type::ai; }
+	void make_idle() { info_.proxy_controller = side_proxy_controller::type::idle; }
+	void make_proxy_human() { info_.proxy_controller = side_proxy_controller::type::human; }
 	void clear_proxy() { make_proxy_human(); }
 
 	void change_proxy(side_proxy_controller::type proxy) { info_.proxy_controller = proxy; }
 
-	void toggle_droid() { info_.proxy_controller = (info_.proxy_controller == side_proxy_controller::type::AI  ) ? side_proxy_controller::type::HUMAN : side_proxy_controller::type::AI;   }
-	void toggle_idle()  { info_.proxy_controller = (info_.proxy_controller == side_proxy_controller::type::IDLE) ? side_proxy_controller::type::HUMAN : side_proxy_controller::type::IDLE; }
+	void toggle_droid() { info_.proxy_controller = (info_.proxy_controller == side_proxy_controller::type::ai  ) ? side_proxy_controller::type::human : side_proxy_controller::type::ai;   }
+	void toggle_idle()  { info_.proxy_controller = (info_.proxy_controller == side_proxy_controller::type::idle) ? side_proxy_controller::type::human : side_proxy_controller::type::idle; }
 
 	const std::string& team_name() const { return info_.team_name; }
 	const t_string &user_team_name() const { return info_.user_team_name; }
@@ -374,12 +374,12 @@ public:
 
 	config to_config() const;
 
-	bool share_maps() const { return info_.share_vision != team_shared_vision::type::NONE ; }
-	bool share_view() const { return info_.share_vision == team_shared_vision::type::ALL; }
+	bool share_maps() const { return info_.share_vision != team_shared_vision::type::none ; }
+	bool share_view() const { return info_.share_vision == team_shared_vision::type::all; }
 	team_shared_vision::type share_vision() const { return info_.share_vision; }
 
 	void set_share_vision(const std::string& vision_status) {
-		info_.share_vision = team_shared_vision::get_enum(vision_status).value_or(team_shared_vision::type::ALL);
+		info_.share_vision = team_shared_vision::get_enum(vision_status).value_or(team_shared_vision::type::all);
 		clear_caches();
 	}
 

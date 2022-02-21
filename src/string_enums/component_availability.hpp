@@ -24,7 +24,6 @@ struct component_availability_defines
 	static constexpr const char* const mp = "mp";
 	static constexpr const char* const hybrid = "hybrid";
 
-	enum class type { SP, MP, HYBRID, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ sp, mp, hybrid };
+	ENUM_AND_ARRAY(sp, mp, hybrid)
 };
 using component_availability = string_enums::enum_base<component_availability_defines>;

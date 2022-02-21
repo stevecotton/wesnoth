@@ -24,7 +24,6 @@ struct sort_order_defines
 	static constexpr const char* const ascending = "ascending";
 	static constexpr const char* const descending = "descending";
 
-	enum class type { NONE, ASCENDING, DESCENDING, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ none, ascending, descending };
+	ENUM_AND_ARRAY(none, ascending, descending)
 };
 using sort_order = string_enums::enum_base<sort_order_defines>;

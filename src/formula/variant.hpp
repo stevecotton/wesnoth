@@ -59,13 +59,13 @@ public:
 	variant get_member(const std::string& name) const;
 
 	/** Functions to test the type of the internal value. */
-	bool is_null()     const { return type() == formula_variant::type::TYPE_NULL; }
-	bool is_int()      const { return type() == formula_variant::type::TYPE_INT; }
-	bool is_decimal()  const { return type() == formula_variant::type::TYPE_DECIMAL; }
-	bool is_callable() const { return type() == formula_variant::type::TYPE_OBJECT; }
-	bool is_list()     const { return type() == formula_variant::type::TYPE_LIST; }
-	bool is_string()   const { return type() == formula_variant::type::TYPE_STRING; }
-	bool is_map()      const { return type() == formula_variant::type::TYPE_MAP; }
+	bool is_null()     const { return type() == formula_variant::type::type_null; }
+	bool is_int()      const { return type() == formula_variant::type::type_int; }
+	bool is_decimal()  const { return type() == formula_variant::type::type_decimal; }
+	bool is_callable() const { return type() == formula_variant::type::type_object; }
+	bool is_list()     const { return type() == formula_variant::type::type_list; }
+	bool is_string()   const { return type() == formula_variant::type::type_string; }
+	bool is_map()      const { return type() == formula_variant::type::type_map; }
 
 	int as_int() const;
 
@@ -82,7 +82,7 @@ public:
 
 	const_formula_callable_ptr as_callable() const
 	{
-		must_be(formula_variant::type::TYPE_OBJECT);
+		must_be(formula_variant::type::type_object);
 		return value_cast<variant_callable>()->get_callable();
 	}
 

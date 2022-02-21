@@ -25,7 +25,6 @@ struct defeat_condition_defines
 	static constexpr const char* const never = "never";
 	static constexpr const char* const always = "always";
 
-	enum class type { NO_LEADER_LEFT, NO_UNITS_LEFT, NEVER, ALWAYS, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ no_leader_left, no_units_left, never, always };
+	ENUM_AND_ARRAY(no_leader_left, no_units_left, never, always)
 };
 using defeat_condition = string_enums::enum_base<defeat_condition_defines>;

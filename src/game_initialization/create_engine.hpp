@@ -350,7 +350,7 @@ public:
 	/** Wrapper to simplify the is-type-campaign-or-sp-campaign check. */
 	bool is_campaign() const
 	{
-		return current_level_type_ == level_type::type::CAMPAIGN || current_level_type_ == level_type::type::SP_CAMPAIGN;
+		return current_level_type_ == level_type::type::campaign || current_level_type_ == level_type::type::sp_campaign;
 	}
 
 	void set_current_level(const std::size_t index);

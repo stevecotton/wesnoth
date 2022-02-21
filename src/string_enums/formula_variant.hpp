@@ -28,7 +28,6 @@ struct formula_variant_defines
 	static constexpr const char* const type_string = "string";
 	static constexpr const char* const type_map = "map";
 
-	enum class type { TYPE_NULL, TYPE_INT, TYPE_DECIMAL, TYPE_OBJECT, TYPE_LIST, TYPE_STRING, TYPE_MAP, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ type_null, type_int, type_decimal, type_object, type_list, type_string, type_map };
+	ENUM_AND_ARRAY(type_null, type_int, type_decimal, type_object, type_list, type_string, type_map)
 };
 using formula_variant = string_enums::enum_base<formula_variant_defines>;

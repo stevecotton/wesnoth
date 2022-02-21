@@ -1615,16 +1615,16 @@ int generic_combat_modifier(int lawful_bonus, unit_alignments::type alignment, b
 	int bonus;
 
 	switch(alignment) {
-	case unit_alignments::type::LAWFUL:
+	case unit_alignments::type::lawful:
 		bonus = lawful_bonus;
 		break;
-	case unit_alignments::type::NEUTRAL:
+	case unit_alignments::type::neutral:
 		bonus = 0;
 		break;
-	case unit_alignments::type::CHAOTIC:
+	case unit_alignments::type::chaotic:
 		bonus = -lawful_bonus;
 		break;
-	case unit_alignments::type::LIMINAL:
+	case unit_alignments::type::liminal:
 		bonus = std::max(0, max_liminal_bonus-std::abs(lawful_bonus));
 		break;
 	default:

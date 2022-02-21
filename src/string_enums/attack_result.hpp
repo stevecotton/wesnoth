@@ -25,7 +25,6 @@ struct attack_result_defines
 	static constexpr const char* const kill = "kill";
 	static constexpr const char* const invalid = "invalid";
 
-	enum class type { HIT, MISS, KILL, INVALID, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ hit, miss, kill, invalid };
+	ENUM_AND_ARRAY(hit, miss, kill, invalid)
 };
 using attack_result = string_enums::enum_base<attack_result_defines>;

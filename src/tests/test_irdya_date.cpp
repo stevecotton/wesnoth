@@ -37,14 +37,14 @@ BOOST_AUTO_TEST_CASE(test_irdya_date_parse) {
 }
 
 BOOST_AUTO_TEST_CASE(test_irdya_date_equal) {
-	irdya_date first(wesnoth_epoch::type::WESNOTH, 12);
-	irdya_date second(wesnoth_epoch::type::WESNOTH, 12);
+	irdya_date first(wesnoth_epoch::type::wesnoth, 12);
+	irdya_date second(wesnoth_epoch::type::wesnoth, 12);
 	BOOST_CHECK_EQUAL(first, second);
 }
 
 BOOST_AUTO_TEST_CASE(test_irdya_date_ordering) {
-	irdya_date BW_34(wesnoth_epoch::type::BEFORE_WESNOTH, 34), BW_12(wesnoth_epoch::type::BEFORE_WESNOTH, 12), YW_40(wesnoth_epoch::type::WESNOTH, 40), YW_52(wesnoth_epoch::type::WESNOTH, 52);
-	irdya_date BF_29(wesnoth_epoch::type::BEFORE_FALL, 29), BF_42(wesnoth_epoch::type::BEFORE_FALL, 42), AF_12(wesnoth_epoch::type::AFTER_FALL, 12), AF_102(wesnoth_epoch::type::AFTER_FALL, 102), Y0;
+	irdya_date BW_34(wesnoth_epoch::type::before_wesnoth, 34), BW_12(wesnoth_epoch::type::before_wesnoth, 12), YW_40(wesnoth_epoch::type::wesnoth, 40), YW_52(wesnoth_epoch::type::wesnoth, 52);
+	irdya_date BF_29(wesnoth_epoch::type::before_fall, 29), BF_42(wesnoth_epoch::type::before_fall, 42), AF_12(wesnoth_epoch::type::after_fall, 12), AF_102(wesnoth_epoch::type::after_fall, 102), Y0;
 
 	std::vector<std::pair<irdya_date, irdya_date>> test_cases {
 		{BW_34, BW_12},

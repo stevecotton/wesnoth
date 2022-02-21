@@ -24,7 +24,6 @@ struct random_faction_mode_defines
 	static constexpr const char* const no_mirror = "No Mirror";
 	static constexpr const char* const no_ally_mirror = "No Ally Mirror";
 
-	enum class type { INDEPENDENT, NO_MIRROR, NO_ALLY_MIRROR, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ independent, no_mirror, no_ally_mirror };
+	ENUM_AND_ARRAY(independent, no_mirror, no_ally_mirror)
 };
 using random_faction_mode = string_enums::enum_base<random_faction_mode_defines>;

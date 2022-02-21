@@ -25,7 +25,6 @@ struct campaign_type_defines
 	static constexpr const char* const test = "test";
 	static constexpr const char* const tutorial = "tutorial";
 
-	enum class type { SCENARIO, MULTIPLAYER, TEST, TUTORIAL, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ scenario, multiplayer, test, tutorial };
+	ENUM_AND_ARRAY(scenario, multiplayer, test, tutorial)
 };
 using campaign_type = string_enums::enum_base<campaign_type_defines>;

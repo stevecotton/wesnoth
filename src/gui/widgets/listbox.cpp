@@ -594,17 +594,17 @@ void listbox::order_by_column(unsigned column, widget& widget)
 
 	for(auto& pair : orders_) {
 		if(pair.first != nullptr && pair.first != &selectable) {
-			pair.first->set_value(static_cast<unsigned int>(sort_order::type::NONE));
+			pair.first->set_value(static_cast<unsigned int>(sort_order::type::none));
 		}
 	}
 
-	sort_order::type order = sort_order::get_enum(selectable.get_value()).value_or(sort_order::type::NONE);
+	sort_order::type order = sort_order::get_enum(selectable.get_value()).value_or(sort_order::type::none);
 
 	if(static_cast<unsigned int>(order) > orders_[column].second.size()) {
 		return;
 	}
 
-	if(order == sort_order::type::NONE) {
+	if(order == sort_order::type::none) {
 		order_by(std::less<unsigned>());
 	} else {
 		order_by(orders_[column].second[static_cast<unsigned int>(order) - 1]);
@@ -663,21 +663,21 @@ const listbox::order_pair listbox::get_active_sorting_option()
 {
 	for(unsigned int column = 0; column < orders_.size(); ++column) {
 		selectable_item* w = orders_[column].first;
-		sort_order::type sort = sort_order::get_enum(w->get_value()).value_or(sort_order::type::NONE);
+		sort_order::type sort = sort_order::get_enum(w->get_value()).value_or(sort_order::type::none);
 
-		if(w && sort != sort_order::type::NONE) {
+		if(w && sort != sort_order::type::none) {
 			return std::pair(column, sort);
 		}
 	}
 
-	return std::pair(-1, sort_order::type::NONE);
+	return std::pair(-1, sort_order::type::none);
 }
 
 void listbox::mark_as_unsorted()
 {
 	for(auto& pair : orders_) {
 		if(pair.first != nullptr) {
-			pair.first->set_value(static_cast<unsigned int>(sort_order::type::NONE));
+			pair.first->set_value(static_cast<unsigned int>(sort_order::type::none));
 		}
 	}
 }

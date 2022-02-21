@@ -62,7 +62,7 @@ type_error::type_error(const std::string& str) : game::error(str)
 }
 
 variant_iterator::variant_iterator()
-	: type_(formula_variant::type::TYPE_NULL)
+	: type_(formula_variant::type::type_null)
 	, container_(nullptr)
 	, iter_()
 {
@@ -187,7 +187,7 @@ variant variant::operator[](std::size_t n) const
 		return *this;
 	}
 
-	must_be(formula_variant::type::TYPE_LIST);
+	must_be(formula_variant::type::type_list);
 
 	try {
 		return value_cast<variant_list>()->get_container().at(n);
@@ -231,7 +231,7 @@ variant variant::operator[](const variant& v) const
 
 variant variant::get_keys() const
 {
-	must_be(formula_variant::type::TYPE_MAP);
+	must_be(formula_variant::type::type_map);
 
 	std::vector<variant> tmp;
 	for(const auto& i : value_cast<variant_map>()->get_container()) {
@@ -243,7 +243,7 @@ variant variant::get_keys() const
 
 variant variant::get_values() const
 {
-	must_be(formula_variant::type::TYPE_MAP);
+	must_be(formula_variant::type::type_map);
 
 	std::vector<variant> tmp;
 	for(const auto& i : value_cast<variant_map>()->get_container()) {
@@ -297,7 +297,7 @@ int variant::as_int() const
 	if(is_null())    { return 0; }
 	if(is_decimal()) { return as_decimal() / 1000; }
 
-	must_be(formula_variant::type::TYPE_INT);
+	must_be(formula_variant::type::type_int);
 	return value_cast<variant_int>()->get_numeric_value();
 }
 
@@ -321,19 +321,19 @@ bool variant::as_bool() const
 
 const std::string& variant::as_string() const
 {
-	must_be(formula_variant::type::TYPE_STRING);
+	must_be(formula_variant::type::type_string);
 	return value_cast<variant_string>()->get_string();
 }
 
 const std::vector<variant>& variant::as_list() const
 {
-	must_be(formula_variant::type::TYPE_LIST);
+	must_be(formula_variant::type::type_list);
 	return value_cast<variant_list>()->get_container();
 }
 
 const std::map<variant, variant>& variant::as_map() const
 {
-	must_be(formula_variant::type::TYPE_MAP);
+	must_be(formula_variant::type::type_map);
 	return value_cast<variant_map>()->get_container();
 }
 
@@ -539,32 +539,32 @@ bool variant::operator>(const variant& v) const
 
 variant variant::list_elements_add(const variant& v) const
 {
-	must_both_be(formula_variant::type::TYPE_LIST, v);
+	must_both_be(formula_variant::type::type_list, v);
 	return value_cast<variant_list>()->list_op(v.value_, std::plus<variant>());
 }
 
 variant variant::list_elements_sub(const variant& v) const
 {
-	must_both_be(formula_variant::type::TYPE_LIST, v);
+	must_both_be(formula_variant::type::type_list, v);
 	return value_cast<variant_list>()->list_op(v.value_, std::minus<variant>());
 }
 
 variant variant::list_elements_mul(const variant& v) const
 {
-	must_both_be(formula_variant::type::TYPE_LIST, v);
+	must_both_be(formula_variant::type::type_list, v);
 	return value_cast<variant_list>()->list_op(v.value_, std::multiplies<variant>());
 }
 
 variant variant::list_elements_div(const variant& v) const
 {
-	must_both_be(formula_variant::type::TYPE_LIST, v);
+	must_both_be(formula_variant::type::type_list, v);
 	return value_cast<variant_list>()->list_op(v.value_, std::divides<variant>());
 }
 
 variant variant::concatenate(const variant& v) const
 {
 	if(is_list()) {
-		v.must_be(formula_variant::type::TYPE_LIST);
+		v.must_be(formula_variant::type::type_list);
 
 		std::vector<variant> res;
 		res.reserve(num_elements() + v.num_elements());
@@ -579,7 +579,7 @@ variant variant::concatenate(const variant& v) const
 
 		return variant(res);
 	} else if(is_string()) {
-		v.must_be(formula_variant::type::TYPE_STRING);
+		v.must_be(formula_variant::type::type_string);
 		std::string res = as_string() + v.as_string();
 		return variant(res);
 	}
@@ -589,7 +589,7 @@ variant variant::concatenate(const variant& v) const
 
 variant variant::build_range(const variant& v) const
 {
-	must_both_be(formula_variant::type::TYPE_INT, v);
+	must_both_be(formula_variant::type::type_int, v);
 
 	return value_cast<variant_int>()->build_range_variant(v.as_int());
 }

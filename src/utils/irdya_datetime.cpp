@@ -41,10 +41,10 @@ irdya_date irdya_date::read_date(const std::string& date)
 
 	std::size_t epoch_start = date.find_first_not_of(' ', year_end);
 	if(epoch_start == std::string::npos) {
-		date_result.epoch = wesnoth_epoch::type::WESNOTH;
+		date_result.epoch = wesnoth_epoch::type::wesnoth;
 	} else {
 		std::size_t epoch_end = date.find_first_of(' ', epoch_start);
-		date_result.epoch = wesnoth_epoch::get_enum(date.substr(epoch_start, epoch_end - epoch_start)).value_or(wesnoth_epoch::type::WESNOTH);
+		date_result.epoch = wesnoth_epoch::get_enum(date.substr(epoch_start, epoch_end - epoch_start)).value_or(wesnoth_epoch::type::wesnoth);
 	}
 
 	return date_result;
@@ -55,20 +55,18 @@ std::string irdya_date::to_string() const
 	utils::string_map args {{"year", std::to_string(year)}};
 
 	switch(epoch) {
-	case wesnoth_epoch::type::BEFORE_WESNOTH:
+	case wesnoth_epoch::type::before_wesnoth:
 		// TRANSLATORS: "Before Wesnoth"   - format for years prior to the founding of Wesnoth
 		return VGETTEXT("$year BW", args);
-	case wesnoth_epoch::type::WESNOTH:
+	case wesnoth_epoch::type::wesnoth:
 		// TRANSLATORS: "Year of Wesnoth"  - format for years after the founding of Wesnoth
 		return VGETTEXT("$year YW", args);
-	case wesnoth_epoch::type::BEFORE_FALL:
+	case wesnoth_epoch::type::before_fall:
 		// TRANSLATORS: "Before the Fall" -  format for years prior to the fall of Wesnoth
 		return VGETTEXT("$year BF", args);
-	case wesnoth_epoch::type::AFTER_FALL:
+	case wesnoth_epoch::type::after_fall:
 		// TRANSLATORS: "After the Fall"   - format for years after the fall of Wesnoth
 		return VGETTEXT("$year AF", args);
-	case wesnoth_epoch::type::ENUM_MAX:
-		break;
 	}
 
 	return "";
@@ -93,7 +91,7 @@ bool operator<(const irdya_date& a, const irdya_date& b)
 	}
 
 	// The BW and BF epochs count backward, much like BCE
-	if(a.get_epoch() == wesnoth_epoch::type::BEFORE_WESNOTH || a.get_epoch() == wesnoth_epoch::type::BEFORE_FALL) {
+	if(a.get_epoch() == wesnoth_epoch::type::before_wesnoth || a.get_epoch() == wesnoth_epoch::type::before_fall) {
 		return (a.get_year() > b.get_year());
 	} else {
 		return (a.get_year() < b.get_year());

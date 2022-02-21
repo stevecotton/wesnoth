@@ -24,7 +24,6 @@ struct saved_game_mode_defines
 	static constexpr const char* const midgame = "midgame";
 	static constexpr const char* const scenaro_start = "scenaro_start";
 
-	enum class type { NO, MIDGAME, SCENARIO_START, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ no, midgame, scenaro_start };
+	ENUM_AND_ARRAY(no, midgame, scenaro_start)
 };
 using saved_game_mode = string_enums::enum_base<saved_game_mode_defines>;

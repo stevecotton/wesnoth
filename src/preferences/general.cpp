@@ -978,7 +978,7 @@ void set_addon_manager_saved_order_name(const std::string& value)
 
 sort_order::type addon_manager_saved_order_direction()
 {
-	return sort_order::get_enum(get("addon_manager_saved_order_direction")).value_or(sort_order::type::NONE);
+	return sort_order::get_enum(get("addon_manager_saved_order_direction")).value_or(sort_order::type::none);
 }
 
 void set_addon_manager_saved_order_direction(sort_order::type value)

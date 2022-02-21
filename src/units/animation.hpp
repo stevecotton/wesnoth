@@ -37,7 +37,9 @@ public:
 	static void fill_initial_animations(std::vector<unit_animation>& animations, const config& cfg);
 	static void add_anims(std::vector<unit_animation>& animations, const config& cfg);
 
-	int matches(const display& disp, const map_location& loc, const map_location& second_loc, unit_const_ptr my_unit, const std::string& event = "", const int value = 0, attack_result::type hit = attack_result::type::INVALID, const_attack_ptr attack = nullptr, const_attack_ptr second_attack = nullptr, int value2 = 0) const;
+	int matches(const display& disp, const map_location& loc, const map_location& second_loc, unit_const_ptr my_unit, const std::string& event = "",
+		const int value = 0, attack_result::type hit = attack_result::type::invalid, const_attack_ptr attack = nullptr, const_attack_ptr second_attack = nullptr,
+		int value2 = 0) const;
 
 	const unit_frame& get_last_frame() const
 	{
@@ -210,7 +212,7 @@ public:
 		, bool with_bars = false
 		, const std::string& text = ""
 		, const color_t text_color = {0,0,0}
-		, const attack_result::type hit_type = attack_result::type::INVALID
+		, const attack_result::type hit_type = attack_result::type::invalid
 		, const_attack_ptr attack = nullptr
 		, const_attack_ptr second_attack = nullptr
 		, int value2 = 0);
@@ -232,7 +234,7 @@ public:
 		, const map_location& src = map_location::null_location()
 		, const map_location& dst = map_location::null_location()
 		, const int value = 0
-		, const attack_result::type hit_type = attack_result::type::INVALID
+		, const attack_result::type hit_type = attack_result::type::invalid
 		, const_attack_ptr attack = nullptr
 		, const_attack_ptr second_attack = nullptr
 		, int value2 = 0) const;
@@ -245,7 +247,7 @@ public:
 		, bool with_bars = false
 		, const std::string& text = ""
 		, const color_t text_color = {0,0,0}
-		, const attack_result::type hit_type = attack_result::type::INVALID
+		, const attack_result::type hit_type = attack_result::type::invalid
 		, const_attack_ptr attack = nullptr
 		, const_attack_ptr second_attack = nullptr
 		, int value2 = 0);

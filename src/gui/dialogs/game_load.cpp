@@ -368,7 +368,7 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 
 	if(campaign_type_enum) {
 		switch(*campaign_type_enum) {
-			case campaign_type::type::SCENARIO: {
+			case campaign_type::type::scenario: {
 				const config* campaign = nullptr;
 				if(!campaign_id.empty()) {
 					if(const config& c = cache_config_.find_child("campaign", "id", campaign_id)) {
@@ -392,17 +392,14 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 				}
 				break;
 			}
-			case campaign_type::type::MULTIPLAYER:
+			case campaign_type::type::multiplayer:
 				str << _("Multiplayer");
 				break;
-			case campaign_type::type::TUTORIAL:
+			case campaign_type::type::tutorial:
 				str << _("Tutorial");
 				break;
-			case campaign_type::type::TEST:
+			case campaign_type::type::test:
 				str << _("Test scenario");
-				break;
-			case campaign_type::type::ENUM_MAX:
-				str << campaign_type;
 				break;
 		}
 	} else {
@@ -422,8 +419,8 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 	str << "\n" << _("Difficulty: ");
 	if(campaign_type_enum) {
 		switch (*campaign_type_enum) {
-		case campaign_type::type::SCENARIO:
-		case campaign_type::type::MULTIPLAYER: {
+		case campaign_type::type::scenario:
+		case campaign_type::type::multiplayer: {
 			const config* campaign = nullptr;
 			if (!campaign_id.empty()) {
 				if (const config& c = cache_config_.find_child("campaign", "id", campaign_id)) {
@@ -453,12 +450,9 @@ void game_load::evaluate_summary_string(std::stringstream& str, const config& cf
 
 			break;
 		}
-		case campaign_type::type::TUTORIAL:
-		case campaign_type::type::TEST:
+		case campaign_type::type::tutorial:
+		case campaign_type::type::test:
 			str << "—";
-			break;
-		case campaign_type::type::ENUM_MAX:
-			str << campaign_type;
 			break;
 		}
 	} else {

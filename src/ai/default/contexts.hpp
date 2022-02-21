@@ -28,7 +28,7 @@
 namespace ai {
 
 struct target {
-	target(const map_location& pos, double val, ai_target::type target_type = ai_target::type::VILLAGE) : loc(pos), value(val), type(target_type)
+	target(const map_location& pos, double val, ai_target::type target_type = ai_target::type::village) : loc(pos), value(val), type(target_type)
 	{}
 	map_location loc;
 	double value;

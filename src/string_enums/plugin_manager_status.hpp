@@ -24,7 +24,6 @@ struct plugin_manager_status_defines
 	static constexpr const char* const running = "running";
 	static constexpr const char* const stopped = "stopped";
 
-	enum class type { NOT_CREATED, RUNNING, STOPPED, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ not_created, running, stopped };
+	ENUM_AND_ARRAY(not_created, running, stopped)
 };
 using plugin_manager_status = string_enums::enum_base<plugin_manager_status_defines>;

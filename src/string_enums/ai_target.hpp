@@ -28,7 +28,6 @@ struct ai_target_defines
 	static constexpr const char* const mass = "mass";
 	static constexpr const char* const support = "support";
 
-	enum class type { VILLAGE, LEADER, XPLICIT, THREAT, BATTLE_AID, MASS, SUPPORT, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ village, leader, xplicit, threat, battle_aid, mass, support };
+	ENUM_AND_ARRAY(village, leader, xplicit, threat, battle_aid, mass, support)
 };
 using ai_target = string_enums::enum_base<ai_target_defines>;

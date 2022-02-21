@@ -23,7 +23,6 @@ struct grow_direction_defines
 	static constexpr const char* const horizontal = "horizontal";
 	static constexpr const char* const vertical = "vertical";
 
-	enum class type { HORIZONTAL, VERTICAL, ENUM_MAX };
-	static constexpr std::array<const char*, static_cast<int>(type::ENUM_MAX)> values{ horizontal, vertical };
+	ENUM_AND_ARRAY(horizontal, vertical)
 };
 using grow_direction = string_enums::enum_base<grow_direction_defines>;
