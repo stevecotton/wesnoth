@@ -136,7 +136,7 @@ public:
 	/** Returns the id of the variant type */
 	virtual const formula_variant::type& get_type() const
 	{
-		static formula_variant::type type = formula_variant::type::type_null;
+		static formula_variant::type type = formula_variant::type::null;
 		return type;
 	}
 
@@ -250,7 +250,7 @@ public:
 
 	virtual const formula_variant::type& get_type() const override
 	{
-		static formula_variant::type type = formula_variant::type::type_int;
+		static formula_variant::type type = formula_variant::type::integer;
 		return type;
 	}
 };
@@ -291,7 +291,7 @@ public:
 
 	virtual const formula_variant::type& get_type() const override
 	{
-		static formula_variant::type type = formula_variant::type::type_decimal;
+		static formula_variant::type type = formula_variant::type::decimal;
 		return type;
 	}
 
@@ -335,7 +335,7 @@ public:
 
 	virtual const formula_variant::type& get_type() const override
 	{
-		static formula_variant::type type = formula_variant::type::type_object;
+		static formula_variant::type type = formula_variant::type::object;
 		return type;
 	}
 
@@ -401,7 +401,7 @@ public:
 
 	virtual const formula_variant::type& get_type() const override
 	{
-		static formula_variant::type type = formula_variant::type::type_string;
+		static formula_variant::type type = formula_variant::type::string;
 		return type;
 	}
 
@@ -506,7 +506,7 @@ public:
 
 	virtual const formula_variant::type& get_type() const override
 	{
-		static formula_variant::type type = formula_variant::type::type_list;
+		static formula_variant::type type = formula_variant::type::list;
 		return type;
 	}
 
@@ -532,7 +532,7 @@ public:
 
 	virtual const formula_variant::type& get_type() const override
 	{
-		static formula_variant::type type = formula_variant::type::type_map;
+		static formula_variant::type type = formula_variant::type::map;
 		return type;
 	}
 

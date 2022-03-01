@@ -20,14 +20,14 @@
 
 struct formula_variant_defines
 {
-	static constexpr const char* const type_null = "null";
-	static constexpr const char* const type_int = "int";
-	static constexpr const char* const type_decimal = "decimal";
-	static constexpr const char* const type_object = "object";
-	static constexpr const char* const type_list = "list";
-	static constexpr const char* const type_string = "string";
-	static constexpr const char* const type_map = "map";
+	static constexpr const char* const null = "null";
+	static constexpr const char* const integer = "int";
+	static constexpr const char* const decimal = "decimal";
+	static constexpr const char* const object = "object";
+	static constexpr const char* const list = "list";
+	static constexpr const char* const string = "string";
+	static constexpr const char* const map = "map";
 
-	ENUM_AND_ARRAY(type_null, type_int, type_decimal, type_object, type_list, type_string, type_map)
+	ENUM_AND_ARRAY(null, integer, decimal, object, list, string, map)
 };
 using formula_variant = string_enums::enum_base<formula_variant_defines>;
