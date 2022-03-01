@@ -21,7 +21,7 @@
 #include "halo.hpp"
 #include "units/frame.hpp"
 #include "units/ptr.hpp"
-#include "string_enums/attack_result.hpp"
+#include "string_enums/strike_result.hpp"
 
 class display;
 class unit;
@@ -38,7 +38,7 @@ public:
 	static void add_anims(std::vector<unit_animation>& animations, const config& cfg);
 
 	int matches(const display& disp, const map_location& loc, const map_location& second_loc, unit_const_ptr my_unit, const std::string& event = "",
-		const int value = 0, attack_result::type hit = attack_result::type::invalid, const_attack_ptr attack = nullptr, const_attack_ptr second_attack = nullptr,
+		const int value = 0, strike_result::type hit = strike_result::type::invalid, const_attack_ptr attack = nullptr, const_attack_ptr second_attack = nullptr,
 		int value2 = 0) const;
 
 	const unit_frame& get_last_frame() const
@@ -176,7 +176,7 @@ private:
 	std::vector<int> value_;
 	std::vector<config> primary_attack_filter_;
 	std::vector<config> secondary_attack_filter_;
-	std::vector<attack_result::type> hits_;
+	std::vector<strike_result::type> hits_;
 	std::vector<int> value2_;
 	std::map<std::string,particle> sub_anims_;
 	particle unit_anim_;
@@ -212,7 +212,7 @@ public:
 		, bool with_bars = false
 		, const std::string& text = ""
 		, const color_t text_color = {0,0,0}
-		, const attack_result::type hit_type = attack_result::type::invalid
+		, const strike_result::type hit_type = strike_result::type::invalid
 		, const_attack_ptr attack = nullptr
 		, const_attack_ptr second_attack = nullptr
 		, int value2 = 0);
@@ -234,7 +234,7 @@ public:
 		, const map_location& src = map_location::null_location()
 		, const map_location& dst = map_location::null_location()
 		, const int value = 0
-		, const attack_result::type hit_type = attack_result::type::invalid
+		, const strike_result::type hit_type = strike_result::type::invalid
 		, const_attack_ptr attack = nullptr
 		, const_attack_ptr second_attack = nullptr
 		, int value2 = 0) const;
@@ -247,7 +247,7 @@ public:
 		, bool with_bars = false
 		, const std::string& text = ""
 		, const color_t text_color = {0,0,0}
-		, const attack_result::type hit_type = attack_result::type::invalid
+		, const strike_result::type hit_type = strike_result::type::invalid
 		, const_attack_ptr attack = nullptr
 		, const_attack_ptr second_attack = nullptr
 		, int value2 = 0);

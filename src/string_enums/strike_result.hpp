@@ -18,7 +18,7 @@
 
 #include "string_enums/enum_base.hpp"
 
-struct attack_result_defines
+struct strike_result_defines
 {
 	static constexpr const char* const hit = "hit";
 	static constexpr const char* const miss = "miss";
@@ -27,4 +27,4 @@ struct attack_result_defines
 
 	ENUM_AND_ARRAY(hit, miss, kill, invalid)
 };
-using attack_result = string_enums::enum_base<attack_result_defines>;
+using strike_result = string_enums::enum_base<strike_result_defines>;
