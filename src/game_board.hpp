@@ -16,12 +16,12 @@
 #pragma once
 
 #include "display_context.hpp"
+#include "side_controller.hpp"
 #include "team.hpp"
 #include "terrain/translation.hpp"
 #include "terrain/type_data.hpp"
 #include "units/map.hpp"
 #include "units/id.hpp"
-#include "string_enums/side_controller.hpp"
 
 #include <optional>
 #include <set>

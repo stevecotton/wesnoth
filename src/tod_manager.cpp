@@ -25,9 +25,9 @@
 #include "random.hpp"
 #include "resources.hpp"
 #include "serialization/string_utils.hpp"
-#include "string_enums/unit_alignments.hpp"
 #include "units/abilities.hpp"
 #include "units/unit.hpp"
+#include "units/unit_alignments.hpp"
 
 #include <algorithm>
 #include <functional>

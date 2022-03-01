@@ -16,16 +16,16 @@
 #pragma once
 
 #include "color_range.hpp"
+#include "config.hpp"
+#include "defeat_condition.hpp"
 #include "game_config.hpp"
 #include "game_events/fwd.hpp"
 #include "map/location.hpp"
 #include "recall_list_manager.hpp"
+#include "side_controller.hpp"
+#include "side_proxy_controller.hpp"
+#include "team_shared_vision.hpp"
 #include "units/ptr.hpp"
-#include "config.hpp"
-#include "string_enums/defeat_condition.hpp"
-#include "string_enums/side_controller.hpp"
-#include "string_enums/side_proxy_controller.hpp"
-#include "string_enums/team_shared_vision.hpp"
 
 #include <set>
 

@@ -24,8 +24,8 @@
 
 #include "ai/lua/aspect_advancements.hpp"
 #include "attack_prediction.hpp"
-#include "string_enums/unit_alignments.hpp"
 #include "units/ptr.hpp"
+#include "units/unit_alignments.hpp"
 
 #include <vector>
 

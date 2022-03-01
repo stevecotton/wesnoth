@@ -20,9 +20,9 @@
 
 #pragma once
 
+#include "ai/ai_target.hpp"
 #include "ai/contexts.hpp"
 #include "formula/callable.hpp"
-#include "string_enums/ai_target.hpp"
 
 //============================================================================
 namespace ai {

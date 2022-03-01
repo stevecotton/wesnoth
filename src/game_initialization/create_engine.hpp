@@ -17,9 +17,9 @@
 
 #include "config.hpp"
 #include "game_initialization/depcheck.hpp"
+#include "game_initialization/level_type.hpp"
 #include "generators/map_generator.hpp"
 #include "mp_game_settings.hpp"
-#include "string_enums/level_type.hpp"
 #include "utils/irdya_datetime.hpp"
 
 #include <numeric>

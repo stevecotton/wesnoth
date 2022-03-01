@@ -43,11 +43,11 @@
 #include "mp_ui_alerts.hpp"
 #include "preferences/credentials.hpp"
 #include "saved_game.hpp"
+#include "side_controller.hpp"
 #include "statistics.hpp"
 #include "units/types.hpp"
 #include "utils/scope_exit.hpp"
 #include "wesnothd_connection.hpp"
-#include "string_enums/side_controller.hpp"
 
 static lg::log_domain log_mp_connect_engine("mp/connect/engine");
 #define DBG_MP LOG_STREAM(debug, log_mp_connect_engine)

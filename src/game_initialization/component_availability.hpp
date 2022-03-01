@@ -16,15 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct side_controller_defines
+struct component_availability_defines
 {
-	static constexpr const char* const none = "null";
-	static constexpr const char* const human = "human";
-	static constexpr const char* const ai = "ai";
-	static constexpr const char* const reserved = "reserved";
+	static constexpr const char* const sp = "sp";
+	static constexpr const char* const mp = "mp";
+	static constexpr const char* const hybrid = "hybrid";
 
-	ENUM_AND_ARRAY(none, human, ai, reserved)
+	ENUM_AND_ARRAY(sp, mp, hybrid)
 };
-using side_controller = string_enums::enum_base<side_controller_defines>;
+using component_availability = string_enums::enum_base<component_availability_defines>;

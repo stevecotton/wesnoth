@@ -16,7 +16,7 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
 struct formula_variant_defines
 {

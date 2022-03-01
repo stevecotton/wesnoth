@@ -16,15 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct campaign_type_defines
+struct team_shared_vision_defines
 {
-	static constexpr const char* const scenario = "scenario";
-	static constexpr const char* const multiplayer = "multiplayer";
-	static constexpr const char* const test = "test";
-	static constexpr const char* const tutorial = "tutorial";
+	static constexpr const char* const all = "all";
+	static constexpr const char* const shroud = "shroud";
+	static constexpr const char* const none = "none";
 
-	ENUM_AND_ARRAY(scenario, multiplayer, test, tutorial)
+	ENUM_AND_ARRAY(all, shroud, none)
 };
-using campaign_type = string_enums::enum_base<campaign_type_defines>;
+using team_shared_vision = string_enums::enum_base<team_shared_vision_defines>;

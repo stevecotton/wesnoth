@@ -16,7 +16,7 @@
 
 #include "exceptions.hpp"
 #include "formula/callable_fwd.hpp"
-#include "string_enums/formula_variant.hpp"
+#include "formula_variant.hpp"
 #include "utils/general.hpp"
 
 #include <functional>

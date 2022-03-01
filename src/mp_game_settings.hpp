@@ -17,10 +17,10 @@
 #pragma once
 
 #include "config.hpp"
+#include "game_initialization/random_faction_mode.hpp"
+#include "game_initialization/saved_game_mode.hpp"
 #include "game_version.hpp"
 #include "gettext.hpp"
-#include "string_enums/random_faction_mode.hpp"
-#include "string_enums/saved_game_mode.hpp"
 
 #include <optional>
 

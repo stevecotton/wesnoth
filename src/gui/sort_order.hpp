@@ -16,15 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct unit_alignments_defines
+struct sort_order_defines
 {
-	static constexpr const char* const lawful = "lawful";
-	static constexpr const char* const neutral = "neutral";
-	static constexpr const char* const chaotic = "chaotic";
-	static constexpr const char* const liminal = "liminal";
+	static constexpr const char* const none = "none";
+	static constexpr const char* const ascending = "ascending";
+	static constexpr const char* const descending = "descending";
 
-	ENUM_AND_ARRAY(lawful, neutral, chaotic, liminal)
+	ENUM_AND_ARRAY(none, ascending, descending)
 };
-using unit_alignments = string_enums::enum_base<unit_alignments_defines>;
+using sort_order = string_enums::enum_base<sort_order_defines>;

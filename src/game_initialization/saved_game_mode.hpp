@@ -16,15 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct defeat_condition_defines
+struct saved_game_mode_defines
 {
-	static constexpr const char* const no_leader_left = "no_leader_left";
-	static constexpr const char* const no_units_left = "no_units_left";
-	static constexpr const char* const never = "never";
-	static constexpr const char* const always = "always";
+	static constexpr const char* const no = "no";
+	static constexpr const char* const midgame = "midgame";
+	static constexpr const char* const scenaro_start = "scenaro_start";
 
-	ENUM_AND_ARRAY(no_leader_left, no_units_left, never, always)
+	ENUM_AND_ARRAY(no, midgame, scenaro_start)
 };
-using defeat_condition = string_enums::enum_base<defeat_condition_defines>;
+using saved_game_mode = string_enums::enum_base<saved_game_mode_defines>;

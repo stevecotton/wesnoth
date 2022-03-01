@@ -26,8 +26,8 @@
 
 #pragma once
 
+#include "units/conditional_type.hpp"
 #include "units/ptr.hpp"
-#include "string_enums/conditional_type.hpp"
 
 #include "display_context.hpp"
 #include "filter_context.hpp"

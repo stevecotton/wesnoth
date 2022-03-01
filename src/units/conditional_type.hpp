@@ -16,14 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct saved_game_mode_defines
+struct conditional_type_defines
 {
-	static constexpr const char* const no = "no";
-	static constexpr const char* const midgame = "midgame";
-	static constexpr const char* const scenaro_start = "scenaro_start";
+	static constexpr const char* const filter_and = "and";
+	static constexpr const char* const filter_or = "or";
+	static constexpr const char* const filter_not = "not";
 
-	ENUM_AND_ARRAY(no, midgame, scenaro_start)
+	ENUM_AND_ARRAY(filter_and, filter_or, filter_not)
 };
-using saved_game_mode = string_enums::enum_base<saved_game_mode_defines>;
+using conditional_type = string_enums::enum_base<conditional_type_defines>;

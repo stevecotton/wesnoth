@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "string_enums/unit_alignments.hpp"
 #include "movetype.hpp"
+#include "units/unit_alignments.hpp"
 #include "units/id.hpp"
 #include "units/ptr.hpp"
 #include "units/attack_type.hpp"

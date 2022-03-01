@@ -18,10 +18,10 @@
 #include <algorithm>
 
 #include "serialization/string_utils.hpp"
+#include "game_initialization/component_availability.hpp"
 #include "gettext.hpp"
 #include "log.hpp"
 #include "utils/general.hpp"
-#include "string_enums/component_availability.hpp"
 
 #include "gui/dialogs/depcheck_confirm_change.hpp"
 #include "gui/dialogs/depcheck_select_new.hpp"

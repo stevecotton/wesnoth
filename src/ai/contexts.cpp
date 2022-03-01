@@ -43,13 +43,13 @@
 #include "pathfind/pathfind.hpp"        // for paths::dest_vect, paths, etc
 #include "resources.hpp"             // for units, gameboard, etc
 #include "serialization/string_utils.hpp"  // for split, etc
-#include "string_enums/unit_alignments.hpp"
 #include "team.hpp"                     // for team
 #include "terrain/filter.hpp"  // for terrain_filter
 #include "terrain/translation.hpp"      // for terrain_code
 #include "time_of_day.hpp"              // for time_of_day
 #include "tod_manager.hpp"           // for tod_manager
 #include "units/unit.hpp"                  // for unit
+#include "units/unit_alignments.hpp"
 #include "units/map.hpp"  // for unit_map::iterator_base, etc
 #include "units/ptr.hpp"                 // for unit_ptr
 #include "units/types.hpp"  // for attack_type, unit_type, etc

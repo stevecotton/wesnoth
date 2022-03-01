@@ -16,14 +16,15 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct side_proxy_controller_defines
+struct wesnoth_epoch_defines
 {
-	static constexpr const char* const idle = "idle";
-	static constexpr const char* const human = "human";
-	static constexpr const char* const ai = "ai";
+	static constexpr const char* const before_wesnoth = "BW";
+	static constexpr const char* const wesnoth = "YW";
+	static constexpr const char* const before_fall = "BF";
+	static constexpr const char* const after_fall = "AF";
 
-	ENUM_AND_ARRAY(idle, human, ai)
+	ENUM_AND_ARRAY(before_wesnoth, wesnoth, before_fall, after_fall)
 };
-using side_proxy_controller = string_enums::enum_base<side_proxy_controller_defines>;
+using wesnoth_epoch = string_enums::enum_base<wesnoth_epoch_defines>;

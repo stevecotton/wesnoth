@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "string_enums/wesnoth_epoch.hpp"
+#include "utils/wesnoth_epoch.hpp"
 
 #include <ostream>
 #include <string>

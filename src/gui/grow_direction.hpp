@@ -16,14 +16,13 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct team_shared_vision_defines
+struct grow_direction_defines
 {
-	static constexpr const char* const all = "all";
-	static constexpr const char* const shroud = "shroud";
-	static constexpr const char* const none = "none";
+	static constexpr const char* const horizontal = "horizontal";
+	static constexpr const char* const vertical = "vertical";
 
-	ENUM_AND_ARRAY(all, shroud, none)
+	ENUM_AND_ARRAY(horizontal, vertical)
 };
-using team_shared_vision = string_enums::enum_base<team_shared_vision_defines>;
+using grow_direction = string_enums::enum_base<grow_direction_defines>;

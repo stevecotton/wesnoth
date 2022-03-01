@@ -26,10 +26,10 @@
 #include "log.hpp"
 #include "map/map.hpp"
 #include "mt_rng.hpp"
+#include "side_controller.hpp"
 #include "tod_manager.hpp"
 #include "team.hpp"
 #include "wesnothd_connection.hpp"
-#include "string_enums/side_controller.hpp"
 
 #include <array>
 #include <cstdlib>

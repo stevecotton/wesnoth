@@ -16,14 +16,15 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct component_availability_defines
+struct campaign_type_defines
 {
-	static constexpr const char* const sp = "sp";
-	static constexpr const char* const mp = "mp";
-	static constexpr const char* const hybrid = "hybrid";
+	static constexpr const char* const scenario = "scenario";
+	static constexpr const char* const multiplayer = "multiplayer";
+	static constexpr const char* const test = "test";
+	static constexpr const char* const tutorial = "tutorial";
 
-	ENUM_AND_ARRAY(sp, mp, hybrid)
+	ENUM_AND_ARRAY(scenario, multiplayer, test, tutorial)
 };
-using component_availability = string_enums::enum_base<component_availability_defines>;
+using campaign_type = string_enums::enum_base<campaign_type_defines>;

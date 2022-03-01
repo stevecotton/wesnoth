@@ -21,7 +21,7 @@
 #pragma once
 
 #include "config.hpp"
-#include "string_enums/plugin_manager_status.hpp"
+#include "scripting/plugin_manager_status.hpp"
 
 #include <string>
 

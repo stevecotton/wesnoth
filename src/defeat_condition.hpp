@@ -16,14 +16,15 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct sort_order_defines
+struct defeat_condition_defines
 {
-	static constexpr const char* const none = "none";
-	static constexpr const char* const ascending = "ascending";
-	static constexpr const char* const descending = "descending";
+	static constexpr const char* const no_leader_left = "no_leader_left";
+	static constexpr const char* const no_units_left = "no_units_left";
+	static constexpr const char* const never = "never";
+	static constexpr const char* const always = "always";
 
-	ENUM_AND_ARRAY(none, ascending, descending)
+	ENUM_AND_ARRAY(no_leader_left, no_units_left, never, always)
 };
-using sort_order = string_enums::enum_base<sort_order_defines>;
+using defeat_condition = string_enums::enum_base<defeat_condition_defines>;

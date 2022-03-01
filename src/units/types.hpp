@@ -18,7 +18,7 @@
 #include "gettext.hpp"
 #include "map/location.hpp"
 #include "movetype.hpp"
-#include "string_enums/unit_alignments.hpp"
+#include "units/unit_alignments.hpp"
 #include "units/race.hpp"
 #include "units/attack_type.hpp"
 #include "units/type_error.hpp"

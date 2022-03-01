@@ -18,8 +18,8 @@
 #include "editor/map/map_context.hpp"
 #include "gui/dialogs/modal_dialog.hpp"
 #include "gui/widgets/group.hpp"
+#include "side_controller.hpp"
 #include "team.hpp"
-#include "string_enums/side_controller.hpp"
 
 namespace gui2
 {

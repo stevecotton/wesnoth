@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "string_enums/campaign_type.hpp"
+#include "campaign_type.hpp"
 
 #include <vector>
 #include <set>

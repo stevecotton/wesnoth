@@ -16,15 +16,15 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct wesnoth_epoch_defines
+struct unit_alignments_defines
 {
-	static constexpr const char* const before_wesnoth = "BW";
-	static constexpr const char* const wesnoth = "YW";
-	static constexpr const char* const before_fall = "BF";
-	static constexpr const char* const after_fall = "AF";
+	static constexpr const char* const lawful = "lawful";
+	static constexpr const char* const neutral = "neutral";
+	static constexpr const char* const chaotic = "chaotic";
+	static constexpr const char* const liminal = "liminal";
 
-	ENUM_AND_ARRAY(before_wesnoth, wesnoth, before_fall, after_fall)
+	ENUM_AND_ARRAY(lawful, neutral, chaotic, liminal)
 };
-using wesnoth_epoch = string_enums::enum_base<wesnoth_epoch_defines>;
+using unit_alignments = string_enums::enum_base<unit_alignments_defines>;

@@ -16,15 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct strike_result_defines
+struct side_proxy_controller_defines
 {
-	static constexpr const char* const hit = "hit";
-	static constexpr const char* const miss = "miss";
-	static constexpr const char* const kill = "kill";
-	static constexpr const char* const invalid = "invalid";
+	static constexpr const char* const idle = "idle";
+	static constexpr const char* const human = "human";
+	static constexpr const char* const ai = "ai";
 
-	ENUM_AND_ARRAY(hit, miss, kill, invalid)
+	ENUM_AND_ARRAY(idle, human, ai)
 };
-using strike_result = string_enums::enum_base<strike_result_defines>;
+using side_proxy_controller = string_enums::enum_base<side_proxy_controller_defines>;

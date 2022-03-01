@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "string_enums/grow_direction.hpp"
+#include "gui/grow_direction.hpp"
 
 struct point;
 

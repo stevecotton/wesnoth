@@ -30,13 +30,13 @@
 #include "reports.hpp"
 #include "resources.hpp"
 #include "color.hpp"
-#include "string_enums/unit_alignments.hpp"
 #include "team.hpp"
 #include "terrain/movement.hpp"
 #include "tod_manager.hpp"
 #include "units/unit.hpp"
 #include "units/helper.hpp"
 #include "units/types.hpp"
+#include "units/unit_alignments.hpp"
 #include "whiteboard/manager.hpp"
 
 #include <cassert>

@@ -16,14 +16,15 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct random_faction_mode_defines
+struct strike_result_defines
 {
-	static constexpr const char* const independent = "Independent";
-	static constexpr const char* const no_mirror = "No Mirror";
-	static constexpr const char* const no_ally_mirror = "No Ally Mirror";
+	static constexpr const char* const hit = "hit";
+	static constexpr const char* const miss = "miss";
+	static constexpr const char* const kill = "kill";
+	static constexpr const char* const invalid = "invalid";
 
-	ENUM_AND_ARRAY(independent, no_mirror, no_ally_mirror)
+	ENUM_AND_ARRAY(hit, miss, kill, invalid)
 };
-using random_faction_mode = string_enums::enum_base<random_faction_mode_defines>;
+using strike_result = string_enums::enum_base<strike_result_defines>;

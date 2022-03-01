@@ -22,8 +22,8 @@
 
 #pragma once
 
+#include "level_result.hpp"
 #include "lua_jailbreak_exception.hpp"
-#include "string_enums/level_result.hpp"
 
 #include <string>
 #include <exception>

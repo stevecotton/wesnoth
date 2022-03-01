@@ -16,14 +16,15 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct conditional_type_defines
+struct side_controller_defines
 {
-	static constexpr const char* const filter_and = "and";
-	static constexpr const char* const filter_or = "or";
-	static constexpr const char* const filter_not = "not";
+	static constexpr const char* const none = "null";
+	static constexpr const char* const human = "human";
+	static constexpr const char* const ai = "ai";
+	static constexpr const char* const reserved = "reserved";
 
-	ENUM_AND_ARRAY(filter_and, filter_or, filter_not)
+	ENUM_AND_ARRAY(none, human, ai, reserved)
 };
-using conditional_type = string_enums::enum_base<conditional_type_defines>;
+using side_controller = string_enums::enum_base<side_controller_defines>;

@@ -21,7 +21,7 @@
 #include "halo.hpp"
 #include "units/frame.hpp"
 #include "units/ptr.hpp"
-#include "string_enums/strike_result.hpp"
+#include "units/strike_result.hpp"
 
 class display;
 class unit;

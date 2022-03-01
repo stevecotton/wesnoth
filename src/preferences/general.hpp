@@ -16,8 +16,8 @@
 #pragma once
 
 #include "config.hpp"
+#include "gui/sort_order.hpp"
 #include "terrain/translation.hpp"
-#include "string_enums/sort_order.hpp"
 
 #include <utility>
 

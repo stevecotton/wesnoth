@@ -16,13 +16,14 @@
 
 #include <array>
 
-#include "string_enums/enum_base.hpp"
+#include "enum_base.hpp"
 
-struct grow_direction_defines
+struct random_faction_mode_defines
 {
-	static constexpr const char* const horizontal = "horizontal";
-	static constexpr const char* const vertical = "vertical";
+	static constexpr const char* const independent = "Independent";
+	static constexpr const char* const no_mirror = "No Mirror";
+	static constexpr const char* const no_ally_mirror = "No Ally Mirror";
 
-	ENUM_AND_ARRAY(horizontal, vertical)
+	ENUM_AND_ARRAY(independent, no_mirror, no_ally_mirror)
 };
-using grow_direction = string_enums::enum_base<grow_direction_defines>;
+using random_faction_mode = string_enums::enum_base<random_faction_mode_defines>;
