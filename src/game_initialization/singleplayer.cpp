@@ -29,6 +29,8 @@
 static lg::log_domain log_engine("engine");
 #define ERR_NG LOG_STREAM(err, log_engine)
 
+using namespace ng;
+
 namespace sp
 {
 bool select_campaign(saved_game& state, jump_to_campaign_info jump_to_campaign)

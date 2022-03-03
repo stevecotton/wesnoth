@@ -18,6 +18,9 @@
 
 #include "enum_base.hpp"
 
+namespace ng::depcheck
+{
+
 struct component_availability_defines
 {
 	static constexpr const char* const sp = "sp";
@@ -27,3 +30,5 @@ struct component_availability_defines
 	ENUM_AND_ARRAY(sp, mp, hybrid)
 };
 using component_availability = string_enums::enum_base<component_availability_defines>;
+
+}

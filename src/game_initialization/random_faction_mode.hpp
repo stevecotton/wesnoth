@@ -18,6 +18,9 @@
 
 #include "enum_base.hpp"
 
+namespace ng
+{
+
 struct random_faction_mode_defines
 {
 	static constexpr const char* const independent = "Independent";
@@ -27,3 +30,5 @@ struct random_faction_mode_defines
 	ENUM_AND_ARRAY(independent, no_mirror, no_ally_mirror)
 };
 using random_faction_mode = string_enums::enum_base<random_faction_mode_defines>;
+
+}

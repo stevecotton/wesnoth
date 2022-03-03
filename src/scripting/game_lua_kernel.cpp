@@ -1456,14 +1456,14 @@ static int impl_mp_settings_get(lua_State* L)
 		return_bool_attrib("allow_observers", settings.allow_observers);
 		return_bool_attrib("private_replay", settings.private_replay);
 		return_bool_attrib("shuffle_sides", settings.shuffle_sides);
-		return_string_attrib("random_faction_mode", random_faction_mode::get_string(settings.mode));
+		return_string_attrib("random_faction_mode", ng::random_faction_mode::get_string(settings.mode));
 		return_cfgref_attrib("options", settings.options);
 		if(strcmp(m, "savegame") == 0) {
 			auto savegame = settings.saved_game;
-			if(savegame == saved_game_mode::type::no) {
+			if(savegame == ng::saved_game_mode::type::no) {
 				lua_pushboolean(L, false);
 			} else {
-				lua_push(L, saved_game_mode::get_string(savegame));
+				lua_push(L, ng::saved_game_mode::get_string(savegame));
 			}
 			return 1;
 		}

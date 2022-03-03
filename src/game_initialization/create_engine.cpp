@@ -766,17 +766,17 @@ void create_engine::init_extras(const MP_EXTRA extra_type)
 	std::vector<extras_metadata_ptr>& extras = get_extras_by_type(extra_type);
 	const std::string extra_name = (extra_type == ERA) ? "era" : "modification";
 
-	component_availability::type default_availabilty = (extra_type == ERA)
-		? component_availability::type::mp
-		: component_availability::type::hybrid;
+	auto default_availabilty = (extra_type == ERA)
+		? ng::depcheck::component_availability::type::mp
+		: ng::depcheck::component_availability::type::hybrid;
 
 	std::set<std::string> found_ids;
 	for(const config& extra : game_config_.child_range(extra_name))
 	{
-		component_availability::type type = component_availability::get_enum(extra["type"].str()).value_or(default_availabilty);
+		auto type = ng::depcheck::component_availability::get_enum(extra["type"].str()).value_or(default_availabilty);
 		const bool mp = state_.classification().is_multiplayer();
 
-		if((type != component_availability::type::mp || mp) && (type != component_availability::type::sp || !mp) )
+		if((type != ng::depcheck::component_availability::type::mp || mp) && (type != ng::depcheck::component_availability::type::sp || !mp) )
 		{
 			if(found_ids.insert(extra["id"]).second) {
 				extras_metadata_ptr new_extras_metadata(new extras_metadata());

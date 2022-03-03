@@ -59,9 +59,9 @@ struct mp_game_settings
 	bool private_replay;
 	bool shuffle_sides;
 
-	saved_game_mode::type saved_game;
+	ng::saved_game_mode::type saved_game;
 
-	random_faction_mode::type mode;
+	ng::random_faction_mode::type mode;
 
 	config options;
 

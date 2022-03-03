@@ -129,7 +129,7 @@ game_info::game_info(const config& game, const std::vector<std::string>& install
 	, time_limit()
 	, vacant_slots()
 	, current_turn(0)
-	, reloaded(saved_game_mode::get_enum(game["savegame"].str()).value_or(saved_game_mode::type::no) != saved_game_mode::type::no)
+	, reloaded(ng::saved_game_mode::get_enum(game["savegame"].str()).value_or(ng::saved_game_mode::type::no) != ng::saved_game_mode::type::no)
 	, started(false)
 	, fog(game["mp_fog"].to_bool())
 	, shroud(game["mp_shroud"].to_bool())

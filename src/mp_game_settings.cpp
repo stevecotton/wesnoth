@@ -29,6 +29,8 @@ static lg::log_domain log_engine("engine");
 #define LOG_NG LOG_STREAM(info, log_engine)
 #define DBG_NG LOG_STREAM(debug, log_engine)
 
+using namespace ng;
+
 mp_game_settings::mp_game_settings() :
 	name(),
 	password(),

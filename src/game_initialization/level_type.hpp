@@ -18,6 +18,9 @@
 
 #include "enum_base.hpp"
 
+namespace ng
+{
+
 struct level_type_defines
 {
 	static constexpr const char* const scenario = "scenario";
@@ -30,3 +33,5 @@ struct level_type_defines
 	ENUM_AND_ARRAY(scenario, user_map, user_scenario, random_map, campaign, sp_campaign)
 };
 using level_type = string_enums::enum_base<level_type_defines>;
+
+}

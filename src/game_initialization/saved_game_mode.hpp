@@ -18,6 +18,9 @@
 
 #include "enum_base.hpp"
 
+namespace ng
+{
+
 struct saved_game_mode_defines
 {
 	static constexpr const char* const no = "no";
@@ -27,3 +30,5 @@ struct saved_game_mode_defines
 	ENUM_AND_ARRAY(no, midgame, scenaro_start)
 };
 using saved_game_mode = string_enums::enum_base<saved_game_mode_defines>;
+
+}

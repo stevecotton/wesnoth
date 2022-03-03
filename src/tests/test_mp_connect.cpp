@@ -27,6 +27,8 @@
 
 #include <boost/assign.hpp>
 
+using namespace ng;
+
 /* Definitions */
 
 class test_connect_engine : public ng::connect_engine {
