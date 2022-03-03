@@ -29,7 +29,7 @@
 #include "saved_game.hpp"
 #include "side_controller.hpp"
 #include "wml_exception.hpp"
-#include "game_initialization/component_availability.hpp"
+//#include "game_initialization/component_availability.hpp" //FIXME: included twice
 
 #include "serialization/preprocessor.hpp"
 #include "serialization/parser.hpp"

@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO namespace
+
 struct level_result_defines
 {
 	static constexpr const char* const victory = "victory";

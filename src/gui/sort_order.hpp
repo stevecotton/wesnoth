@@ -18,6 +18,9 @@
 
 #include "enum_base.hpp"
 
+// TODO: namespace
+// move this file up, it's more generic than a gui2 feature
+
 struct sort_order_defines
 {
 	static constexpr const char* const none = "none";

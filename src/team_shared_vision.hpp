@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO: namespace, was previously inside `class ::team`
+
 struct team_shared_vision_defines
 {
 	static constexpr const char* const all = "all";

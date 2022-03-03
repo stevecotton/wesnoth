@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO namespace. Something to do with animation, or make this more generic?
+
 struct strike_result_defines
 {
 	static constexpr const char* const hit = "hit";

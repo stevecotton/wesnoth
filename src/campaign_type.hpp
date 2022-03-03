@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO: namespace, was previously a member of `class ::game_classification`
+
 struct campaign_type_defines
 {
 	static constexpr const char* const scenario = "scenario";

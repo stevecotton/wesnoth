@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO namespace
+
 struct plugin_manager_status_defines
 {
 	static constexpr const char* const not_created = "not created";

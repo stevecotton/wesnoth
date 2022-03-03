@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO: namespace, was previously inside `class ::team`
+
 struct defeat_condition_defines
 {
 	static constexpr const char* const no_leader_left = "no_leader_left";

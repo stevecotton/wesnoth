@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO: namespace, was previously inside `class ::team`
+
 struct side_controller_defines
 {
 	static constexpr const char* const none = "null";

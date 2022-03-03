@@ -18,6 +18,8 @@
 
 #include "enum_base.hpp"
 
+// TODO namespace
+
 struct unit_alignments_defines
 {
 	static constexpr const char* const lawful = "lawful";
