@@ -1706,6 +1706,10 @@ effect::effect(const unit_ability_list& list, int def, bool backstab, const_atta
 		if (!filter_base_matches(cfg, def))
 			continue;
 
+		//is_cumulable is a boolean value who is true when abilities or weapon
+		//used is [leadership], [drains], [heal_on_hit], [heals] or [regenerate] type.
+		//while what is_cumulable or "cumulative" attribute are flase, "value"
+		//calculation type is usual, else , "value" is equivalent to "add" or "sub" atribute.
 		if(!is_cumulable || !cfg["cumulative"].to_bool()){
 			if (const config::attribute_value *v = cfg.get("value")) {
 				int value = get_single_ability_value(*v, def, ability, list.loc(), att, [&](const wfl::formula& formula, wfl::map_formula_callable& callable) {
