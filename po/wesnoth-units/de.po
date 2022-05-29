@@ -6460,12 +6460,6 @@ msgstr "Braunes Pferd"
 
 #. [unit_type]: id=Bay Horse, race=horse
 #: data/core/units/monsters/Horse.cfg:19
-#, fuzzy
-#| msgid ""
-#| "Bay horses are defined more by their coloration than their size or "
-#| "temperment, and can be found anywhere from the battlefield to the farm to "
-#| "the wild plains and woodlands. Though an unencumbered horse will tend to "
-#| "flee if possible, they will fight back with a powerful kick when cornered."
 msgid ""
 "Bay horses are defined more by their coloration than their size or "
 "temperament, and can be found anywhere from the battlefield to the farm to "
@@ -7066,14 +7060,6 @@ msgstr "Naga-Ehrengarde"
 
 #. [unit_type]: id=Naga High Guard, race=naga
 #: data/core/units/nagas/Guard_High.cfg:23
-#, fuzzy
-#| msgid ""
-#| "The elite naga guards are a rigid barrier to any invaders of a naga "
-#| "stronghold. They have powerful stikes and, like the lesser Shield Guard, "
-#| "they are difficult to dislodge from their posts because of effective use "
-#| "of a shield in melee techniques. This tactic does nothing against ranged "
-#| "attacks, but the nagas can usually seek better terrain advantage in such "
-#| "situations."
 msgid ""
 "The elite naga guards are a rigid barrier to any invaders of a naga "
 "stronghold. They have powerful strikes and, like the lesser Shield Guard, "
