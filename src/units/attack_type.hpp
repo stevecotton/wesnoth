@@ -114,6 +114,13 @@ public:
 	 * @param special_tags If true, match @a special against the tag name of special tags.
 	 */
 	bool has_special_or_ability(const std::string& special, bool special_id=true, bool special_tags=true) const;
+	/** check if special matche with
+	 * @return True if tspecial matche with filter.
+	 * @param cfg config of special.
+	 * @param tag_name tag_name of special checked
+	 * @param filter if special check with filter, return true.
+	 */
+	bool special_matches_filter(const config & cfg, const std::string& tag_name, const config & filter) const;
 
 	// In unit_types.cpp:
 
@@ -136,14 +143,20 @@ private:
 	// Configured as a bit field, in case that is useful.
 	enum AFFECTS { AFFECT_SELF=1, AFFECT_OTHER=2, AFFECT_EITHER=3 };
 	/**
+	 * Filter a list of abilities or weapon specials, removing any entries that don't own
+	 * the overwrite_specials attributes.
+	 *
+	 * @param overwriters list that may have overwrite_specials attributes.
+	 */
+	unit_ability_list overwrite_special_overwriter(unit_ability_list overwriters) const;
+	/**
 	 * Filter a list of abilities or weapon specials, removing any entries that are overridden by
 	 * the overwrite_specials attributes of a second list.
 	 *
 	 * @param input list to check, a filtered copy of this list is returned by the function.
-	 * @param overwriters list that may have overwrite_specials attributes.
-	 * @param is_special if true, input contains weapon specials; if false, it contains abilities.
+	 * @param overwriters list that have overwrite_specials attributes if not empty.
 	 */
-	unit_ability_list overwrite_special_checking(unit_ability_list input, unit_ability_list overwriters, bool is_special) const;
+	unit_ability_list overwrite_special_checking(unit_ability_list input, unit_ability_list overwriters) const;
 	/** check_self_abilities : return an boolean value for checking of activities of abilities used like weapon
 	 * @return True if the special @a special is active.
 	 * @param cfg the config to one special ability checked.

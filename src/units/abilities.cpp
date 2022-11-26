@@ -35,6 +35,7 @@
 #include "units/abilities.hpp"
 #include "units/filter.hpp"
 #include "units/map.hpp"
+#include "utils/config_filters.hpp"
 #include "filter_context.hpp"
 #include "formula/callable_objects.hpp"
 #include "formula/formula.hpp"
@@ -1262,17 +1263,11 @@ unit_ability_list attack_type::get_weapon_ability(const std::string& ability) co
 
 unit_ability_list attack_type::get_specials_and_abilities(const std::string& special) const
 {
-	unit_ability_list abil_list = get_weapon_ability(special);
-	if(!abil_list.empty()){
-		abil_list = overwrite_special_checking(abil_list, abil_list, false);
-	}
-	unit_ability_list spe_list = get_specials(special);
-	if(!spe_list.empty()){
-		spe_list = overwrite_special_checking(spe_list, abil_list, true);
-		if(special == "plague" && !spe_list.empty()){
-			return spe_list;
-		}
-		abil_list.append(spe_list);
+	unit_ability_list abil_list = get_specials(special);
+	abil_list.append(get_weapon_ability(special));
+	unit_ability_list overwriters = overwrite_special_overwriter(abil_list);
+	if(!abil_list.empty() && !overwriters.empty()){
+		abil_list = overwrite_special_checking(abil_list, overwriters);
 	}
 	return abil_list;
 }
@@ -1288,23 +1283,47 @@ static bool overwrite_special_affects(const config& special)
 	return (apply_to == "one_side" || apply_to == "both_sides");
 }
 
-unit_ability_list attack_type::overwrite_special_checking(unit_ability_list input, unit_ability_list overwriters, bool is_special) const
+unit_ability_list attack_type::overwrite_special_overwriter(unit_ability_list overwriters) const
 {
-	for(unit_ability_list::iterator i = overwriters.begin(); i != overwriters.end();) {
-		if(!overwrite_special_affects(*i->ability_cfg)) {
-			i = overwriters.erase(i);
-		} else {
-			++i;
+	std::vector<double> priorityvec;
+	utils::erase_if(overwriters, [&](const unit_ability& i) {
+		if(overwrite_special_affects(*i.ability_cfg)){
+			auto overwrite_specials = (*i.ability_cfg).optional_child("overwrite");
+			if(overwrite_specials && !overwrite_specials["priority"].empty()){
+				priorityvec.push_back(overwrite_specials["priority"].to_double(0));
+			}
 		}
-	}
+		return (!overwrite_special_affects(*i.ability_cfg));
+	});
+
 	if(overwriters.empty()){
-		return input;
+		return overwriters;
 	}
 
+	if(!priorityvec.empty()){
+		double priority = *(std::max_element(priorityvec.begin(), priorityvec.end()));
+		if(priority > 0){
+			unit_ability_list temp_overwriters;
+			temp_overwriters.append_if(overwriters, [&](const unit_ability& i) {
+				auto overwrite_specials = (*i.ability_cfg).optional_child("overwrite");
+				return (overwrite_specials && overwrite_specials["priority"].to_double(0) == priority);
+			});
+			overwriters = overwrite_special_checking(overwriters, temp_overwriters);
+		}
+	}
+	return overwriters;
+}
+
+unit_ability_list attack_type::overwrite_special_checking(unit_ability_list input, unit_ability_list overwriters) const
+{
 	for(const auto& i : overwriters) {
 		bool affect_side = ((*i.ability_cfg)["overwrite_specials"] == "one_side");
+		auto overwrite_specials = (*i.ability_cfg).optional_child("overwrite");
+		double priority = overwrite_specials ? overwrite_specials["priority"].to_double(0) : 0.00;
 		utils::erase_if(input, [&](const unit_ability& j) {
-			bool is_overwritable = (is_special || !overwrite_special_affects(*j.ability_cfg));
+			auto has_overwrite_specials = (*j.ability_cfg).optional_child("overwrite");
+			bool prior = (priority > 0) ? (has_overwrite_specials && has_overwrite_specials["priority"].to_double(0) >= priority) : true;
+			bool is_overwritable = (overwrite_special_affects(*j.ability_cfg) && !prior) || !overwrite_special_affects(*j.ability_cfg);
 			bool one_side_overwritable = true;
 			if(affect_side && is_overwritable){
 				if(special_affects_self(*i.ability_cfg, is_attacker_)){
@@ -1314,7 +1333,15 @@ unit_ability_list attack_type::overwrite_special_checking(unit_ability_list inpu
 					one_side_overwritable = special_affects_opponent(*j.ability_cfg, !is_attacker_);
 				}
 			}
-			return (is_overwritable && one_side_overwritable);
+			bool special_matches = true;
+			if(overwrite_specials){
+				auto overwrite_filter = (*overwrite_specials).optional_child("filter_specials");
+				if(overwrite_filter && is_overwritable && one_side_overwritable){
+					const std::string& tag_name = !(*overwrite_filter)["tag_name"].empty() ? (*overwrite_filter)["tag_name"].str() : "";
+					special_matches = special_matches_filter((*j.ability_cfg), tag_name, *overwrite_filter);
+				}
+			}
+			return (is_overwritable && one_side_overwritable && special_matches);
 		});
 	}
 	return input;
@@ -1522,6 +1549,133 @@ bool attack_type::has_special_or_ability(const std::string& special, bool specia
 	return (has_special(special, false, special_id, special_tags) || has_weapon_ability(special, special_id, special_tags));
 }
 //end of emulate weapon special functions.
+
+//function for filter abilities or specials
+namespace {//helper for attack_type::special_matches_filter() and unit::ability_matches_filter()
+	bool type_value_if_present(const config& filter, const config& cfg)
+	{
+		if(filter["type_value"].empty()) {
+			return true;
+		}
+
+		std::string cfg_type_value;
+		const std::vector<std::string> filter_attribute = utils::split(filter["type_value"]);
+		if(!cfg["value"].empty()){
+			cfg_type_value ="value";
+		} else if(!cfg["add"].empty()){
+			cfg_type_value ="add";
+		} else if(!cfg["sub"].empty()){
+			cfg_type_value ="sub";
+		} else if(!cfg["multiply"].empty()){
+			cfg_type_value ="multiply";
+		} else if(!cfg["divide"].empty()){
+			cfg_type_value ="divide";
+		}
+		return ( std::find(filter_attribute.begin(), filter_attribute.end(), cfg_type_value) != filter_attribute.end() );
+	}
+
+	bool matches_ability_filter(const config & cfg, const std::string& tag_name, const config & filter)
+	{
+		using namespace utils::config_filters;
+
+		if(!filter["affect_adjacent"].empty()){
+			bool adjacent = cfg.has_child("affect_adjacent");
+			if(filter["affect_adjacent"].to_bool() != adjacent){
+				return false;
+			}
+		}
+
+		if(!bool_matches_if_present(filter, cfg, "affect_self", true))
+			return false;
+
+		if(!bool_matches_if_present(filter, cfg, "affect_allies", true))
+			return false;
+
+		if(!bool_matches_if_present(filter, cfg, "affect_enemies", false))
+			return false;
+
+		if(!bool_matches_if_present(filter, cfg, "cumulative", false))
+			return false;
+
+		const std::vector<std::string> filter_type = utils::split(filter["tag_name"]);
+		if ( !filter_type.empty() && std::find(filter_type.begin(), filter_type.end(), tag_name) == filter_type.end() )
+			return false;
+
+		if(!string_matches_if_present(filter, cfg, "overwrite_specials", "none"))
+			return false;
+
+		if(!string_matches_if_present(filter, cfg, "id", ""))
+			return false;
+
+		if(!string_matches_if_present(filter, cfg, "apply_to", "self"))
+			return false;
+
+		if(!string_matches_if_present(filter, cfg, "active_on", "both"))
+			return false;
+
+		//for plague only
+		if(!string_matches_if_present(filter, cfg, "type", ""))
+			return false;
+
+		if(!int_matches_if_present(filter, cfg, "value"))
+			return false;
+
+		if(!int_matches_if_present_or_negative(filter, cfg, "add", "sub"))
+			return false;
+
+		if(!int_matches_if_present_or_negative(filter, cfg, "sub", "add"))
+			return false;
+
+		if(!double_matches_if_present(filter, cfg, "multiply"))
+			return false;
+
+		if(!double_matches_if_present(filter, cfg, "divide"))
+			return false;
+
+		if(!type_value_if_present(filter, cfg))
+			return false;
+
+		// Passed all tests.
+		return true;
+	}
+
+	static bool common_matches_filter(const config & cfg, const std::string& tag_name, const config & filter)
+	{
+		// Handle the basic filter.
+		bool matches = matches_ability_filter(cfg, tag_name, filter);
+
+		// Handle [and], [or], and [not] with in-order precedence
+		for (const config::any_child condition : filter.all_children_range() )
+		{
+			// Handle [and]
+			if ( condition.key == "and" )
+				matches = matches && common_matches_filter(cfg, tag_name, condition.cfg);
+
+			// Handle [or]
+			else if ( condition.key == "or" )
+				matches = matches || common_matches_filter(cfg, tag_name, condition.cfg);
+
+			// Handle [not]
+			else if ( condition.key == "not" )
+				matches = matches && !common_matches_filter(cfg, tag_name, condition.cfg);
+		}
+
+		return matches;
+	}
+}//anonymous namespace
+
+bool attack_type::special_matches_filter(const config & cfg, const std::string& tag_name, const config & filter) const
+{
+	return common_matches_filter(cfg, tag_name, filter);
+}
+
+bool unit::ability_matches_filter(const config & cfg, const std::string& tag_name, const config & filter) const
+{
+	return common_matches_filter(cfg, tag_name, filter);
+}
+
+//end of filter_special/ability functions
+
 
 bool attack_type::special_active(const config& special, AFFECTS whom, const std::string& tag_name,
                                  const std::string& filter_self) const
