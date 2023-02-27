@@ -82,6 +82,7 @@ reindent:
 		--exclude=../../data/test/scenarios/wml_tests/TerrainWML \
 		--exclude=../../data/schema \
 		$(DATA)
+	@find ../../data/gui -name \*.cfg -print0 | xargs -0 ./check_mixed_indent
 	@find ../../data/schema -name \*.cfg -print0 | xargs -0 ./check_mixed_indent
 
 # Extract a table of editor keybindings from the editor theme definition
