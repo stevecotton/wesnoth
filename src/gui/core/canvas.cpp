@@ -465,6 +465,18 @@ void text_shape::draw(wfl::map_formula_callable& variables)
 	const int h = h_(local_variables);
 	rect dst_rect{x, y, w, h};
 
+	// FIXME: remove this visual debugging that's related to bug 6952.
+	// Get what is expected to be the visible area of the screen where this text would go,
+	// and overlay a green rectangle on that area.
+	rect clipped = dst_rect.intersect(draw::get_clip());
+	draw::fill(clipped, 0, 100, 0, 100);
+	PLAIN_LOG << "Highlighted the rectange " << clipped;
+
+	// If we're rendering the credits, bail out early before bug 6952 makes us crash out.
+	if(h > 10000) {
+		return;
+	}
+
 	texture tex = text_renderer.render_and_get_texture();
 	if(!tex) {
 		DBG_GUI_D << "Text: Rendering '" << text << "' resulted in an empty canvas, leave.";
