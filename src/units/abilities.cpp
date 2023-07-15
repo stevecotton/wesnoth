@@ -772,7 +772,9 @@ bool attack_type::has_special(const std::string& special, bool simple_check, boo
 
 /**
  * Returns the currently active specials as an ability list, given the current
- * context (see set_specials_context).
+ * context (see set_specials_context). This only looks at specials provided by
+ * the unit's weapon and opponent's weapon, it does not examine any abilities
+ * that are used like weapon specials.
  */
 unit_ability_list attack_type::get_specials(const std::string& special) const
 {

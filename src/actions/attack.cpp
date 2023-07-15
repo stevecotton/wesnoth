@@ -293,6 +293,9 @@ battle_context_unit_stats::battle_context_unit_stats(const unit_type* u_type,
 		opp_ctx.emplace(opp_weapon->specials_context(*opp_type, map_location::null_location(), !attacking));
 	}
 
+	// The calculations only need to use get_specials() instead of get_specials_and_abilities(), because these
+	// calculations are using unit types.
+	// TODO: does that logic actually hold? Are there abilities that could be detected without actual units?
 	slows = weapon->has_special("slow");
 	drains = !opp_type->musthave_status("undrainable") && weapon->has_special("drains");
 	petrifies = weapon->has_special("petrifies");
