@@ -1267,7 +1267,8 @@ unit_ability_list attack_type::get_specials_and_abilities(const std::string& spe
 	abil_list.append(get_weapon_ability(special));
 	unit_ability_list overwriters = overwrite_special_overwriter(abil_list);
 	if(!abil_list.empty() && !overwriters.empty()){
-		abil_list = overwrite_special_checking(abil_list, overwriters);
+		int list_count = 0;
+		overwrite_special_checking(abil_list, overwriters, list_count);
 	}
 	return abil_list;
 }
@@ -1286,8 +1287,10 @@ static bool overwrite_special_affects(const config& special)
 unit_ability_list attack_type::overwrite_special_overwriter(unit_ability_list overwriters) const
 {
 	std::vector<double> priorityvec;
+	int list_count = 0;
 	utils::erase_if(overwriters, [&](const unit_ability& i) {
 		if(overwrite_special_affects(*i.ability_cfg)){
+			list_count += 1;
 			auto overwrite_specials = (*i.ability_cfg).optional_child("overwrite");
 			if(overwrite_specials && !overwrite_specials["priority"].empty()){
 				priorityvec.push_back(overwrite_specials["priority"].to_double(0));
@@ -1300,21 +1303,33 @@ unit_ability_list attack_type::overwrite_special_overwriter(unit_ability_list ov
 		return overwriters;
 	}
 
-	if(!priorityvec.empty()){
-		double priority = *(std::max_element(priorityvec.begin(), priorityvec.end()));
-		if(priority > 0){
-			unit_ability_list temp_overwriters;
-			temp_overwriters.append_if(overwriters, [&](const unit_ability& i) {
-				auto overwrite_specials = (*i.ability_cfg).optional_child("overwrite");
-				return (overwrite_specials && overwrite_specials["priority"].to_double(0) == priority);
-			});
-			overwriters = overwrite_special_checking(overwriters, temp_overwriters);
+	if(!priorityvec.empty() && (list_count >= 2)){
+		if(priorityvec.size() >= 2){
+			std::sort(priorityvec.begin(), priorityvec.end(),[](const double &l, const double &r)
+				{
+					return l > r;
+				}
+			);
+		}
+		for(double priority : priorityvec){
+			if(priority > 0){
+				unit_ability_list temp_overwriters;
+				std::pair<unit_ability_list, int> overwrite_list;
+				temp_overwriters.append_if(overwriters, [&](const unit_ability& i) {
+					auto overwrite_specials = (*i.ability_cfg).optional_child("overwrite");
+					return (overwrite_specials && overwrite_specials["priority"].to_double(0) == priority);
+				});
+				overwrite_special_checking(overwriters, temp_overwriters, list_count);
+			}
+			if(list_count <= 1){
+				break;
+			}
 		}
 	}
 	return overwriters;
 }
 
-unit_ability_list attack_type::overwrite_special_checking(unit_ability_list input, unit_ability_list overwriters) const
+void attack_type::overwrite_special_checking(unit_ability_list& input, unit_ability_list& overwriters, int& list_count) const
 {
 	for(const auto& i : overwriters) {
 		bool affect_side = ((*i.ability_cfg)["overwrite_specials"] == "one_side");
@@ -1341,10 +1356,12 @@ unit_ability_list attack_type::overwrite_special_checking(unit_ability_list inpu
 					special_matches = special_matches_filter((*j.ability_cfg), tag_name, *overwrite_filter);
 				}
 			}
+			if(is_overwritable && one_side_overwritable && special_matches && list_count > 0){
+				list_count -= 1;
+			}
 			return (is_overwritable && one_side_overwritable && special_matches);
 		});
 	}
-	return input;
 }
 
 	/**

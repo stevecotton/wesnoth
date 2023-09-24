@@ -155,8 +155,9 @@ private:
 	 *
 	 * @param input list to check, a filtered copy of this list is returned by the function.
 	 * @param overwriters list that have overwrite_specials attributes if not empty.
+	 * @param list_count used for count size of input when function called in overwrite_special_overwriter.
 	 */
-	unit_ability_list overwrite_special_checking(unit_ability_list input, unit_ability_list overwriters) const;
+	void overwrite_special_checking(unit_ability_list& input, unit_ability_list& overwriters, int& list_count) const;
 	/** check_self_abilities : return an boolean value for checking of activities of abilities used like weapon
 	 * @return True if the special @a special is active.
 	 * @param cfg the config to one special ability checked.
