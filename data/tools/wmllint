@@ -3202,10 +3202,7 @@ def translator(filename, mapxforms, textxform):
                         print("*** Exiting map mode.")
                     line = line.split('"')[0]
                 if line:
-                    if ',' in line:
-                        fields = line.split(",")
-                    else:
-                        fields = [x for x in line]
+                    fields = line.split(",")
                     outmap.append(fields)
                     if not maskwarn and maptype == 'map':
                         terrain_strings = (f.split()[-1] for f in fields)
@@ -3226,10 +3223,17 @@ def translator(filename, mapxforms, textxform):
             newdata += savedheaders
             if have_header and not have_delimiter:
                 newdata.append(terminator)
-            for y in range(len(outmap)):
-                newdata.append(",".join(outmap[y]) + terminator)
-            # All lines of the map are processed, add the appropriate trailer
-            if not map_only:
+            if map_only:
+                for y in range(len(outmap)):
+                    newdata.append(",".join(outmap[y]) + terminator)
+            else:
+                # One line of data, put the opening and closing double-quotes on the same line.
+                if len(outmap) == 1:
+                    newdata.append(",".join(outmap[y]))
+                else:
+                    newdata.append(terminator)
+                    for y in range(len(outmap)):
+                        newdata.append(",".join(outmap[y]) + terminator)
                 newdata.append("\"" + terminator)
         elif "map_data=" in line and ("{" in line or "}" in line):
             newline = line
