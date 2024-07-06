@@ -373,11 +373,11 @@ bool unit::ability_active(const std::string& ability,const config& cfg,const map
 				continue;
 			unit_map::const_iterator unit = units.find(adjacent[index]);
 			if (unit == units.end())
-				return false;
+				continue;
 			if (!ufilt(*unit, *this))
-				return false;
+				continue;
 			if((*this).id() == (*unit).id())
-				return false;
+				continue;
 			if (i.has_attribute("is_enemy")) {
 				const display_context& dc = resources::filter_con->get_disp_context();
 				if (i["is_enemy"].to_bool() != dc.get_team(unit->side()).is_enemy(side_)) {
@@ -407,7 +407,7 @@ bool unit::ability_active(const std::string& ability,const config& cfg,const map
 				continue;
 			}
 			if(!adj_filter.match(adjacent[index])) {
-				return false;
+				continue;
 			}
 			count++;
 		}
@@ -1910,7 +1910,7 @@ bool attack_type::special_active_impl(
 				continue;
 			unit_map::const_iterator unit = units.find(adjacent[index]);
 			if (unit == units.end() || !filter.matches(*unit, adjacent[index], *self))
-				return false;
+				continue;
 			if (i.has_attribute("is_enemy")) {
 				const display_context& dc = resources::filter_con->get_disp_context();
 				if (i["is_enemy"].to_bool() != dc.get_team(unit->side()).is_enemy(self->side())) {
@@ -1938,7 +1938,7 @@ bool attack_type::special_active_impl(
 			if (index == map_location::NDIRECTIONS)
 				continue;
 			if(!adj_filter.match(adjacent[index])) {
-				return false;
+				continue;
 			}
 			count++;
 		}
