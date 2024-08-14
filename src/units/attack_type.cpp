@@ -46,27 +46,6 @@ static lg::log_domain log_unit("unit");
 static lg::log_domain log_wml("wml");
 #define ERR_WML LOG_STREAM(err, log_wml)
 
-namespace {
-/**
- * Value of attack_type::num_recursion_ at which allocations of further recursion_guards fail. This
- * value is used per weapon, so if two weapon specials are depending on each other being active then
- * with ATTACK_RECURSION_LIMIT = 3 the recursion could go 6 levels deep (and then return false on
- * the 7th call to matches_simple_filter).
- *
- * The counter is checked at the start of matches_simple_filter, and even the first level needs an
- * allocation; setting the limit to zero would make matches_simple_filter always return false.
- *
- * With the recursion limit set to 1, the following tests fail; they just need a reasonable depth.
- * event_test_filter_attack_specials
- * event_test_filter_attack_opponent_weapon_condition
- * event_test_filter_attack_student_weapon_condition
- *
- * With the limit set to 2, all tests pass, but as the limit only affects cases that would otherwise
- * lead to a crash, it seems reasonable to leave a little headroom for more complex logic.
- */
-constexpr unsigned int ATTACK_RECURSION_LIMIT = 4;
-};
-
 attack_type::attack_type(const config& cfg) :
 	self_loc_(),
 	other_loc_(),
@@ -156,7 +135,7 @@ bool matches_simple_filter(const attack_type& attack, const config& filter, cons
 {
 	//update and check variable_recursion for prevent check special_id/type_active in case of infinite recursion.
 	attack_type::recursion_guard filter_lock;
-	filter_lock = attack.update_variables_recursion();
+	filter_lock = attack.update_variables_recursion(filter);
 	if(!filter_lock) {
 		show_recursion_warning(attack, filter);
 		return false;
@@ -636,21 +615,25 @@ bool attack_type::describe_modification(const config& cfg,std::string* descripti
 	return true;
 }
 
-attack_type::recursion_guard attack_type::update_variables_recursion() const
+attack_type::recursion_guard attack_type::update_variables_recursion(const config& filter) const
 {
+	// todo - could a filter ever appear twice on the stack with different answers, for example if it's
+	// checking that the unit is in a backstab position to two different units?
+	//
 	// this shouldn't be const, but replacing the const-and-mutable mess in attack_type is a big task
-	if(num_recursion_ < ATTACK_RECURSION_LIMIT) {
-		return recursion_guard(*this);
+	if(utils::contains(open_queries_, filter)) {
+		return recursion_guard();
 	}
-	return recursion_guard();
+
+	return recursion_guard(*this, filter);
 }
 
 attack_type::recursion_guard::recursion_guard() = default;
 
-attack_type::recursion_guard::recursion_guard(const attack_type& weapon)
+attack_type::recursion_guard::recursion_guard(const attack_type& weapon, const config& filter)
 	: parent(weapon.shared_from_this())
 {
-	weapon.num_recursion_++;
+	parent->open_queries_.emplace_back(filter);
 }
 
 attack_type::recursion_guard::recursion_guard(attack_type::recursion_guard&& other)
@@ -676,8 +659,10 @@ attack_type::recursion_guard& attack_type::recursion_guard::operator=(attack_typ
 attack_type::recursion_guard::~recursion_guard()
 {
 	if(parent) {
-		assert(parent->num_recursion_ > 0);
-		parent->num_recursion_--;
+		// As this only expects nested recursion, simply pop the top of the open_queries_ stack
+		// without checking that the top of the stack matches the filter passed to the constructor.
+		assert(!parent->open_queries_.empty());
+		parent->open_queries_.pop_back();
 	}
 }
 
