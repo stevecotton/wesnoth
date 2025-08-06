@@ -76,7 +76,6 @@ private: // data
 	unit_ptr shown_unit_;
 	const std::vector<map_location>& path_;
 	std::size_t current_;
-	fake_unit_ptr temp_unit_ptr_;
 	bool was_hidden_;
 	bool is_enemy_;
 };

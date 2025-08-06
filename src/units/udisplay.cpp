@@ -184,7 +184,6 @@ unit_mover::unit_mover(const std::vector<map_location>& path, bool animate, bool
 	shown_unit_(),
 	path_(path),
 	current_(0),
-	temp_unit_ptr_(),
 	// Somewhat arbitrary default values.
 	was_hidden_(false),
 	is_enemy_(true)
@@ -225,13 +224,6 @@ void unit_mover::replace_temporary(const unit_ptr& u)
 	// Save the hidden state of the unit.
 	was_hidden_ = u->get_hidden();
 
-	// Make our temporary unit mostly match u...
-	temp_unit_ptr_ = fake_unit_ptr(u->clone(), resources::fake_units);
-
-	// ... but keep the temporary unhidden and hide the original.
-	temp_unit_ptr_->set_hidden(false);
-	u->set_hidden(true);
-
 	// Update cached data.
 	is_enemy_ =	resources::gameboard->get_team(u->side()).is_enemy(disp_->viewing_team().side());
 }
@@ -246,8 +238,8 @@ void unit_mover::update_shown_unit()
 {
 	if ( shown_unit_ ) {
 		// Switch the display back to the real unit.
-		shown_unit_->set_hidden(was_hidden_);
-		temp_unit_ptr_->set_hidden(true);
+//		shown_unit_->set_hidden(was_hidden_);
+//		temp_unit_ptr_->set_hidden(true);
 		shown_unit_.reset();
 	}
 }
@@ -266,41 +258,38 @@ void unit_mover::start(const unit_ptr& u)
 	u->anim_comp().reset_affect_adjacent(*disp_);
 	if ( !animate_ ) {
 		was_hidden_ = u->get_hidden();
-		u->set_hidden(true);
+//		u->set_hidden(true);
 		return;
 	}
 
 	// This normally does nothing, but just in case...
 	wait_for_anims();
 
-	// Visually replace the original unit with the temporary.
-	// (Original unit is left on the map, so the unit count is correct.)
-	replace_temporary(u);
 
 	// Initialize our temporary unit for the move.
-	temp_unit_ptr_->set_location(path_[0]);
-	temp_unit_ptr_->set_facing(path_[0].get_relative_dir(path_[1]));
-	temp_unit_ptr_->anim_comp().set_standing(false);
+//	temp_unit_ptr_->set_location(path_[0]);
+	u->set_facing(path_[0].get_relative_dir(path_[1]));
+	u->anim_comp().set_standing(false);
 	disp_->invalidate(path_[0]);
 
 	// If the unit can be seen here by the viewing side:
-	if(!is_enemy_ || !temp_unit_ptr_->invisible(path_[0])) {
+	if(!is_enemy_ || !u->invisible(path_[0])) {
 		// Scroll to the path, but only if it fully fits on screen.
 		// If it does not fit we might be able to do a better scroll later.
 		disp_->scroll_to_tiles(path_, game_display::ONSCREEN, true, true, 0.0, false);
 	}
 
 	// extra immobile movement animation for take-off
-	animator_.add_animation(temp_unit_ptr_.get_unit_ptr(), "pre_movement", path_[0], path_[1]);
+	animator_.add_animation(u, "pre_movement", path_[0], path_[1]);
 	animator_.start_animations();
 	animator_.wait_for_end();
 	animator_.clear();
 
 	// Switch the display back to the real unit.
-	u->set_facing(temp_unit_ptr_->facing());
-	u->anim_comp().set_standing(false);	// Need to reset u's animation so the new facing takes effect.
-	u->set_hidden(was_hidden_);
-	temp_unit_ptr_->set_hidden(true);
+//	u->set_facing(temp_unit_ptr_->facing());
+//	u->anim_comp().set_standing(false);	// Need to reset u's animation so the new facing takes effect.
+//	u->set_hidden(was_hidden_);
+//	temp_unit_ptr_->set_hidden(true);
 }
 
 
@@ -325,16 +314,6 @@ void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool upda
 	// Handle pending visibility issues before introducing new ones.
 	wait_for_anims();
 
-	if ( update  ||  !temp_unit_ptr_ )
-		// Replace the temp unit (which also hides u and shows our temporary).
-		replace_temporary(u);
-	else
-	{
-		// Just switch the display from the real unit to our fake one.
-		temp_unit_ptr_->set_hidden(false);
-		u->set_hidden(true);
-	}
-
 	// Safety check.
 	path_index = std::min(path_index, path_.size()-1);
 
@@ -343,9 +322,9 @@ void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool upda
 		// When that is the case, and the unit is invisible at path_[current_], we shouldn't
 		// scroll to that hex.
 		std::vector<map_location> locs;
-		if (!temp_unit_ptr_->invisible(path_[current_]))
+		if (!u->invisible(path_[current_]))
 			locs.push_back(path_[current_]);
-		if (!temp_unit_ptr_->invisible(path_[current_+1]))
+		if (!u->invisible(path_[current_+1]))
 			locs.push_back(path_[current_+1]);
 		// If the unit can be seen by the viewing side while making this step:
 		if ( !is_enemy_ || !locs.empty() )
@@ -357,32 +336,32 @@ void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool upda
 			     !disp_->tile_fully_on_screen(path_[current_+1]))
 			{
 				// prevent the unit from disappearing if we scroll here with i == 0
-				temp_unit_ptr_->set_location(path_[current_]);
+				u->set_location(path_[current_]);
 				disp_->invalidate(path_[current_]);
 				// scroll in as much of the remaining path as possible
-				if ( temp_unit_ptr_->anim_comp().get_animation() )
-					temp_unit_ptr_->anim_comp().get_animation()->pause_animation();
+				if ( u->anim_comp().get_animation() )
+					u->anim_comp().get_animation()->pause_animation();
 				disp_->scroll_to_tiles(locs, game_display::ONSCREEN,
 				                       true, false, 0.0, force_scroll_);
-				if ( temp_unit_ptr_->anim_comp().get_animation() )
-					temp_unit_ptr_->anim_comp().get_animation()->restart_animation();
+				if ( u->anim_comp().get_animation() )
+					u->anim_comp().get_animation()->restart_animation();
 			}
 
 			if ( tiles_adjacent(path_[current_], path_[current_+1]) )
 				wait_until_ =
 					move_unit_between(path_[current_], path_[current_+1],
-					                  temp_unit_ptr_.get_unit_ptr(), current_,
+					                  u, current_,
 					                  path_.size() - (current_+2), animator_,
 					                  *disp_);
 			else if ( path_[current_] != path_[current_+1] )
 				teleport_unit_between(path_[current_], path_[current_+1],
-				                      *temp_unit_ptr_, *disp_);
+				                      *u, *disp_);
 		}
 	}
 
 	// Update the unit's facing.
-	u->set_facing(temp_unit_ptr_->facing());
-	u->anim_comp().set_standing(false);	// Need to reset u's animation so the new facing takes effect.
+//	u->set_facing(temp_unit_ptr_->facing());
+//	u->anim_comp().set_standing(false);	// Need to reset u's animation so the new facing takes effect.
 	// Remember the unit to unhide when the animation finishes.
 	shown_unit_ = u;
 }
@@ -454,19 +433,18 @@ void unit_mover::finish(const unit_ptr& u, map_location::direction dir)
 		wait_for_anims(); // In case proceed_to() did not wait for the last animation.
 
 		// Make sure the displayed unit is correct.
-		replace_temporary(u);
-		temp_unit_ptr_->set_location(end_loc);
-		temp_unit_ptr_->set_facing(final_dir);
+		u->set_location(end_loc);
+		u->set_facing(final_dir);
 
 		// Animation
-		animator_.add_animation(temp_unit_ptr_.get_unit_ptr(), "post_movement", end_loc);
+		animator_.add_animation(u, "post_movement", end_loc);
 		animator_.start_animations();
 		animator_.wait_for_end();
 		animator_.clear();
 
 		// Switch the display back to the real unit.
-		u->set_hidden(was_hidden_);
-		temp_unit_ptr_->set_hidden(true);
+//		u->set_hidden(was_hidden_);
+//		temp_unit_ptr_->set_hidden(true);
 		u->anim_comp().reset_affect_adjacent(*disp_);
 
 		if(events::mouse_handler* mousehandler = events::mouse_handler::get_singleton()) {
@@ -476,7 +454,7 @@ void unit_mover::finish(const unit_ptr& u, map_location::direction dir)
 	else
 	{
 		// Show the unit at end of skipped animation
-		u->set_hidden(was_hidden_);
+//		u->set_hidden(was_hidden_);
 	}
 
 	// Facing gets set even when not animating.
@@ -823,9 +801,9 @@ void unit_recruited(const map_location& loc,const map_location& leader_loc)
 
 	{
 		ON_SCOPE_EXIT(u) {
-			u->set_hidden(false);
+//			u->set_hidden(false);
 		};
-		u->set_hidden(true);
+//		u->set_hidden(true);
 
 		if (leader_visible && unit_visible) {
 			disp->scroll_to_tiles(loc,leader_loc,game_display::ONSCREEN,true,0.0,false);
