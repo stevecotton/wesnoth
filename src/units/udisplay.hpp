@@ -41,6 +41,10 @@ namespace unit_display
  * A class to encapsulate the steps of drawing a unit's move.
  * If control over how far the unit moves is not needed, move_unit() may
  * be a more convenient interface.
+ *
+ * There appears to be exactly two users of this class - the implementation of
+ * move_unit(), and a wrapper class in src/actions/move.cpp which is also
+ * called unit_mover().
  */
 class unit_mover {
 public:
@@ -80,6 +84,8 @@ private: // data
 
 /**
  * Display a unit moving along a given path.
+ *
+ * TODO: just a dev note - the 6 callers of this are easy to find, as they all include the namespace in the call.
  */
 void move_unit(const std::vector<map_location>& path, const unit_ptr& u,
 	bool animate=true,
