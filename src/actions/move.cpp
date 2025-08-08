@@ -625,7 +625,7 @@ namespace { // Private helpers for move_unit()
 
 			// Show this move.
 			animator.proceed_to(move_it_.get_shared_ptr(), step_to - begin_,
-			                    move_it_->appearance_changed(), false);
+			                    move_it_->appearance_changed());
 			move_it_->set_appearance_changed(false);
 			disp.redraw_minimap();
 		}
@@ -660,7 +660,7 @@ namespace { // Private helpers for move_unit()
 			move_loc_ = step_to;
 
 			// Show this move.
-			animator.proceed_to(move_it_.get_shared_ptr(), step_to - begin_, move_it_->appearance_changed(), false);
+			animator.proceed_to(move_it_.get_shared_ptr(), step_to - begin_, move_it_->appearance_changed());
 
 			move_it_->set_appearance_changed(false);
 			disp.redraw_minimap();

@@ -310,12 +310,13 @@ void unit_mover::start(const unit_ptr& u)
  * The moving unit will only be updated if update is set to true; otherwise,
  * the provided unit is merely hidden during the movement and re-shown after.
  * (Not updating the unit can produce smoother animations in some cases.)
- * If @a wait is set to false, this returns without waiting for the final
+ *
+ * This returns without waiting for the final
  * animation to finish. Call wait_for_anims() to explicitly get this final
  * wait (another call to proceed_to() or finish() will implicitly wait). The
  * unit must remain valid until the wait is finished.
  */
-void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool update, bool wait)
+void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool update)
 {
 	// Nothing to do here if animations cannot be shown.
 	if ( !can_draw_ || !animate_ )
@@ -384,8 +385,6 @@ void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool upda
 	u->anim_comp().set_standing(false);	// Need to reset u's animation so the new facing takes effect.
 	// Remember the unit to unhide when the animation finishes.
 	shown_unit_ = u;
-	if ( wait )
-		wait_for_anims();
 }
 
 
@@ -514,7 +513,8 @@ void move_unit(const std::vector<map_location>& path, const unit_ptr& u,
 	unit_mover mover(path, animate, force_scroll);
 
 	mover.start(u);
-	mover.proceed_to(u, path.size());
+	mover.proceed_to(u, path.size(), false);
+	mover.wait_for_anims();
 	mover.finish(u, dir);
 }
 

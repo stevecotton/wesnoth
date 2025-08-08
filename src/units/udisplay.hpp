@@ -51,7 +51,8 @@ public:
 	~unit_mover();
 
 	void start(const unit_ptr& u);
-	void proceed_to(const unit_ptr& u, std::size_t path_index, bool update=false, bool wait=true);
+	// note the asynchronous nature of proceed_to
+	void proceed_to(const unit_ptr& u, std::size_t path_index, bool update);
 	void wait_for_anims();
 	void finish(const unit_ptr& u, map_location::direction dir = map_location::direction::indeterminate);
 
