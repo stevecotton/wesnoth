@@ -368,6 +368,10 @@ void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool upda
 //	u->anim_comp().set_standing(false);	// Need to reset u's animation so the new facing takes effect.
 	// Remember the unit to unhide when the animation finishes.
 	shown_unit_ = u;
+	auto start_time = std::chrono::steady_clock::now();
+	wait_for_anims();
+	auto end_time = std::chrono::steady_clock::now();
+	std::cerr << "Animating lasted " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << " milliseconds" << "\n";
 }
 
 
