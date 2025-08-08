@@ -1385,7 +1385,7 @@ void unit_animator::start_animations()
 
 	for(auto& anim : animated_units_) {
 		if(anim.animation) {
-			anim.my_unit->anim_comp().start_animation(begin_time, anim.animation, anim.with_bars, anim.text, anim.text_color);
+			anim.my_unit->anim_comp().start_animation(begin_time, anim.animation, anim.with_bars, anim.text, anim.text_color, unit_animation_component::STATE_ANIM, anim.src);
 			anim.animation = nullptr;
 		} else {
 			anim.my_unit->anim_comp().get_animation()->update_parameters(anim.src, anim.src.get_direction(anim.my_unit->facing()));

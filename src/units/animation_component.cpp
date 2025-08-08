@@ -109,7 +109,7 @@ void unit_animation_component::set_selecting()
 }
 
 void unit_animation_component::start_animation(const std::chrono::milliseconds& start_time, const unit_animation *animation,
-	bool with_bars,  const std::string &text, color_t text_color, STATE state)
+	bool with_bars,  const std::string &text, color_t text_color, STATE state, map_location loc)
 {
 	if (!animation) {
 		if (state == STATE_STANDING)
@@ -124,7 +124,10 @@ void unit_animation_component::start_animation(const std::chrono::milliseconds& 
 	draw_bars_ =  with_bars;
 	anim_.reset(new unit_animation(*animation));
 	const auto real_start_time = start_time == std::chrono::milliseconds::max() ? anim_->get_begin_time() : start_time;
-	anim_->start_animation(real_start_time, u_.loc_, u_.loc_.get_direction(u_.facing_),
+	if (!loc.valid()) {
+		loc = u_.loc_;
+	}
+	anim_->start_animation(real_start_time, loc, loc.get_direction(u_.facing_),
 		 text, text_color, accelerate);
 	frame_begin_time_ = anim_->get_begin_time() - 1ms;
 	next_idling_ = get_next_idle_tick();

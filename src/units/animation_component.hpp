@@ -96,7 +96,8 @@ public:
 	/** Begin an animation. */
 	void start_animation(const std::chrono::milliseconds& start_time, const unit_animation *animation,
 		bool with_bars,  const std::string &text = "",
-		color_t text_color = {}, STATE state = STATE_ANIM);
+		color_t text_color = {}, STATE state = STATE_ANIM,
+		map_location loc = map_location::null_location());
 
 	/** Invalidates an animation with respect to a display object, preparing it for redraw. */
 	bool invalidate(const display & disp);
