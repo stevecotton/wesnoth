@@ -32,6 +32,8 @@
 #include "utils/scope_exit.hpp"
 #include "video.hpp"
 
+#include <iostream>
+
 #define LOG_DP LOG_STREAM(info, display)
 
 
@@ -141,7 +143,7 @@ std::chrono::milliseconds move_unit_between(const map_location& a,
 		return std::chrono::milliseconds::min();
 	}
 
-	temp_unit->set_location(a);
+	//temp_unit->set_location(a);
 	disp.invalidate(a);
 	temp_unit->set_facing(a.get_relative_dir(b));
 	animator.replace_anim_if_invalid(temp_unit,"movement",a,b,step_num,
@@ -292,7 +294,6 @@ void unit_mover::start(const unit_ptr& u)
 //	temp_unit_ptr_->set_hidden(true);
 }
 
-
 /**
  * Visually moves a unit from the last hex we drew to the one specified by
  * @a path_index. If @a path_index points to an earlier hex, we do nothing.
@@ -307,6 +308,7 @@ void unit_mover::start(const unit_ptr& u)
  */
 void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool update)
 {
+	std::cerr << "proceed_to index=" << path_index << " size=" << path_.size() << "\n";
 	// Nothing to do here if animations cannot be shown.
 	if ( !can_draw_ || !animate_ )
 		return;
@@ -331,6 +333,8 @@ void unit_mover::proceed_to(const unit_ptr& u, std::size_t path_index, bool upda
 		{
 			// Wait for the previous step to complete before drawing the next one.
 			wait_for_anims();
+
+			std::cerr << "proceed_to current=" << current_ << "\n";
 
 			if ( !disp_->tile_fully_on_screen(path_[current_]) ||
 			     !disp_->tile_fully_on_screen(path_[current_+1]))

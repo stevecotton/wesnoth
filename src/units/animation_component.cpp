@@ -62,8 +62,10 @@ const unit_animation* unit_animation_component::choose_animation(const map_locat
 	}
 
 	if(max_val == unit_animation::MATCH_FAIL) {
+		ERR_NG << "No animation found at location " << loc;
 		return nullptr;
 	}
+	ERR_NG << "Animation found at location " << loc;
 	return options[randomness::rng::default_instance().get_random_int(0, options.size()-1)];
 }
 
