@@ -19,6 +19,9 @@
  * Templates related to animations.
  */
 
+#include <algorithm>
+#include <iostream>
+
 template<typename T>
 const T animated<T>::void_value_ = T();
 
@@ -126,6 +129,10 @@ inline void animated<T>::update_last_draw_time(double acceleration)
 	if(cycles_ && animation_time > end_time) {
 		const auto time_in_current_cycle = (animation_time - end_time) % get_animation_duration();
 		const auto time_to_skip = animation_time - time_in_current_cycle;
+
+		std::cerr << "duration=" << get_animation_duration().count()
+				<< "\tanimation_time=" << animation_time.count() << "\tin_current_cycle=" << time_in_current_cycle.count()
+				<< "\tto_skip=" << time_to_skip.count() << "\n";
 
 		// Reset start tick to the beginning of the current cycle.
 		start_tick_ += std::chrono::floor<std::chrono::milliseconds>(time_to_skip / acceleration_);
