@@ -86,6 +86,8 @@ inline void animated<T>::start_animation(const std::chrono::milliseconds& start_
 template<typename T>
 inline void animated<T>::update_last_draw_time(double acceleration)
 {
+	acceleration = 0.25;
+
 	if(acceleration > 0 && acceleration_ != acceleration) {
 		auto tmp = tick_to_time(last_update_tick_);
 		acceleration_ = acceleration;
