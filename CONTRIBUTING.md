@@ -22,7 +22,7 @@ All C++, WML and Lua files are in UTF-8, as we use Gettext-style translations, a
 
 WML files must be formatted with wmlindent, as this will be checked by the CI. Currently the data/gui and data/schema directories are exceptions to this, some of the unit tests are exceptions too.
 
-For C++ files, we have a configuration file for `clang-format`, however C++ formatting is currently handled by comments in code review without a check by the CI. This may change in future, but currently we want to incrementally move towards consistent formatting in steps that leave a useful `git blame` history rather than doing the whole codebase in one go. For C++ changes in files that aren't matching the standard it's left to the judgement of the contributor. We recommend making a local commit before running `clang-format`, in case more code than expected gets changed. Some GUIs, such as Visual Studio Code, are able to run clang-format on just the selected text rather than the full file.
+For C++ files, we have a configuration file for `clang-format`, however C++ formatting is currently handled by comments in code review without a check by the CI. This may change in future, but currently we want to incrementally move towards consistent formatting in steps that leave a useful `git blame` history rather than reformatting the whole codebase in one go. For C++ changes in files that aren't matching the standard it's left to the judgement of the contributor. We recommend making a local commit before running `clang-format`, in case more code than expected gets changed. Some GUIs, such as Visual Studio Code, are able to run clang-format on just the selected text rather than the full file.
 
 Generally, we follow these conventions in our C++ code:
 
