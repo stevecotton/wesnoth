@@ -914,7 +914,7 @@ std::vector<attack_type::attack_tooltip_metadata> attack_type::abilities_special
 	}
 	for(const auto [key, cfg] : self_->abilities().all_children_view()) {
 		if(check_self_abilities_impl(shared_from_this(), other_attack_, cfg, self_, self_loc_, AFFECT_SELF, key, false)) {
-			const bool active = true; // See PR 10538, for now this conditional block is only reached for active ones
+			const bool active = !is_for_listing_ || special_active(cfg, AFFECT_EITHER, key);
 			const std::string name = cfg["name_affected"];
 			const std::string desc = cfg["description_affected"];
 
@@ -937,7 +937,7 @@ std::vector<attack_type::attack_tooltip_metadata> attack_type::abilities_special
 		int dir = find_direction(self_loc_, from_loc, distance);
 		for(const auto [key, cfg] : u.abilities().all_children_view()) {
 			if(check_adj_abilities_impl(shared_from_this(), other_attack_, cfg, self_, u, distance, dir, self_loc_, from_loc, AFFECT_SELF, key, false)) {
-				const bool active = true; // See PR 10538, for now this conditional block is only reached for active ones
+				const bool active = !is_for_listing_ || special_active(cfg, AFFECT_EITHER, key);
 				const std::string name = cfg["name_affected"];
 				const std::string desc = cfg["description_affected"];
 
@@ -1185,13 +1185,6 @@ attack_type::specials_context_t::specials_context_t(const attack_type& weapon, c
 	weapon.is_attacker_ = attacking;
 	weapon.other_attack_ = nullptr;
 	weapon.is_for_listing_ = false;
-}
-
-attack_type::specials_context_t::specials_context_t(const attack_type& weapon, bool attacking)
-	: parent(weapon.shared_from_this())
-{
-	weapon.is_for_listing_ = true;
-	weapon.is_attacker_ = attacking;
 }
 
 attack_type::specials_context_t::~specials_context_t()
@@ -2188,7 +2181,7 @@ bool attack_type::special_active_impl(
 
 	// Is this active on attack/defense?
 	const std::string & active_on = special["active_on"];
-	if ( !active_on.empty() ) {
+	if ( !is_for_listing && !active_on.empty() ) {
 		if ( is_attacker  &&  active_on != "offense" )
 			return false;
 		if ( !is_attacker  &&  active_on != "defense" )
@@ -2275,17 +2268,17 @@ bool attack_type::special_active_impl(
 	if (!special_unit_matches(self, other, self_loc, self_attack, special, is_for_listing, filter_self, self_check_if_recursion))
 		return false;
 	std::string opp_check_if_recursion = (applied_both || !whom_is_self) ? tag_name : "";
-	if (!special_unit_matches(other, self, other_loc, other_attack, special, is_for_listing, "filter_opponent", opp_check_if_recursion))
+	if (!is_for_listing && !special_unit_matches(other, self, other_loc, other_attack, special, is_for_listing, "filter_opponent", opp_check_if_recursion))
 		return false;
 	//in case of apply_to=attacker|defender, if both [filter_attacker] and [filter_defender] are used,
 	//check what is_attacker is true(or false for (filter_defender]) in affect self case only is necessary for what unit affected by special has a tag_name check.
 	bool applied_to_attacker = applied_both || (whom_is_self && is_attacker) || (!whom_is_self && !is_attacker);
 	std::string att_check_if_recursion = applied_to_attacker ? tag_name : "";
-	if (!special_unit_matches(att, def, att_loc, att_weapon, special, is_for_listing, "filter_attacker", att_check_if_recursion))
+	if ((!is_for_listing && is_attacker) && !special_unit_matches(att, def, att_loc, att_weapon, special, is_for_listing, "filter_attacker", att_check_if_recursion))
 		return false;
 	bool applied_to_defender = applied_both || (whom_is_self && !is_attacker) || (!whom_is_self && is_attacker);
 	std::string def_check_if_recursion= applied_to_defender ? tag_name : "";
-	if (!special_unit_matches(def, att, def_loc, def_weapon, special, is_for_listing, "filter_defender", def_check_if_recursion))
+	if ((!is_for_listing && !is_attacker) && !special_unit_matches(def, att, def_loc, def_weapon, special, is_for_listing, "filter_defender", def_check_if_recursion))
 		return false;
 
 	// filter adjacent units or adjacent locations

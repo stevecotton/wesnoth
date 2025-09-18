@@ -989,7 +989,7 @@ static int attack_info(const reports::context& rc, const attack_type &at, config
 	{
 		//If we have a second unit, do the 2-unit specials_context
 		bool attacking = (u.side() == rc.screen().playing_team().side());
-		auto ctx = (sec_u == nullptr) ? at.specials_context_for_listing(attacking) :
+		auto ctx = (sec_u == nullptr) ? at.specials_context_for_listing(u.shared_from_this(), hex, attacking) :
 						at.specials_context(u.shared_from_this(), sec_u->shared_from_this(), hex, sec_u->get_location(), attacking, std::move(sec_u_weapon));
 
 		bool has_specials = false;
@@ -1011,26 +1011,6 @@ static int attack_info(const reports::context& rc, const attack_type &at, config
 			add_text(res, flush(str), flush(tooltip), help_page);
 		}
 
-		if(has_specials) {
-			// Add some padding so the end of the specials list
-			// isn't too close vertically to the attack icons of
-			// the next attack. Also for symmetry with the padding
-			// above the list of specials (below the attack icon line).
-			const std::string spacer = "misc/blank.png~CROP(0, 0, 1, 5)";
-			add_image(res, spacer, "");
-			add_text(res, "\n", "");
-		}
-	}
-
-	// 'abilities' version of special_tooltips is below.
-	{
-		//If we have a second unit, do the 2-unit specials_context
-		bool attacking = (u.side() == rc.screen().playing_team().side());
-		auto ctx = (sec_u == nullptr)
-	? at.specials_context(u.shared_from_this(), hex, attacking)
-	: at.specials_context(u.shared_from_this(), sec_u->shared_from_this(), hex, sec_u->get_location(), attacking, std::move(sec_u_weapon));
-
-		bool has_specials = false;
 		for(const auto& tip : at.abilities_special_tooltips())
 		{
 			has_specials = true;

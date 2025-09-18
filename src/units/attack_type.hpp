@@ -469,8 +469,18 @@ public:
 	specials_context_t specials_context(const unit_type& self_type, const map_location& loc, bool attacking = true) const {
 		return specials_context_t(*this, self_type, loc, attacking);
 	}
-	specials_context_t specials_context_for_listing(bool attacking = true) const {
-		return specials_context_t(*this, attacking);
+	/**
+	 * Set up a specials context that ignores some filters and thus reports
+	 * weapon specials as active if there is potentially an opponent that could
+	 * activate them, even when no known unit_type would be such an opponent.
+	 *
+	 * The location is used for checking other units' teaching abilities, so
+	 * that weapon specials used as abilities are found.
+	 */
+	specials_context_t specials_context_for_listing(unit_const_ptr self, const map_location& loc, bool attacking) const {
+		specials_context_t sct(*this, self, loc, attacking);
+		is_for_listing_ = true; // FIXME - get back to the sort-of-moving-to-RAII design
+		return sct;
 	}
 	void set_changed(bool value)
 	{
