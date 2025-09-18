@@ -91,20 +91,26 @@ public:
 	 */
 	struct attack_tooltip_metadata
 	{
-		// constructor because emplace_back() doesn't use aggregate initialization
-		explicit attack_tooltip_metadata(t_string&& n, t_string&& d, bool a)
-			: name(std::move(n))
-			, description(std::move(d))
-			, active(a)
-		{
-		}
-
 		t_string name;
 		t_string description;
 		bool active;
 	};
 
-	std::vector<attack_tooltip_metadata> special_tooltips(bool assume_active=true) const;
+	/**
+	 * Returns a vector of names and descriptions for the specials of *this.
+	 * This does not include any taught by weapon specials used as abilities,
+	 * which are searched for by abilities_special_tooltips() instead.
+	 *
+	 * If assume_active is false, this uses the current context (see
+	 * set_specials_context) to determine whether to use the active or inactive
+	 * name and description for each special.
+	 *
+	 * If assume_active is true, the active name and description will be used
+	 * regardless of the current context (see set_specials_context).
+	 *
+	 * If the appropriate name is empty, the special is omitted from the output.
+	 */
+	std::vector<attack_tooltip_metadata> special_tooltips(bool assume_active) const;
 	std::vector<attack_tooltip_metadata> abilities_special_tooltips() const;
 
 	std::string weapon_specials() const;

@@ -677,7 +677,7 @@ std::string unit_topic_generator::operator()() const {
 		// Otherwise the Special column will be hidden.
 		bool has_special = false;
 		for(const attack_type& attack : type_.attacks()) {
-			if(!attack.special_tooltips().empty()) {
+			if(!attack.special_tooltips(true).empty()) {
 				has_special = true;
 			}
 		}
@@ -743,7 +743,7 @@ std::string unit_topic_generator::operator()() const {
 
 			// special
 			if(has_special) {
-				const auto specials = attack.special_tooltips();
+				const auto specials = attack.special_tooltips(true);
 				if(!specials.empty()) {
 					std::stringstream specials_ss;
 					std::string lang_special = "";

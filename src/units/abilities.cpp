@@ -867,19 +867,6 @@ unit_ability_list attack_type::get_specials(const std::string& special) const
 	return res;
 }
 
-/**
- * Returns a vector of names and descriptions for the specials of *this.
- * Each std::tuple in the vector is [name, description, active].
- *
- * If assume_active is true, all specials will be shown as if they are active
- * and the third element of the tuple will always be true without checking.
- *
- * If assume_active is false, this uses either the active or inactive
- * name/description for each special, based on the current context (see
- * set_specials_context).
- *
- * If the appropriate name is empty, the special is skipped.
- */
 std::vector<attack_type::attack_tooltip_metadata> attack_type::special_tooltips(
 	bool assume_active) const
 {
@@ -901,7 +888,7 @@ std::vector<attack_type::attack_tooltip_metadata> attack_type::special_tooltips(
 			? cfg["description"].str()
 			: cfg.get_or("description_inactive", "description").str();
 
-		res.emplace_back(
+		res.AGGREGATE_EMPLACE(
 			unit_abilities::substitute_variables(name, key, cfg),
 			unit_abilities::substitute_variables(desc, key, cfg),
 			active
@@ -915,8 +902,8 @@ std::vector<attack_type::attack_tooltip_metadata> attack_type::special_tooltips(
  * abilities for which this unit is the student (including ones where the unit
  * is teaching itself).
  *
- * Behavior is similar to attack_type::special_tooltips, however as there's only
- * one caller the implementation is fixed to assume_active==false.
+ * Behavior is similar to attack_type::special_tooltips(false). As there's only
+ * one caller the implementation doesn't take a parameter for it.
  */
 std::vector<attack_type::attack_tooltip_metadata> attack_type::abilities_special_tooltips() const
 {
@@ -934,7 +921,7 @@ std::vector<attack_type::attack_tooltip_metadata> attack_type::abilities_special
 			if(name.empty() || checking_name.count(name) != 0) {
 				continue;
 			}
-			res.emplace_back(name, desc, active);
+			res.AGGREGATE_EMPLACE(name, desc, active);
 			checking_name.insert(name);
 		}
 	}
@@ -957,7 +944,7 @@ std::vector<attack_type::attack_tooltip_metadata> attack_type::abilities_special
 				if(name.empty() || checking_name.count(name) != 0) {
 					continue;
 				}
-				res.emplace_back(name, desc, active);
+				res.AGGREGATE_EMPLACE(name, desc, active);
 				checking_name.insert(name);
 			}
 		}

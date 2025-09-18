@@ -281,7 +281,7 @@ void unit_preview_pane::print_attack_details(
 			);
 		}
 
-		for(const auto& tip : a.special_tooltips()) {
+		for(const auto& tip : a.special_tooltips(true)) {
 			add_name_tree_node(
 				subsection,
 				"item",
