@@ -34,7 +34,7 @@
 ### Packaging
 ### Terrain
 ### Translations
-   * Updated translations: Bengali, British English, Chinese (Simplified), French, Greek, Hungarian, Italian, Spanish
+   * Updated translations: Bengali, British English, Chinese (Simplified), Czech, French, Greek, Hungarian, Italian, Spanish
 ### Units
    * Ships:
      * Adjusted gold costs for most ships.
