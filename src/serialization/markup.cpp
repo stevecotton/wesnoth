@@ -479,6 +479,8 @@ static std::string config_to_pango_markup(const std::string& orig_tagname, const
 		tagname = "span";
 	} else if(orig_tagname == "img") {
 		return ""; // ignore
+	} else if(orig_tagname == "character_entity") {
+		return font::escape_text("&" + cfg["name"].str() + ";");
 	} else if(orig_tagname == "table") {
 		text << "\n";
 		for (const auto& row : cfg.child_range("row")) {
@@ -521,21 +523,27 @@ static std::string config_to_pango_markup(const std::string& orig_tagname, const
 }
 
 std::string help_to_pango_markup(const std::string& help_markup) {
-	const config& help_cfg = parse_text(help_markup);
-	std::stringstream pango_text;
-	std::string prev_tagname = "";
-	for(const auto& [tagname, child_cfg] : help_cfg.all_children_view()) {
-		// Two consecutive [text] blocks mean two paragraphs of text.
-		// Reinserting the paragraph break.
-		if(prev_tagname == "text" && tagname == "text") {
-			pango_text << "\n";
+	try {
+		const config& help_cfg = parse_text(help_markup);
+		std::stringstream pango_text;
+		std::string prev_tagname = "";
+		for(const auto& [tagname, child_cfg] : help_cfg.all_children_view()) {
+			// Two consecutive [text] blocks mean two paragraphs of text.
+			// Reinserting the paragraph break.
+			if(prev_tagname == "text" && tagname == "text") {
+				pango_text << "\n";
+			}
+
+			pango_text << config_to_pango_markup(tagname, child_cfg);
+
+			prev_tagname = tagname;
 		}
-
-		pango_text << config_to_pango_markup(tagname, child_cfg);
-
-		prev_tagname = tagname;
+		return pango_text.str();
+	} catch(const parse_error& e) {
+		return markup::span_color(font::BAD_COLOR,
+			"Error:[" + e.message + "]\n"
+			+ font::escape_text(help_markup));
 	}
-	return pango_text.str();
 }
 
 }
