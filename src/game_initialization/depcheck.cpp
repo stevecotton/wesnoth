@@ -397,7 +397,7 @@ void manager::try_scenario_by_index(int index, bool force)
 
 int manager::get_era_index() const
 {
-	get_era_index(era_);
+	return get_era_index(era_);
 }
 
 int manager::get_era_index(const std::string& id) const
