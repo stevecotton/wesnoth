@@ -339,7 +339,7 @@ utils::optional<std::size_t> random_next_track_index()
 	std::ranges::iota(indices, current_track_list.cbegin());
 	std::ranges::shuffle(indices, randomness::rng::default_instance());
 #else
-	std::iota(indices.begin(), indices.end(), 0);
+	std::iota(indices.begin(), indices.end(), current_track_list.cbegin());
 	std::shuffle(indices.begin(), indices.end(), randomness::rng::default_instance());
 #endif
 
