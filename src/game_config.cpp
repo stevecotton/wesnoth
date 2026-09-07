@@ -486,6 +486,33 @@ void add_color_info(const game_config_view& v, bool build_defaults)
 		const config::attribute_value* ufc = teamC.get("ui_font_color");
 		if(ufc) {
 			ui_font_color = color_t::from_hex_string(ufc->str());
+		} else {
+			// Predictate for "bright enough to show up on a dark background"
+			auto is_readable_ui_color = [](const color_t& c) {
+				// Completely arbitrary numbers here. This could consider the sum of two
+				// or all three channels, but brightness isn't linear and the background
+				// may be a gray overlay over terrain rather than pure black.
+				return 0x90 <= c.r || 0x90 <= c.g || 0x90 <= c.b;
+			};
+
+			// We need a color_range to call generate_reference_palette.
+			// Only the mid(), min() and max() values of this will be used.
+			const auto cr = color_range(temp, std::nullopt);
+			if(is_readable_ui_color(cr.mid())) {
+				ui_font_color = cr.mid();
+			} else {
+				LOG_NG << "Color too dark to be readable in the UI: " << id
+					<< " has mid() " << cr.mid().to_hex_string()
+					<< " and sum " << (cr.mid().r + cr.mid().g + cr.mid().b);
+				const auto palette = generate_reference_palette(cr);
+				const auto it = std::find_if(palette.cbegin(), palette.cend(), is_readable_ui_color);
+				if(it != palette.cend()) {
+					LOG_NG << ".. using a lighter color in the UI: " << it->to_hex_string();
+					ui_font_color = *it;
+				}
+				// Reaching palette.cend() implies that cr.max() is also too dark.
+				// Use the mid() value anyway, on the assumption that this is deliberate.
+			}
 		}
 
 		team_rgb_range.emplace(id, color_range(temp, ui_font_color));
