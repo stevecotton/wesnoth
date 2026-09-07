@@ -1475,7 +1475,7 @@ void display::recalculate_minimap()
 	minimap_renderer_ = image::prep_minimap_for_rendering(
 		context().map(),
 		context().teams().empty() ? nullptr : &viewing_team(),
-		nullptr,
+		&context().units(),
 		(selectedHex_.valid() && !is_blindfolded()) ? &reach_map_ : nullptr
 	);
 
@@ -1507,8 +1507,6 @@ void display::draw_minimap()
 	// Draw the minimap and update its location for mouse and units functions
 	minimap_location_ = std::invoke(minimap_renderer_, area);
 
-	draw_minimap_units();
-
 	// calculate the visible portion of the map:
 	// scaling between minimap and full map images
 	double xscaling = 1.0 * minimap_location_.w / (context().map().w() * hex_width());
@@ -1536,53 +1534,6 @@ void display::draw_minimap()
 	};
 
 	draw::rect(outline_rect, 255, 255, 255);
-}
-
-void display::draw_minimap_units()
-{
-	if (!prefs::get().minimap_draw_units() || is_blindfolded()) return;
-
-	double xscaling = 1.0 * minimap_location_.w / context().map().w();
-	double yscaling = 1.0 * minimap_location_.h / context().map().h();
-
-	for(const auto& u : context().units()) {
-		if (fogged(u.get_location()) ||
-		    (viewing_team().is_enemy(u.side()) &&
-		     u.invisible(u.get_location())) ||
-			 u.get_hidden()) {
-			continue;
-		}
-
-		int side = u.side();
-		color_t col = team::get_minimap_color(side);
-
-		if(!prefs::get().minimap_movement_coding()) {
-			auto status = orb_status::allied;
-			if(viewing_team().is_enemy(side)) {
-				status = orb_status::enemy;
-			} else if(viewing_team().side() == side) {
-				status = context().unit_orb_status(u);
-			} else {
-				// no-op, status is already set to orb_status::allied;
-			}
-			col = game_config::color_info(orb_status_helper::get_orb_color(status)).rep();
-		}
-
-		double u_x = u.get_location().x * xscaling;
-		double u_y = (u.get_location().y + (is_odd(u.get_location().x) ? 1 : -1)/4.0) * yscaling;
-		// use 4/3 to compensate the horizontal hexes imbrication
-		double u_w = 4.0 / 3.0 * xscaling;
-		double u_h = yscaling;
-
-		rect r {
-				  minimap_location_.x + int(std::round(u_x))
-				, minimap_location_.y + int(std::round(u_y))
-				, int(std::round(u_w))
-				, int(std::round(u_h))
-		};
-
-		draw::fill(r, col.r, col.g, col.b, col.a);
-	}
 }
 
 bool display::scroll(const point& amount, bool force)

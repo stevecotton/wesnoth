@@ -422,8 +422,6 @@ public:
 	  * Returns true if something was drawn, false otherwise. */
 	bool draw_reports(const rect& region);
 
-	void draw_minimap_units();
-
 	/** Function to invalidate all tiles. */
 	void invalidate_all();
 

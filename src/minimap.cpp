@@ -76,7 +76,7 @@ std::function<rect(rect)> prep_minimap_for_rendering(
 	}
 
 	// Nothing to draw!
-	if(!preferences_minimap_draw_villages && !preferences_minimap_draw_terrain) {
+	if(!preferences_minimap_draw_units && !preferences_minimap_draw_villages && !preferences_minimap_draw_terrain) {
 		return nullptr;
 	}
 
