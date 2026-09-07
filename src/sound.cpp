@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <list>
 #include <mutex>
+#include <numeric>
 #include <unordered_map>
 #include <utility>
 
@@ -325,6 +326,32 @@ bool track_ok(const std::string& id)
 	return true;
 }
 
+/**
+ * Returns a random playlist index for a track that satisfies
+ * @ref track_ok, or nullopt if no suitable track is found.
+ */
+utils::optional<std::size_t> random_next_track_index()
+{
+	using iterator = decltype(current_track_list)::const_iterator;
+	auto indices = std::vector<iterator>(current_track_list.size());
+
+#if __cpp_lib_ranges
+	std::ranges::iota(indices, current_track_list.cbegin());
+	std::ranges::shuffle(indices, randomness::rng::default_instance());
+#else
+	std::iota(indices.begin(), indices.end(), 0);
+	std::shuffle(indices.begin(), indices.end(), randomness::rng::default_instance());
+#endif
+
+	for(const iterator& candidate : indices) {
+		if(track_ok((*candidate)->file_path())) {
+			return std::distance(current_track_list.cbegin(), candidate);
+		}
+	}
+
+	return utils::nullopt;
+}
+
 std::shared_ptr<sound::music_track> choose_track()
 {
 	assert(!current_track_list.empty());
@@ -340,9 +367,7 @@ std::shared_ptr<sound::music_track> choose_track()
 	//
 	if(!current_index || current_track->shuffle()) {
 		if(current_track_list.size() > 1) {
-			do {
-				next_index = randomness::rng::default_instance().get_random_int(0, current_track_list.size() - 1);
-			} while(!track_ok(current_track_list[next_index]->file_path()));
+			next_index = random_next_track_index().value_or(0);
 		}
 	} else {
 		next_index = (current_index.value() + 1) % current_track_list.size();
