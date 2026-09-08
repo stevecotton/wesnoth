@@ -335,7 +335,7 @@ utils::optional<std::size_t> random_next_track_index()
 	using iterator = decltype(current_track_list)::const_iterator;
 	auto indices = std::vector<iterator>(current_track_list.size());
 
-#if __cpp_lib_ranges
+#ifdef __cpp_lib_ranges_iota
 	std::ranges::iota(indices, current_track_list.cbegin());
 	std::ranges::shuffle(indices, randomness::rng::default_instance());
 #else
