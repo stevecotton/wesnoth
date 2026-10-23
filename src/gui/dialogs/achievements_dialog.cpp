@@ -31,8 +31,6 @@
 static lg::log_domain log_config("config");
 #define ERR_CONFIG LOG_STREAM(err, log_config)
 
-constexpr int sub_achievements_limit = 28;
-
 namespace gui2::dialogs
 {
 
@@ -121,15 +119,15 @@ void achievements_dialog::set_achievements_row()
 			}}
 		});
 
-		auto achievement_progress = static_cast<progress_bar*>(newrow.find("achievement_progress", false));
+		auto& achievement_progress = newrow.find_widget<progress_bar>("achievement_progress");
 		if(in_progress) {
-			achievement_progress->set_percentage((ach.current_progress_ / double(ach.max_progress_)) * 100);
+			achievement_progress.set_percentage((ach.current_progress_ / double(ach.max_progress_)) * 100);
 		} else {
-			achievement_progress->set_visible(gui2::widget::visibility::invisible);
+			achievement_progress.set_visible(gui2::widget::visibility::invisible);
 		}
 
-		auto name = static_cast<styled_widget*>(newrow.find("name", false));
-		name->get_canvas(0).set_variable("achieved", wfl::variant(ach.achieved_));
+		auto& name = newrow.find_widget<styled_widget>("name");
+		name.get_canvas(0).set_variable("achieved", wfl::variant(ach.achieved_));
 
 		set_sub_achievements(newrow, ach);
 	}
@@ -148,21 +146,21 @@ void achievements_dialog::set_sub_achievements(grid& newrow, const achievement& 
 	// set any sub achievements
 	for(const sub_achievement& sub_ach : ach.sub_achievements_)
 	{
-		if(i == sub_achievements_limit) {
-			ERR_CONFIG << "Too many sub achievements";
-			break;
-		} else {
-			drawing* img = static_cast<drawing*>(newrow.find("sub_icon" + std::to_string(i), false));
+		auto img = newrow.find_widget<drawing>("sub_icon" + std::to_string(i), false, false);
+		if(img) {
 			img->set_label(sub_ach.achieved_ ? sub_ach.icon_completed_ : sub_ach.icon_);
 			img->set_tooltip(sub_ach.description_);
+		} else {
+			ERR_CONFIG << "Too many sub achievements, some will not be displayed";
 		}
 		i++;
 	}
 
 	// if an achievement hasn't defined the maximum possible sub-achievements, hide the [image]s for the rest
-	for(; i < sub_achievements_limit; i++)
+	while(auto img = newrow.find_widget<drawing>("sub_icon" + std::to_string(i), false, false))
 	{
-		newrow.find("sub_icon" + std::to_string(i), false)->set_visible(visibility::invisible);
+		img->set_visible(visibility::invisible);
+		i++;
 	}
 }
 
